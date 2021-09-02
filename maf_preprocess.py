@@ -91,9 +91,9 @@ def main():
     parser.add_argument("--target_sequence", help="The name of the sequence to be extracted from the WGA (e.g. chrX).")
     parser.add_argument("--start", help="The start position on the TARGET_SEQUENCE of the region to extract.", type=int)
     parser.add_argument("--end", help="The end position on the TARGET_SEQUENCE of the region to extract.", type=int)
-    parser.parse_args()
+    arguments = parser.parse_args()
 
-    process_maf_file(parser)
+    process_maf_file(arguments)
 
     #process_maf_file(sys_argv[1])
 
