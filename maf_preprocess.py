@@ -19,8 +19,7 @@ SMALLEST_SEQUENCE = 6
 This script is used to preprocess the 241-way MAF alignment. This scri
 '''
 
-
-
+MAX_ITERATIONS = 100
 
 #Extract the species included from the newick-formatted tree
 #   newick_tree_path - the path to a plain text file containing a newick-formatted phylogenetic tree
@@ -68,18 +67,26 @@ def extract_species_from_newick(newick_tree_path):
 def process_maf_file(arguments):
     print("The path the the MAF formatted alignment file is: {}".format(arguments.maf_path))
 
-    MAX_ITERATIONS = 100
 
     try:
-        iteration = 0
-        for alignment_block in AlignIO.parse(arguments.maf_path, "maf"):
-            if iteration > MAX_ITERATIONS:
-                break
-            print('processing alignment block')
-            for species in alignment_block:
-                print(species.id, species.annotations["start"], species.annotations["end"])
+        # iteration = 0
+        # for alignment_block in AlignIO.parse(arguments.maf_path, "maf"):
+        #     if iteration > MAX_ITERATIONS:
+        #         break
+        #     print('processing alignment block')
+        #     for species in alignment_block:
+        #         print(species.id, species.annotations["start"], species.annotations["end"])
 
-            iteration += 1
+        #     iteration += 1
+
+
+        m = parseMAF(arguments.maf_path)
+
+
+        for b in m.parse():
+            print(b.alignment)
+
+
     except Exception as e:
         print(e)
 
@@ -95,6 +102,8 @@ def main():
     arguments = parser.parse_args()
 
     process_maf_file(arguments)
+
+
 
     #process_maf_file(sys_argv[1])
 
@@ -119,7 +128,7 @@ class MAFBlock:
     def __init__(self, score, seq_records = []):
         self.alignment = seq_records
         self.score = score
-        self.length_flag = False
+        # self.length_flag = False
 
     # Add SeqRecord object to list of alignments
     def add_seq_record(self, sr):
@@ -176,12 +185,25 @@ class MAFBlock:
 # header and footer are both lists of strings, each coming from a comment line in the .maf file. The 
 # alignment blocks are of type MAFBlock, to facilitate the transfer of scores.
 class MAF:
-    def __init__(self, mafPath = ""):
-        self.blocks = []
+    def __init__(self, maf_path = ""):
+        # self.blocks = []
         self.header = []
         self.footer = []
-        if mafPath:
-            self.read(mafPath)      
+        self.maf_path = maf_path
+        # if maf_path:
+        #     iteration = 0
+        #     for alignment_block in self.read_maf(maf_path):
+        #         if iteration > MAX_ITERATIONS:
+        #             break
+
+        #         iteration += 1
+
+            # self.read(mafPath)      
+    def parse(self):
+        if maf_path:
+            iteration = 0
+            for alignment_block in self.read_maf(maf_path):
+                yield alignment_block
 
     # Add a new alignment MAFBlock to the list of blocks. 
     def add_block(self, block: MAFBlock):
@@ -196,7 +218,7 @@ class MAF:
         self.footer.append(line)
 
     # Read/Parse a .maf file at the specified mafPath. Filter blocks as they are read. 
-    def read(self, mafPath):
+    def read_maf(self, mafPath):
         current_block = MAFBlock(0.0, [])
         first = True
 
@@ -207,6 +229,24 @@ class MAF:
                     self.add_header_line(line.rstrip())
                 else:
                     self.add_footer_line(line.rstrip())
+
+            # Encountered a new alignment block
+            elif line.startswith('a'):
+                # This is the first alignment block that has been encountered
+                if first:
+                    first = False
+                else:
+                    # Check the existing alignment block for target species before overwriting it.
+                    # If the reference and at least 1 other species are included, the MAFBlock will be
+                    # filtered and saved.
+                    # if (not current_block.length_flag):
+
+                    yield current_block
+                        # self.check_for_target_species(current_block)
+
+                # Create new block using the score found in .maf file
+                current_block = MAFBlock(line.split('=')[1].rstrip(), [])
+
 
             # Encountered a sequence within an alignment block
             elif line.startswith('s'):
@@ -225,26 +265,13 @@ class MAF:
                                id = annotation_items['src'], 
                                annotations = annotation_items)
 
-                print(tokens[3])
-                if int(tokens[3]) < SMALLEST_SEQUENCE:
-                    current_block.length_flag = True
+                # print(tokens[3])
+                # if int(tokens[3]) < SMALLEST_SEQUENCE:
+                    # current_block.length_flag = True
 
                 current_block.add_seq_record(sr)
 
-            # Encountered a new alignment block
-            elif line.startswith('a'):
-                # This is the first alignment block that has been encountered
-                if first:
-                    first = False
-                else:
-                    # Check the existing alignment block for target species before overwriting it.
-                    # If the reference and at least 1 other species are included, the MAFBlock will be
-                    # filtered and saved.
-                    if (not current_block.length_flag):
-                        self.check_for_target_species(current_block)
 
-                # Create new block using the score found in .maf file
-                current_block = MAFBlock(line.split('=')[1].rstrip(), [])
             
             elif line.startswith('i'):
                 continue
@@ -258,8 +285,8 @@ class MAF:
             else: 
                 print(line)
 
-        self.check_for_target_species(current_block)
-
+        # self.check_for_target_species(current_block)
+        yield current_block
 
     # Check the current MAFBlock for the target species declared in config.py. This 
     def check_for_target_species(self, block: MAFBlock):
