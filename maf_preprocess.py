@@ -201,7 +201,10 @@ class MAF:
         if self.maf_path:
             iteration = 0
             for alignment_block in self.read_maf():
-                print(iteration, alignment_block.alignment[0])
+                if iteration > MAX_ITERATIONS:
+                    break
+                print(iteration, alignment_block.alignment)
+
 
     # Add a new alignment MAFBlock to the list of blocks. 
     def add_block(self, block: MAFBlock):
@@ -269,8 +272,7 @@ class MAF:
                                 id = annotation_items['src'], 
                                 annotations = annotation_items)
                 except IndexError as e:
-                    print(line)
-                    print(tokens)
+                    print("There are not the expected number of items within this sequence line of the alignment block.")
                     
 
                 # print(tokens[3])
