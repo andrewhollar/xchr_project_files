@@ -203,7 +203,7 @@ class MAF:
             for alignment_block in self.read_maf():
                 if iteration > MAX_ITERATIONS:
                     break
-                print(iteration, alignment_block.alignment)
+                print(iteration, alignment_block.alignment[0])
 
 
     # Add a new alignment MAFBlock to the list of blocks. 
