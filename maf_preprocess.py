@@ -71,7 +71,7 @@ def process_maf_file(arguments):
 
     try:
         iteration = 0
-        for alignment_block in AlignIO.parse(arguments.mafpath, "maf"):
+        for alignment_block in AlignIO.parse(arguments.maf_path, "maf"):
             if iteration > MAX_ITERATIONS:
                 break
             print('processing alignment block')
@@ -86,12 +86,12 @@ def process_maf_file(arguments):
 # Function that takes a multiple alignment 
 def main():
     parser = argparse.ArgumentParser(description='Preprocess the 241-way mammalian whole genome alignment (WGA).')
-    parser.add_argument("-p", "--mafpath", help="The file path to the MAF-formatted alignment file.")
-    parser.add_argument("--targetspecies", help="The species used as the reference when the MAF was created (e.g. Homo_sapiens).")
-    parser.add_argument("--targetsequence", help="The name of the sequence to be extracted from the WGA (e.g. chrX).")
+    parser.add_argument("-p", "--maf_path", help="The file path to the MAF-formatted alignment file.")
+    parser.add_argument("--target_species", help="The species used as the reference when the MAF was created (e.g. Homo_sapiens).")
+    parser.add_argument("--target_sequence", help="The name of the sequence to be extracted from the WGA (e.g. chrX).")
     parser.add_argument("--start", help="The start position on the TARGET_SEQUENCE of the region to extract.", type=int)
     parser.add_argument("--end", help="The end position on the TARGET_SEQUENCE of the region to extract.", type=int)
-
+    parser.parse_args()
 
     process_maf_file(parser)
 
