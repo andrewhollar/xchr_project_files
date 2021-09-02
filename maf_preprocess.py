@@ -85,6 +85,7 @@ def process_maf_file(arguments):
 
 
     except Exception as e:
+        print("there has been an exception")
         print(e)
 
 
