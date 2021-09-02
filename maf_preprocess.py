@@ -66,6 +66,7 @@ def extract_species_from_newick(newick_tree_path):
     
 
 def process_maf_file(arguments):
+    print("The path the the MAF formatted alignment file is: {}".format(arguments.maf_paths))
 
     MAX_ITERATIONS = 100
 
