@@ -81,10 +81,7 @@ def process_maf_file(arguments):
 
 
         m = MAF(arguments.maf_path)
-
-
-        for b in m.parse():
-            print(b.alignment)
+        m.parse()
 
 
     except Exception as e:
@@ -203,7 +200,7 @@ class MAF:
         if self.maf_path:
             iteration = 0
             for alignment_block in self.read_maf():
-                yield alignment_block
+                print(iteration, alignment_block.alignment[0])
 
     # Add a new alignment MAFBlock to the list of blocks. 
     def add_block(self, block: MAFBlock):
