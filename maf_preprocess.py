@@ -19,7 +19,7 @@ SMALLEST_SEQUENCE = 6
 This script is used to preprocess the 241-way MAF alignment. This scri
 '''
 
-MAX_ITERATIONS = 100
+MAX_ITERATIONS = 10
 
 #Extract the species included from the newick-formatted tree
 #   newick_tree_path - the path to a plain text file containing a newick-formatted phylogenetic tree
@@ -189,14 +189,13 @@ class MAF:
         # self.blocks = []
         self.header = []
         self.footer = []
-        self.maf_path = cmd_arguments.maf_path
-
+        self.arguments = cmd_arguments
 
         self.read_iteration = 0
 
 
     def parse(self):
-        if self.maf_path:
+        if self.arguments.maf_path:
             for alignment_block in self.read_maf():
                 if self.read_iteration > MAX_ITERATIONS:
                     break
@@ -220,7 +219,7 @@ class MAF:
         current_block = MAFBlock(0.0, [])
         first = True
 
-        for line in open(self.maf_path, "r"):
+        for line in open(self.arguments.maf_path, "r"):
 
             if current_block.species_flag:
                 print("There has been an error with the reference species not being the first listed within an alignment block.")
@@ -274,10 +273,10 @@ class MAF:
                 #This means that this is the first sequence within the current alignment block to be processed. This is expected to be the reference genome (i.e. Homo_sapiens)
                 if len(current_block.alignment) == 0:
 
-                    if arguments.target_species not in annotation_items["src"]:
+                    if self.arguments.target_species not in annotation_items["src"]:
                         current_block.species_flag = True
 
-                    if arguments.target_sequence not in annotation_items["src"]:
+                    if self.arguments.target_sequence not in annotation_items["src"]:
                         current_block.sequence_flag = True
 
                 try :
