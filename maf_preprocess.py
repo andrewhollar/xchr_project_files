@@ -1,4 +1,8 @@
 from Bio import AlignIO
+import argparse
+
+
+
 from Bio.Align import MultipleSeqAlignment
 from Bio.SeqRecord import SeqRecord
 from Bio.Seq import Seq
@@ -9,6 +13,13 @@ import re
 
 annotation_tags = ["src", "start", "size", "strand", "srcSize"]
 SMALLEST_SEQUENCE = 6
+
+
+'''
+This script is used to preprocess the 241-way MAF alignment. This scri
+'''
+
+
 
 
 #Extract the species included from the newick-formatted tree
@@ -30,15 +41,64 @@ def extract_species_from_newick(newick_tree_path):
     newick_tree_list = newick_tree_str.split(":")
 
     #Keep only the entries that are non-empty
-    target_species = [species for species in newick_tree_list if species != ""]
+    target_species = [species for species in newick_tree_list if species != ""][:-1]
+
+
+
+    csl = ""
+    for s in target_species:
+        if s.startswith("e-"):
+            print(s)
+            s = s[2:]
+            print(s)
+
+        if s == "point":
+            print("skipping entry point")
+            continue
+
+        for c in s:
+            if c != " ":
+                csl += c
+        csl += ","
+    print(csl)
     
     return target_species
     
+
+def process_maf_file(arguments):
+
+    MAX_ITERATIONS = 100
+
+    try:
+        iteration = 0
+        for alignment_block in AlignIO.parse(arguments.maf_path, "maf"):
+            if iteration > MAX_ITERATIONS:
+                break
+            print('processing alignment block')
+            for species in alignment_block:
+                print(species.id, species.annotations["start"], species.annotations["end"])
+
+            iteration += 1
+    except e:
+        print(e)
+
+
 # Function that takes a multiple alignment 
 def main():
+    parser = argparse.ArgumentParser(description='Preprocess the 241-way mammalian whole genome alignment (WGA).')
+    parser.add_argument("-p", "--maf_path" help="The file path to the MAF-formatted alignment file.")
+    parser.add_argument("--target_species", help="The species used as the reference when the MAF was created (e.g. Homo_sapiens).")
+    parser.add_argument("--target_sequence", help="The name of the sequence to be extracted from the WGA (e.g. chrX).")
+    parser.add_argument("--start", help="The start position on the TARGET_SEQUENCE of the region to extract.", type=int)
+    parser.add_argument("--end", help="The end position on the TARGET_SEQUENCE of the region to extract.", type=int)
+
+
+    process_maf_file(parser)
+
+    #process_maf_file(sys_argv[1])
 
     #Read newick-formatted tree to determine which entries from MAF alignment blocks to remove (i.e. entries that contain 'fullTreeAnc' in the species name)
-    target_species = extract_species_from_newick(sys.argv[1])
+    #target_species = extract_species_from_newick(sys.argv[1])
 
     # print("Reading and filtering .maf file based on preferences set in config.py.")
     # print("The target species are: " + str(CONF['TARGET_SPECIES']))
@@ -47,6 +107,8 @@ def main():
     # print("Writing new .maf file")
     # m.write(Path(sys.argv[2]))
     # print("Write complete.")
+
+
 
 
 # Class that represents a single alignment block within a .maf (multiple alignment format) file.
