@@ -79,7 +79,7 @@ def process_maf_file(arguments):
                 print(species.id, species.annotations["start"], species.annotations["end"])
 
             iteration += 1
-    except e:
+    except Exception as e:
         print(e)
 
 
