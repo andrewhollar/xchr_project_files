@@ -243,8 +243,11 @@ class MAF:
                         # self.check_for_target_species(current_block)
 
                 # Create new block using the score found in .maf file
-                print(line)
-                current_block = MAFBlock(line.split('=')[1].rstrip(), [])
+                try:
+                    current_block = MAFBlock(line.split('=')[1].rstrip(), [])
+                except:
+                    #This means that no score was provided, in which case we assign it to be 0.
+                    current_block = MAFBlock("0", [])
 
 
             # Encountered a sequence within an alignment block
