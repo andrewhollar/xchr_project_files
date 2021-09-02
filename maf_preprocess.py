@@ -202,7 +202,7 @@ class MAF:
     def parse(self):
         if self.maf_path:
             iteration = 0
-            for alignment_block in self.read_maf(self.maf_path):
+            for alignment_block in self.read_maf():
                 yield alignment_block
 
     # Add a new alignment MAFBlock to the list of blocks. 
