@@ -200,9 +200,9 @@ class MAF:
 
             # self.read(mafPath)      
     def parse(self):
-        if maf_path:
+        if self.maf_path:
             iteration = 0
-            for alignment_block in self.read_maf(maf_path):
+            for alignment_block in self.read_maf(self.maf_path):
                 yield alignment_block
 
     # Add a new alignment MAFBlock to the list of blocks. 
@@ -218,11 +218,11 @@ class MAF:
         self.footer.append(line)
 
     # Read/Parse a .maf file at the specified mafPath. Filter blocks as they are read. 
-    def read_maf(self, mafPath):
+    def read_maf(self):
         current_block = MAFBlock(0.0, [])
         first = True
 
-        for line in open(mafPath, "r"):
+        for line in open(self.maf_path, "r"):
             # Encountered a comment line, either in the header or footer
             if line.startswith("#"):
                 if first:
