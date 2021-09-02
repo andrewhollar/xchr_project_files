@@ -238,7 +238,7 @@ class MAF:
                     # If the reference and at least 1 other species are included, the MAFBlock will be
                     # filtered and saved.
                     # if (not current_block.length_flag):
-                    if not current_block.species_flag or not current_block.sequence_flag:
+                    if not current_block.species_flag and not current_block.sequence_flag:
 
                         self.read_iteration += 1
                         
