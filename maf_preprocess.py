@@ -253,6 +253,7 @@ class MAF:
             # Encountered a sequence within an alignment block
             elif line.startswith('s'):
 
+
                 #Remove enpty strings from parsed line
                 tokens = list(filter(None, line.split(' ')))
                 
@@ -262,10 +263,15 @@ class MAF:
                 for t in range(1, len(tokens) - 1, 1):
                     annotation_items[annotation_tags[t - 1]] = tokens[t]
                     
-                # Create new SeqRecord
-                sr = SeqRecord(Seq(tokens[6].rstrip()), 
-                               id = annotation_items['src'], 
-                               annotations = annotation_items)
+                try :
+                    # Create new SeqRecord
+                    sr = SeqRecord(Seq(tokens[6].rstrip()), 
+                                id = annotation_items['src'], 
+                                annotations = annotation_items)
+                except IndexError as e:
+                    print(line)
+                    print(tokens)
+                    
 
                 # print(tokens[3])
                 # if int(tokens[3]) < SMALLEST_SEQUENCE:
