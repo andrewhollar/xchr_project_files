@@ -71,7 +71,7 @@ def process_maf_file(arguments):
 
     try:
         iteration = 0
-        for alignment_block in AlignIO.parse(arguments.maf_path, "maf"):
+        for alignment_block in AlignIO.parse(arguments.mafpath, "maf"):
             if iteration > MAX_ITERATIONS:
                 break
             print('processing alignment block')
