@@ -126,6 +126,8 @@ class MAFBlock:
     def __init__(self, score, seq_records = []):
         self.alignment = seq_records
         self.score = score
+        self.species_flag = False
+        self.sequence_flag = False
         # self.length_flag = False
 
     # Add SeqRecord object to list of alignments
@@ -190,14 +192,15 @@ class MAF:
         self.maf_path = cmd_arguments.maf_path
 
 
+        self.read_iteration = 0
+
+
     def parse(self):
         if self.maf_path:
-            iteration = 0
             for alignment_block in self.read_maf():
-                if iteration > MAX_ITERATIONS:
+                if self.read_iteration > MAX_ITERATIONS:
                     break
-                print(iteration, alignment_block.alignment[0])
-                iteration += 1
+                print(self.read_iteration, alignment_block.alignment[0])
 
 
     # Add a new alignment MAFBlock to the list of blocks. 
@@ -218,8 +221,17 @@ class MAF:
         first = True
 
         for line in open(self.maf_path, "r"):
+
+            if current_block.species_flag:
+                print("There has been an error with the reference species not being the first listed within an alignment block.")
+                print(current_block)
+                continue
+            elif current_block.sequence_flag:
+                #Simply haven't found the correct sequence (i.e. chromosome) within the WGA
+                continue
+
             # Encountered a comment line, either in the header or footer
-            if line.startswith("#"):
+            elif line.startswith("#"):
                 if first:
                     self.add_header_line(line.rstrip())
                 else:
@@ -250,7 +262,6 @@ class MAF:
             # Encountered a sequence within an alignment block
             elif line.startswith('s'):
 
-
                 #Remove enpty strings from parsed line
                 tokens = list(filter(None, line.split('\t')))
                 
@@ -259,7 +270,16 @@ class MAF:
 
                 for t in range(1, len(tokens) - 1, 1):
                     annotation_items[annotation_tags[t - 1]] = tokens[t]
-                    
+
+                #This means that this is the first sequence within the current alignment block to be processed. This is expected to be the reference genome (i.e. Homo_sapiens)
+                if len(current_block.alignment) == 0:
+
+                    if arguments.target_species not in annotation_items["src"]:
+                        current_block.species_flag = True
+
+                    if arguments.target_sequence not in annotation_items["src"]:
+                        current_block.sequence_flag = True
+
                 try :
                     # Create new SeqRecord
                     sr = SeqRecord(Seq(tokens[6].rstrip()), 
@@ -287,7 +307,8 @@ class MAF:
             elif line.rstrip() == "":
                 continue
             else: 
-                print(line)
+                # print(line)
+                continue
 
         # self.check_for_target_species(current_block)
         yield current_block
