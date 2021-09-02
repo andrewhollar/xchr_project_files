@@ -68,7 +68,7 @@ def process_maf_file(arguments):
     print("The path the the MAF formatted alignment file is: {}".format(arguments.maf_path))
 
 
-    try:
+    # try:
         # iteration = 0
         # for alignment_block in AlignIO.parse(arguments.maf_path, "maf"):
         #     if iteration > MAX_ITERATIONS:
@@ -80,13 +80,13 @@ def process_maf_file(arguments):
         #     iteration += 1
 
 
-        m = MAF(arguments.maf_path)
-        m.parse()
+    m = MAF(arguments.maf_path)
+    m.parse()
 
 
-    except Exception as e:
-        print("there has been an exception")
-        print(e)
+    # except Exception as e:
+    #     print("there has been an exception")
+    #     print(e)
 
 
 # Function that takes a multiple alignment 
