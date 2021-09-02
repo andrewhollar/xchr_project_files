@@ -80,7 +80,7 @@ def process_maf_file(arguments):
         #     iteration += 1
 
 
-    m = MAF(arguments.maf_path)
+    m = MAF(arguments)
     m.parse()
 
 
@@ -183,20 +183,13 @@ class MAFBlock:
 # header and footer are both lists of strings, each coming from a comment line in the .maf file. The 
 # alignment blocks are of type MAFBlock, to facilitate the transfer of scores.
 class MAF:
-    def __init__(self, maf_path = ""):
+    def __init__(self, cmd_arguments):
         # self.blocks = []
         self.header = []
         self.footer = []
-        self.maf_path = maf_path
-        # if maf_path:
-        #     iteration = 0
-        #     for alignment_block in self.read_maf(maf_path):
-        #         if iteration > MAX_ITERATIONS:
-        #             break
+        self.maf_path = cmd_arguments.maf_path
 
-        #         iteration += 1
 
-            # self.read(mafPath)      
     def parse(self):
         if self.maf_path:
             iteration = 0
@@ -204,6 +197,7 @@ class MAF:
                 if iteration > MAX_ITERATIONS:
                     break
                 print(iteration, alignment_block.alignment[0])
+                iteration += 1
 
 
     # Add a new alignment MAFBlock to the list of blocks. 
