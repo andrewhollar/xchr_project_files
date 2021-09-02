@@ -221,16 +221,8 @@ class MAF:
 
         for line in open(self.arguments.maf_path, "r"):
 
-            if current_block.species_flag:
-                print("There has been an error with the reference species not being the first listed within an alignment block.")
-                print(current_block)
-                continue
-            elif current_block.sequence_flag:
-                #Simply haven't found the correct sequence (i.e. chromosome) within the WGA
-                continue
-
             # Encountered a comment line, either in the header or footer
-            elif line.startswith("#"):
+            if line.startswith("#"):
                 if first:
                     self.add_header_line(line.rstrip())
                 else:
@@ -246,8 +238,11 @@ class MAF:
                     # If the reference and at least 1 other species are included, the MAFBlock will be
                     # filtered and saved.
                     # if (not current_block.length_flag):
+                    if not current_block.species_flag or not current_block.sequence_flag:
 
-                    yield current_block
+                        self.read_iteration += 1
+                        
+                        yield current_block
                         # self.check_for_target_species(current_block)
 
                 # Create new block using the score found in .maf file
@@ -257,6 +252,14 @@ class MAF:
                     #This means that no score was provided, in which case we assign it to be 0.
                     current_block = MAFBlock("0", [])
 
+            elif current_block.species_flag:
+                print("There has been an error with the reference species not being the first listed within an alignment block.")
+                print(current_block)
+                continue
+
+            elif current_block.sequence_flag:
+                #Simply haven't found the correct sequence (i.e. chromosome) within the WGA
+                continue
 
             # Encountered a sequence within an alignment block
             elif line.startswith('s'):
