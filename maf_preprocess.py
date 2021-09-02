@@ -80,7 +80,7 @@ def process_maf_file(arguments):
         #     iteration += 1
 
 
-        m = parseMAF(arguments.maf_path)
+        m = MAF(arguments.maf_path)
 
 
         for b in m.parse():
