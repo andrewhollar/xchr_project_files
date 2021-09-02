@@ -255,7 +255,7 @@ class MAF:
 
 
                 #Remove enpty strings from parsed line
-                tokens = list(filter(None, line.split(' ')))
+                tokens = list(filter(None, line.split('\t')))
                 
                 #Information for annotation
                 annotation_items = {}
