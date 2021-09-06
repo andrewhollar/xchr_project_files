@@ -79,7 +79,8 @@ def process_maf_file(arguments):
 
 
     m = MAF(arguments)
-    m.parse()
+    # m.parse()
+    m.extract_maf()
 
 
     # except Exception as e:
