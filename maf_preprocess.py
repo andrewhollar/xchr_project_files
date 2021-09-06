@@ -213,6 +213,30 @@ class MAF:
     def add_footer_line(self, line):
         self.footer.append(line)
 
+
+    def extract_maf(self):
+        #target_species -> self.arguments.target_species (Homo_sapiens)
+        #target_sequence -> self.arguments.target_sequence (chrX)
+
+        first = True
+
+        target_alignment_block_found = False
+        alignment_block_information = ""
+
+        for line in open(self.arguments.maf_path, "r"):
+            if first and line.startswith("#"):
+                self.add_header_line(line.rstrip())
+            elif not target_alignment_block_found and line.startswith('a') and "chrX" in line:
+                target_alignment_block_found = True
+                alignment_block_information = line
+            elif target_alignment_block_found:
+                print(alignment_block_information)
+                print(line)
+                break
+            else:
+                continue
+
+
     # Read/Parse a .maf file at the specified mafPath. Filter blocks as they are read. 
     def read_maf(self):
         current_block = MAFBlock(0.0, [])
