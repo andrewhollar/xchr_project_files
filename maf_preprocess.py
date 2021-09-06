@@ -63,10 +63,8 @@ def extract_species_from_newick(newick_tree_path):
     
     return target_species
     
-
 def process_maf_file(arguments):
     print("The path the the MAF formatted alignment file is: {}".format(arguments.maf_path))
-
 
     # try:
         # iteration = 0
@@ -191,15 +189,16 @@ class MAF:
         self.footer = []
         self.arguments = cmd_arguments
 
-        self.read_iteration = 0
+        self.xchr_read_iteration = 0
+        self.block_counter = 0
 
 
     def parse(self):
         if self.arguments.maf_path:
             for alignment_block in self.read_maf():
-                if self.read_iteration > MAX_ITERATIONS:
+                if self.xchr_read_iteration > MAX_ITERATIONS:
                     break
-                print(self.read_iteration, alignment_block.alignment[0])
+                print(self.xchr_read_iteration, alignment_block.alignment[0])
 
 
     # Add a new alignment MAFBlock to the list of blocks. 
@@ -221,6 +220,9 @@ class MAF:
 
         for line in open(self.arguments.maf_path, "r"):
 
+            if (self.block_counter+1)%10000 == 0:
+                print(self.block_counter)
+
             # Encountered a comment line, either in the header or footer
             if line.startswith("#"):
                 if first:
@@ -234,13 +236,16 @@ class MAF:
                 if first:
                     first = False
                 else:
+
+                    self.block_counter += 1
+
                     # Check the existing alignment block for target species before overwriting it.
                     # If the reference and at least 1 other species are included, the MAFBlock will be
                     # filtered and saved.
                     # if (not current_block.length_flag):
                     if not current_block.species_flag and not current_block.sequence_flag:
 
-                        self.read_iteration += 1
+                        self.xchr_read_iteration += 1
                         
                         yield current_block
                         # self.check_for_target_species(current_block)
