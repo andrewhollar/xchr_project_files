@@ -234,9 +234,12 @@ class MAF:
                 else:
 
                     self.block_counter += 1
-                    if (self.block_counter+1)%10000 == 0:
-                        print(self.block_counter)
-                        
+                    if (self.block_counter+1)%100000 == 0:
+                        try:
+                            print(self.block_counter, current_block.alignment[0])
+                        except Exception as e:
+                            print(self.block_counter)
+
                     # Check the existing alignment block for target species before overwriting it.
                     # If the reference and at least 1 other species are included, the MAFBlock will be
                     # filtered and saved.
