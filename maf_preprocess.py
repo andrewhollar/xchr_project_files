@@ -219,10 +219,6 @@ class MAF:
         first = True
 
         for line in open(self.arguments.maf_path, "r"):
-
-            if (self.block_counter+1)%10000 == 0:
-                print(self.block_counter)
-
             # Encountered a comment line, either in the header or footer
             if line.startswith("#"):
                 if first:
@@ -238,7 +234,9 @@ class MAF:
                 else:
 
                     self.block_counter += 1
-
+                    if (self.block_counter+1)%10000 == 0:
+                        print(self.block_counter)
+                        
                     # Check the existing alignment block for target species before overwriting it.
                     # If the reference and at least 1 other species are included, the MAFBlock will be
                     # filtered and saved.
