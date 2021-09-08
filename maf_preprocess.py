@@ -1,5 +1,6 @@
 from Bio import AlignIO
 import argparse
+import time
 
 
 
@@ -90,7 +91,8 @@ def process_maf_file(arguments):
 def test_wait():
     for i in range(5000):
         if (i % 4) == 0:
-            user_input = input('enter a number: ')
+            # user_input = input('enter a number: ')
+            time.sleep(500)
 
 # Function that takes a multiple alignment 
 def main():
