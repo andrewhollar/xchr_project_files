@@ -8,4 +8,4 @@ echo $CHR_X_START
 echo $CHR_X_END
 
 
-sed -n '$CHR_X_START,$CHR_X_END;' ~/alignments/sample.maf > extracted_region.maf
+sed -n '$CHR_X_START,$CHR_X_END p' ~/alignments/sample.maf > extracted_region.maf
