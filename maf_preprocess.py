@@ -87,6 +87,10 @@ def process_maf_file(arguments):
     #     print("there has been an exception")
     #     print(e)
 
+def test_wait():
+    for i in range(5000):
+        if (i % 4) == 0:
+            user_input = input('enter a number: ')
 
 # Function that takes a multiple alignment 
 def main():
@@ -98,9 +102,9 @@ def main():
     parser.add_argument("--end", help="The end position on the TARGET_SEQUENCE of the region to extract.", type=int)
     arguments = parser.parse_args()
 
-    process_maf_file(arguments)
+    # process_maf_file(arguments)
 
-
+    test_wait()
 
     #process_maf_file(sys_argv[1])
 
