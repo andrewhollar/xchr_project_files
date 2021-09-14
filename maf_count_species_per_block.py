@@ -18,10 +18,13 @@ bins = {0: 0,
         5: 0,
         6: 0,
         7: 0,
-        8: 0}
+        8: 0,
+        9: 0}
+bins.setdefault(0)
 
 for msa in AlignIO.parse(maf_filepath, "maf"):
     num_msas += 1
+    
     bins[len(msa)] += 1
 
 print(maf_filepath, bins, num_msas)
