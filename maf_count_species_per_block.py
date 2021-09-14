@@ -32,6 +32,7 @@ for msa in AlignIO.parse(maf_filepath, "maf"):
 
 
     if len(msa) == 37:
+        print(msa)
         for s in msa:
             print(s.id)
         input("type something to move on")
