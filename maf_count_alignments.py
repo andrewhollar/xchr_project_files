@@ -19,7 +19,7 @@ for msa in AlignIO.parse(maf_filepath, "maf"):
         num_msas += 1
 
     if msa[0].annotations['size'] in alignment_block_lengths:
-        alignment_block_lengths[msa[0].annotations['size']] += 1:
+        alignment_block_lengths[msa[0].annotations['size']] += 1
     else:
         alignment_block_lengths[msa[0].annotations['size']] = 1
 
