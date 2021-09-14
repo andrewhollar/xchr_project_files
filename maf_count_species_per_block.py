@@ -29,6 +29,12 @@ for msa in AlignIO.parse(maf_filepath, "maf"):
         bins[len(msa)] += 1
     else:
         bins[len(msa)] = 1
+
+
+    if len(msa) > 6:
+        for s in msa:
+            print(s.id)
+        input("type something to move on")
     # bins[len(msa)] += 1
 
 print(maf_filepath, bins, num_msas)
