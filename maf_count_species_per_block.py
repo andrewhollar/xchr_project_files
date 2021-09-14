@@ -10,21 +10,25 @@ import sys
 maf_filepath = sys.argv[1]
 
 num_msas = 0
-bins = {0: 0,
-        1: 0,
-        2: 0,
-        3: 0,
-        4: 0,
-        5: 0,
-        6: 0,
-        7: 0,
-        8: 0,
-        9: 0}
-bins.setdefault(0)
+# bins = {0: 0,
+#         1: 0,
+#         2: 0,
+#         3: 0,
+#         4: 0,
+#         5: 0,
+#         6: 0,
+#         7: 0,
+#         8: 0,
+#         9: 0}
+bins = {}
 
 for msa in AlignIO.parse(maf_filepath, "maf"):
     num_msas += 1
     
-    bins[len(msa)] += 1
+    if len(msa) in bins:
+        bins[len(msa)] += 1
+    else:
+        bins[len(msa)] = 1
+    # bins[len(msa)] += 1
 
 print(maf_filepath, bins, num_msas)
