@@ -20,7 +20,7 @@ for msa in AlignIO.parse(maf_in_filepath, "maf"):
     length_flag = False
 
     for sequence in msa:
-        if len(sequence.seq) < 15:
+        if int(sequence.annotations['size']) < 15:
             length_flag = True
 
     if not length_flag:
