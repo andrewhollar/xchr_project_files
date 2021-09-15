@@ -24,4 +24,4 @@ for msa in AlignIO.parse(maf_filepath, "maf"):
         alignment_block_lengths[msa[0].annotations['size']] = 1
 
 print(maf_filepath, num_msas)
-# print(sorted(alignment_block_lengths.items(), reverse=True))
+print(sorted(alignment_block_lengths.items(), reverse=True))
