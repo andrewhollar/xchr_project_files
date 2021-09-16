@@ -50,6 +50,10 @@ for msa in AlignIO.parse(maf_filepath, "maf"):
 
         # write the alignment block to the output file
         maf_out_filepath = open(alignment_block_output_location, "w")
+
+        for sequence in msa:
+            sequence.seq = str(sequence.seq).upper()
+
         AlignIO.write(msa, maf_out_filepath, "maf")
         maf_out_filepath.close()
 
