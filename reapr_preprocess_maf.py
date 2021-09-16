@@ -20,7 +20,7 @@ if not os.path.exists(OUT_DIR):
     os.makedirs(OUT_DIR)
 
 SAMPLE_DENOM = 1000
-MAX_SAMPLES = 10
+MAX_SAMPLES = 2
 
 # Method to pad an integer with zeros on the left, this returns a string of length num_positions.
 def pad_int(input_int, num_positions):
@@ -41,7 +41,7 @@ for msa in AlignIO.parse(maf_filepath, "maf"):
         reapr_alignment_entry = []
 
         # create an output file name for this alignment block
-        alignment_block_name = "6way_block_" + pad_int(alignment_block_idx, 8)
+        alignment_block_name = "6way_block_" + pad_int(alignment_block_idx, 8) + ".maf"
         reapr_alignment_entry.append(alignment_block_name)
 
         # use the file name to create a location for the output file
