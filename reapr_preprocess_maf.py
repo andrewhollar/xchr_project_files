@@ -57,9 +57,15 @@ for msa in AlignIO.parse(maf_filepath, "maf"):
 
 
         with open(alignment_block_output_location, "w") as block_out:
-            block_out.write("a score=0.00\n")
+            block_out.write("a\tscore=0.00\n")
             for sequence in msa:
-                block_out.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format("s", sequence.id, sequence.annotations['start'], sequence.annotations['size'], sequence.annotations['strand'], sequence.annotations['srcSize'], str(sequence.seq).upper()))
+
+                if sequence.annotations['strand'] == 1:
+                    strand_char = "+"
+                else:
+                    strand_char = "-"
+
+                block_out.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format("s", sequence.id, sequence.annotations['start'], sequence.annotations['size'], strand_char, sequence.annotations['srcSize'], str(sequence.seq).upper()))
 
         # AlignIO.write(msa, maf_out_filepath, "maf")
         # maf_out_filepath.close()
