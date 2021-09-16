@@ -20,6 +20,7 @@ if not os.path.exists(OUT_DIR):
     os.makedirs(OUT_DIR)
 
 SAMPLE_DENOM = 1000
+MAX_SAMPLES = 10
 
 # Method to pad an integer with zeros on the left, this returns a string of length num_positions.
 def pad_int(input_int, num_positions):
@@ -31,8 +32,9 @@ def pad_int(input_int, num_positions):
 maf_filepath = sys.argv[1]
 reapr_alignment_map = []
 alignment_block_idx = 0
+sample_size = 0
 for msa in AlignIO.parse(maf_filepath, "maf"):
-    if random.randint(1, SAMPLE_DENOM) == 1:
+    if random.randint(1, SAMPLE_DENOM) == 1 and sample_size < MAX_SAMPLES:
         # This should contain two pieces of information:
         #   1. the name of the alignment block
         #   2. the location of the new alignment block file (this should be in the 'alignments/' sub-directory)
@@ -52,6 +54,7 @@ for msa in AlignIO.parse(maf_filepath, "maf"):
         maf_out_filepath.close()
 
         reapr_alignment_map.append(reapr_alignment_entry)
+        sample_size += 1
 
     alignment_block_idx += 1
 
