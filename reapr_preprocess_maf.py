@@ -55,8 +55,14 @@ for msa in AlignIO.parse(maf_filepath, "maf"):
         for sequence in msa:
             sequence.seq = str(sequence.seq).upper()
 
-        AlignIO.write(msa, maf_out_filepath, "maf")
-        maf_out_filepath.close()
+
+        with open(maf_out_filepath, "w") as block_out:
+            block_out.write("a score=0.00\n")
+            for sequence in msa:
+                block_out.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format("s", sequence.id, sequence.annotations['start'], sequence.annotations['size'], sequence.annotations['strand'], sequence.annotations['srcSize'], str(sequence.seq).upper()))
+
+        # AlignIO.write(msa, maf_out_filepath, "maf")
+        # maf_out_filepath.close()
 
         reapr_alignment_map.append(reapr_alignment_entry)
         sample_size += 1
