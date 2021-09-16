@@ -12,11 +12,14 @@ python reapr_preprocess_maf.py path_to_maf_file.maf
 from Bio import AlignIO
 import sys
 import os
+import random
 
 # Create an output directory to contain the files required as input to reapr
 OUT_DIR = './reapr_preprocess/alignments/'
 if not os.path.exists(OUT_DIR):
     os.makedirs(OUT_DIR)
+
+SAMPLE_DENOM = 1000
 
 # Method to pad an integer with zeros on the left, this returns a string of length num_positions.
 def pad_int(input_int, num_positions):
@@ -29,7 +32,7 @@ maf_filepath = sys.argv[1]
 reapr_alignment_map = []
 alignment_block_idx = 0
 for msa in AlignIO.parse(maf_filepath, "maf"):
-    if alignment_block_idx < 10:
+    if random.randint(1, SAMPLE_DENOM) == 1:
         # This should contain two pieces of information:
         #   1. the name of the alignment block
         #   2. the location of the new alignment block file (this should be in the 'alignments/' sub-directory)
@@ -49,16 +52,14 @@ for msa in AlignIO.parse(maf_filepath, "maf"):
         maf_out_filepath.close()
 
         reapr_alignment_map.append(reapr_alignment_entry)
-    else:
-        break
-    
+
     alignment_block_idx += 1
 
 
 # write the alignment block map file to the './reapr_preprocess/' directory
 with open('./reapr_preprocess/alignment_blocks.txt', 'w') as blocks_out:
     for entry in reapr_alignment_map:
-        blocks_out.write("{}\t{}".format(entry[0], entry[1]))
+        blocks_out.write("{}\t{}\n".format(entry[0], entry[1]))
 
 
 
