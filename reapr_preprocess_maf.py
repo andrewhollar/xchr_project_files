@@ -15,7 +15,7 @@ import os
 import random
 
 # Create an output directory to contain the files required as input to reapr
-OUT_DIR = './reapr_preprocess/alignments/'
+OUT_DIR = '/home/ahollar/reapr_001/alignments/'
 if not os.path.exists(OUT_DIR):
     os.makedirs(OUT_DIR)
 
@@ -57,7 +57,7 @@ for msa in AlignIO.parse(maf_filepath, "maf"):
 
 
 # write the alignment block map file to the './reapr_preprocess/' directory
-with open('./reapr_preprocess/alignment_blocks.txt', 'w') as blocks_out:
+with open('/home/ahollar/reapr_001/alignment_blocks.txt', 'w') as blocks_out:
     for entry in reapr_alignment_map:
         blocks_out.write("{}\t{}\n".format(entry[0], entry[1]))
 
