@@ -20,8 +20,8 @@ if not os.path.exists(OUT_DIR):
     os.makedirs(OUT_DIR)
 
 SAMPLE_DENOM = 10
-MAX_SAMPLES = 2
-SAMPLE_LENGTH = 500
+MAX_SAMPLES = 20
+SAMPLE_LENGTH = 15
 
 # Method to pad an integer with zeros on the left, this returns a string of length num_positions.
 def pad_int(input_int, num_positions):
