@@ -19,8 +19,8 @@ OUT_DIR = '/home/ahollar/reapr_001/alignments/'
 if not os.path.exists(OUT_DIR):
     os.makedirs(OUT_DIR)
 
-SAMPLE_DENOM = 10
-MAX_SAMPLES = 20
+SAMPLE_DENOM = 1
+MAX_SAMPLES = 1000000000
 SAMPLE_LENGTH = 15
 
 # Method to pad an integer with zeros on the left, this returns a string of length num_positions.
