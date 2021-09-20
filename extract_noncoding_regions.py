@@ -20,6 +20,7 @@ for line in open(gencode_gtf, "r").readlines():
     if line_tokens[2] == "gene":
         nc_entry = ["chrX", previous_gene_end, line_tokens[3], "nc_{}".format(pad_int(nc_id,8)), "0", line_tokens[6]]
         noncoding_regions.append(nc_entry)
+        previous_gene_end = line_tokens[4]
         nc_id += 1
 
     if nc_id > 10:
