@@ -9,6 +9,7 @@ def pad_int(input_int, num_positions):
     return str_rep
 
 gencode_gtf = "/home/ahollar/bed_files/gencode.v38.annotation.xchr.gtf"
+out_file = sys.argv[1]
 
 previous_gene_end = 0
 
@@ -23,7 +24,7 @@ for line in open(gencode_gtf, "r").readlines():
         previous_gene_end = line_tokens[4]
         nc_id += 1
 
-    if nc_id > 10:
-        break    
 
-print(noncoding_regions)
+with open(out_file, "w") as nc_bed:
+    for region in noncoding_regions:
+        nc_bed.write(("\t".join(region) + "\n"))
