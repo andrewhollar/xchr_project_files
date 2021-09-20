@@ -8,7 +8,7 @@ def pad_int(input_int, num_positions):
         str_rep = "0" + str_rep
     return str_rep
 
-gencode_gtf = "/home/ahollar/bed_files/gencode.v38.annotation.xchr.gtf"
+gencode_gtf = "/home/ahollar/bed_files/gencode.v38.annotation.xchr.havana.gtf"
 out_file = sys.argv[1]
 
 previous_gene_end = 0
