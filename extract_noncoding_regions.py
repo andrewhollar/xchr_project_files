@@ -19,10 +19,14 @@ nc_id = 0
 for line in open(gencode_gtf, "r").readlines():
     line_tokens = line.split()
     if line_tokens[2] == "gene":
-        nc_entry = ["chrX", str(previous_gene_end), str(line_tokens[3]), "nc_{}".format(pad_int(nc_id,8))]
-        noncoding_regions.append(nc_entry)
+
+        if int(line_tokens[3]) > int(previous_gene_end):
+            nc_entry = ["chrX", str(previous_gene_end), str(line_tokens[3]), "nc_{}".format(pad_int(nc_id,8))]
+            noncoding_regions.append(nc_entry)
+            nc_id += 1
+            
         previous_gene_end = line_tokens[4]
-        nc_id += 1
+
 
 
 with open(out_file, "w") as nc_bed:
