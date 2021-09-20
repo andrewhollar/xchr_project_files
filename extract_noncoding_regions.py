@@ -17,11 +17,12 @@ nc_id = 0
 
 for line in open(gencode_gtf, "r").readlines():
     line_tokens = line.split()
-    print(line_tokens)
     if line_tokens[2] == "gene":
         nc_entry = ["chrX", previous_gene_end, line_tokens[3], "nc_{}".format(pad_int(nc_id,8)), "0", line_tokens[6]]
-        print(nc_entry)
         noncoding_regions.append(nc_entry)
         nc_id += 1
-        break
-    
+
+    if nc_id > 10:
+        break    
+
+print(noncoding_regions)
