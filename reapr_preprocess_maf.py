@@ -20,7 +20,7 @@ if not os.path.exists(OUT_DIR):
     os.makedirs(OUT_DIR)
 
 SAMPLE_DENOM = 1
-MAX_SAMPLES = 10
+MAX_SAMPLES = sys.maxsize
 SAMPLE_LENGTH = 15
 
 # Method to pad an integer with zeros on the left, this returns a string of length num_positions.
