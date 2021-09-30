@@ -88,7 +88,7 @@ def process_maf_file(path_to_maf):
         reapr_alignment_map = []
         alignment_block_idx = 0
         sample_size = 0
-        for msa in AlignIO.patse(path_to_maf, "maf"):
+        for msa in AlignIO.parse(path_to_maf, "maf"):
             if random.randint(1, SAMPLE_DENOM) == 1 and sample_size <= MAX_SAMPLES and len(msa[0].seq) >= SAMPLE_LENGTH:
                 # This should contain two pieces of information:
                 #   1. the name of the alignment block
