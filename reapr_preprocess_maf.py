@@ -19,8 +19,8 @@ OUT_DIR = '/home/ahollar/reapr_002/alignments/'
 if not os.path.exists(OUT_DIR):
     os.makedirs(OUT_DIR)
 
-SAMPLE_DENOM = 1
-MAX_SAMPLES = sys.maxsize
+SAMPLE_DENOM = 100
+MAX_SAMPLES = 2     #sys.maxsize
 SAMPLE_LENGTH = 15
 
 # Method to pad an integer with zeros on the left, this returns a string of length num_positions.
@@ -35,7 +35,7 @@ reapr_alignment_map = []
 alignment_block_idx = 0
 sample_size = 0
 for msa in AlignIO.parse(maf_filepath, "maf"):
-    if random.randint(1, SAMPLE_DENOM) == 1 and sample_size < MAX_SAMPLES and len(msa[0].seq) >= SAMPLE_LENGTH:
+    if random.randint(1, SAMPLE_DENOM) == 1 and sample_size <= MAX_SAMPLES and len(msa[0].seq) >= SAMPLE_LENGTH:
         # This should contain two pieces of information:
         #   1. the name of the alignment block
         #   2. the location of the new alignment block file (this should be in the 'alignments/' sub-directory)
@@ -72,6 +72,9 @@ for msa in AlignIO.parse(maf_filepath, "maf"):
 
         reapr_alignment_map.append(reapr_alignment_entry)
         sample_size += 1
+
+    if sample_size > MAX_SAMPLES:
+        break
 
     alignment_block_idx += 1
 
