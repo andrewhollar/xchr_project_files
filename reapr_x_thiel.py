@@ -13,7 +13,6 @@ SAMPLE_LENGTH = 15
 
 STABILITY_THRESHOLD = -1  # Upper threshold on mean z score
 PROCESSES = 1  # Number of process to parallelize
-OUT_DIR = os.getcwd()
 
 def main():
     ''' Needed arguments:
@@ -43,8 +42,8 @@ def main():
     # print(OUT_DIR)
     parent_pid = os.getpid()
 
-    if not os.path.exists(args.output_folder):
-        os.makedirs(args.output_folder)
+    if not os.path.exists(OUT_DIR):
+        os.makedirs(OUT_DIR)
 
     process_maf_file(args.maf_file, OUT_DIR)
 
@@ -60,10 +59,8 @@ def main():
     assert os.path.isfile(args.species), 'Error: {0} is not a file'.format(args.species)
     species = sorted([x for x in open(args.species).read().split('\n') if x != ''])
 
-    print(alignment_blocks)
-    print(species)
-
-
+    # print(alignment_blocks)
+    # print(species)
     #Run initial RNAz screen
 
     #Setup RNAz parameters
@@ -100,14 +97,14 @@ def process_maf_file(path_to_maf, out_dir):
             reapr_alignment_entry.append(alignment_block_name)
 
             # use the file name to create a location for the output file
-            alignment_block_output_location = os.path.join(out_dir, alignment_block_name)
+            alignment_block_output_location = os.path.join(out_dir, "alignments/", alignment_block_name)
             reapr_alignment_entry.append(alignment_block_output_location)
 
             for sequence in msa:
                 sequence.seq = str(sequence.seq).upper()
 
             with open(alignment_block_output_location, "w") as block_out:
-                print("writing alignment")
+                # print("writing alignment")
                 block_out.write("a\tscore=0.00\n")
                 for sequence in msa:
 
