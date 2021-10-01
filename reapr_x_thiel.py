@@ -40,6 +40,7 @@ def main():
 
     outF, errF = sys.stdout, sys.stderr
     OUT_DIR = args.output_folder
+    print(OUT_DIR)
     parent_pid = os.getpid()
 
     if not os.path.exists(args.output_folder):
