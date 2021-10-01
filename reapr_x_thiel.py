@@ -7,12 +7,16 @@ import subprocess
 import random
 from Bio import AlignIO
 
+import run_first_rnaz_screen
+
 SAMPLE_DENOM = 100
 MAX_SAMPLES = 2     #sys.maxsize
 SAMPLE_LENGTH = 15
 
 STABILITY_THRESHOLD = -1  # Upper threshold on mean z score
-PROCESSES = 1  # Number of process to parallelize
+PROCESSES = 1  # Number of process to 
+WINDOW_SIZE = 120
+WINDOW_SLIDE = 20
 
 def main():
     ''' Needed arguments:
@@ -71,6 +75,7 @@ def main():
 
     alignment_format = "MAF"
     RNAz_OUT_DIR = os.path.join(OUT_DIR, "rnaz_1")
+    RNAz_args = [(alignment, no_reference, both_strands, WINDOW_SIZE, WINDOW_SLIDE, structural, )]
     #RNAz#
     
 
@@ -133,7 +138,6 @@ def process_maf_file(path_to_maf, out_dir):
     with open(os.path.join(out_dir, "alignment_blocks.txt"), "w") as blocks_out: 
         for entry in reapr_alignment_map:
             blocks_out.write("{}\t{}\n".format(entry[0], entry[1]))
-
 
 if __name__=='__main__':
     main()
