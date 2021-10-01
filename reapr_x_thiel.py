@@ -77,8 +77,8 @@ def main():
     verbose = True
     both_strands = True
     alignment_format = "MAF"
-    RNAz_OUT_DIR = os.path.join(OUT_DIR, "rnaz_1")
-    RNAz_args = [(alignment, no_reference, both_strands, WINDOW_SIZE, WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, RNAz_OUT_DIR, None, alignment_format, verbose) for alignment in alignment_block_paths]
+    # RNAz_OUT_DIR = os.path.join(OUT_DIR, "rnaz_1")
+    RNAz_args = [(alignment, no_reference, both_strands, WINDOW_SIZE, WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, OUT_DIR, None, alignment_format, verbose) for alignment in alignment_block_paths]
     print(errF, 'Start: First RNAz screen', get_time())
     RNAz_job_pool = multiprocessing.Pool(processes=args.processes)
     RNAz_log_list = RNAz_job_pool.map_async(run_first_rnaz_screen.run_first_rnaz_screen_MP, RNAz_args).get(99999999)
@@ -91,7 +91,7 @@ def main():
     initial_table = os.path.join(OUT_DIR, 'first_rnaz_screen.table')
     alternate_strands = True
     merge = True
-    
+
 
 
     #RNAz#
