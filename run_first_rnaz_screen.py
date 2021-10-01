@@ -129,7 +129,7 @@ def run_first_rnaz_screen(alignment, no_reference, both_strands, window_size, wi
     rnaz_path = os.path.join(tmp_dir, name + '.rnaz')
     log += '\n' + run_RNAz(windows_path, rnaz_path, both_strands, structural, RNAz, verbose)
 
-    if verbose: print(sys.stderr, log, "\n")
+    if verbose: print(str(sys.stderr), log, "\n")
     return log
 
 def run_first_rnaz_screen_MP(jobs):
