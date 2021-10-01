@@ -82,6 +82,12 @@ def pad_int(input_int, num_positions):
     return str_rep
 
 def process_maf_file(path_to_maf, out_dir):
+
+    alignments_out_dir = os.path.join(out_dir, "alignments/")
+
+    if not os.path.exists(alignments_out_dir):
+        os.makedirs(alignments_out_dir)
+
     reapr_alignment_map = []
     alignment_block_idx = 0
     sample_size = 0
