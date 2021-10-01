@@ -6,6 +6,8 @@ import traceback
 import subprocess
 import random
 from Bio import AlignIO
+import commands
+import time
 
 import run_first_rnaz_screen
 
@@ -65,6 +67,8 @@ def main():
 
     # print(alignment_blocks)
     # print(species)
+
+
     #Run initial RNAz screen
 
     #Setup RNAz parameters
@@ -72,19 +76,36 @@ def main():
     structural = False
     verbose = True
     both_strands = True
-
     alignment_format = "MAF"
     RNAz_OUT_DIR = os.path.join(OUT_DIR, "rnaz_1")
-    RNAz_args = [(alignment, no_reference, both_strands, WINDOW_SIZE, WINDOW_SLIDE, structural, )]
-    #RNAz#
+    RNAz_args = [(alignment, no_reference, both_strands, WINDOW_SIZE, WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, RNAz_OUT_DIR, None, alignment_format, verbose) for alignment in alignment_block_paths]
+    print(errF, 'Start: First RNAz screen', get_time())
+    RNAz_job_pool = multiprocessing.Pool(processes=args.processes)
+    RNAz_log_list = RNAz_job_pool.map_async(run_first_rnaz_screen.run_first_rnaz_screen_MP, RNAz_args).get(99999999)
+    print(errF, 'End: First RNAz screen', get_time())
+
+    #Compile table of RNAz screen results
+    RNAz_paths = [alignment + '.rnaz' for alignment in alignment_block_paths]
+    RNAz_log_paths = [alignment + '.windows.log' for alignment in alignment_block_paths]
+    RNAz_index_paths = [alignment + '.windows.indices' for alignment in alignment_block_paths]
+    initial_table = os.path.join(OUT_DIR, 'first_rnaz_screen.table')
+    alternate_strands = True
+    merge = True
     
 
+
+    #RNAz#
+    
 # Method to pad an integer with zeros on the left, this returns a string of length num_positions.
 def pad_int(input_int, num_positions):
     str_rep = str(input_int)
     while len(str_rep) < num_positions:
         str_rep = "0" + str_rep
     return str_rep
+
+# Taken from REAPR-utilities.py
+def get_time():
+    return '\nTime:\n' + time.strftime("%a, %d %b %Y %H:%M:%S", time.gmtime()) + '\nEpoch time: ' + str(time.time()) + '\n'
 
 def process_maf_file(path_to_maf, out_dir):
 
