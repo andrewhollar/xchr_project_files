@@ -40,13 +40,13 @@ def main():
 
     outF, errF = sys.stdout, sys.stderr
     OUT_DIR = args.output_folder
-    print(OUT_DIR)
+    # print(OUT_DIR)
     parent_pid = os.getpid()
 
     if not os.path.exists(args.output_folder):
         os.makedirs(args.output_folder)
 
-    process_maf_file(args.maf_file)
+    process_maf_file(args.maf_file, OUT_DIR)
 
     assert os.path.isfile(os.path.join(OUT_DIR, "alignment_blocks.txt")), 'Error: {0} is not a file.'.format(os.path.join(OUT_DIR, "alignment_blocks.txt"))
     alignment_blocks = [x.split('\t') for x in open(os.path.join(OUT_DIR, "alignment_blocks.txt")).read().split('\n') if x != '']
@@ -84,7 +84,7 @@ def pad_int(input_int, num_positions):
         str_rep = "0" + str_rep
     return str_rep
 
-def process_maf_file(path_to_maf):
+def process_maf_file(path_to_maf, out_dir):
     reapr_alignment_map = []
     alignment_block_idx = 0
     sample_size = 0
@@ -100,7 +100,7 @@ def process_maf_file(path_to_maf):
             reapr_alignment_entry.append(alignment_block_name)
 
             # use the file name to create a location for the output file
-            alignment_block_output_location = os.path.join(OUT_DIR, alignment_block_name)
+            alignment_block_output_location = os.path.join(out_dir, alignment_block_name)
             reapr_alignment_entry.append(alignment_block_output_location)
 
             for sequence in msa:
@@ -127,12 +127,9 @@ def process_maf_file(path_to_maf):
         alignment_block_idx += 1
 
     # write the alignment block map file to the './reapr_preprocess/' directory
-    with open(os.path.join(OUT_DIR, "alignment_blocks.txt"), "w") as blocks_out: 
+    with open(os.path.join(out_dir, "alignment_blocks.txt"), "w") as blocks_out: 
         for entry in reapr_alignment_map:
             blocks_out.write("{}\t{}\n".format(entry[0], entry[1]))
-
-
-
 
 
 if __name__=='__main__':
