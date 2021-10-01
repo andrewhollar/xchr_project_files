@@ -107,6 +107,7 @@ def process_maf_file(path_to_maf):
                     sequence.seq = str(sequence.seq).upper()
 
                 with open(alignment_block_output_location, "w") as block_out:
+                    print("writing alignment")
                     block_out.write("a\tscore=0.00\n")
                     for sequence in msa:
 
