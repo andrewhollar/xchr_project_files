@@ -106,6 +106,9 @@ def run_RNAz(windows_path, rnaz_path, both_strands, structural_model, rnaz_comma
     return log
 
 def run_first_rnaz_screen(alignment, no_reference, both_strands, window_size, window_slide, structural, RNAz, rnazWindow, out_dir, tmp_dir, alignment_format, verbose=False):
+    if tmp_dir is None:
+        tmp_dir = out_dir
+    
     log = ''
     name = os.path.basename(alignment)
     length = get_seq_length(alignment, form=alignment_format)
