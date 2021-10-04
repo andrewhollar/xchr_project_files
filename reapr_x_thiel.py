@@ -65,6 +65,7 @@ def main():
     assert os.path.isfile(os.path.join(OUT_DIR, "alignment_blocks.txt")), 'Error: {0} is not a file.'.format(os.path.join(OUT_DIR, "alignment_blocks.txt"))
     alignment_blocks = [x.split('\t') for x in open(os.path.join(OUT_DIR, "alignment_blocks.txt")).read().split('\n') if x != '']
     alignment_block_dict = dict(alignment_blocks)
+    print(alignment_block_dict)
     alignment_block_names, alignment_block_paths = zip(*alignment_blocks)
 
     #Check that each of the extracted alignment blocks was successfully written to disk
@@ -91,6 +92,9 @@ def main():
     print('End: First RNAz screen', get_time(), file=errF)
 
     #Compile table of RNAz screen results
+
+    for alignment_block
+
     alignment_block_paths = [a for a in alignment_block_paths if os.path.isfile(a)]
     RNAz_paths = [a + '.rnaz' for a in alignment_block_paths if os.path.isfile(a + '.rnaz')]
     RNAz_log_paths = [a + '.windows.log' for a in alignment_block_paths if os.path.isfile(a +'.windows.log')]
