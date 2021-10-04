@@ -13,15 +13,18 @@ import shutil
 
 import run_first_rnaz_screen
 import tabulate_rnaz_results
+import extract_stable_loci
 
 SAMPLE_DENOM = 100
-MAX_SAMPLES = 10     #sys.maxsize
+MAX_SAMPLES = 5     #sys.maxsize
 SAMPLE_LENGTH = 15
 
 STABILITY_THRESHOLD = -1  # Upper threshold on mean z score
 PROCESSES = 1  # Number of process to 
 WINDOW_SIZE = 120
 WINDOW_SLIDE = 20
+
+random.seed(35)
 
 def main():
     ''' Needed arguments:
@@ -98,6 +101,18 @@ def main():
     tabulate_rnaz_results.write_table(initial_table, RNAz_paths, alignment_block_paths, RNAz_log_paths, RNAz_index_paths, alternate_strands, merge, args.threshold, species)
 
 
+    #Extract stable loci
+    loci_dir = os.path.join(args.output_folder, 'loci')
+    loci_alignment_list = extract_stable_loci.extract_loci(alignment_block_dict, initial_table, args.threshold, loci_dir, species, WINDOW_SIZE, WINDOW_SLIDE, False, stdout=False)
+
+    print(loci_alignment_list)
+
+    realignment_tables = [os.path.join(args.output_folder, 'locarna.d_%s.tab' % d) for d in args.delta]
+
+    for delta, realign_table in zip(args.delta, realignment_tables):
+        locus_names, ref_clustals, ungapped_fastas = zip(*loci_alignment_list)
+
+
     #RNAz#
     
 # Method to pad an integer with zeros on the left, this returns a string of length num_positions.
@@ -122,7 +137,7 @@ def process_maf_file(path_to_maf, out_dir):
     alignment_block_idx = 0
     sample_size = 0
     for msa in AlignIO.parse(path_to_maf, "maf"):
-        if random.randint(1, SAMPLE_DENOM) == 1 and sample_size <= MAX_SAMPLES and len(msa[0].seq) >= SAMPLE_LENGTH or alignment_block_idx == 21:
+        if random.randint(1, SAMPLE_DENOM) == 1 and sample_size <= MAX_SAMPLES and len(msa[0].seq) >= SAMPLE_LENGTH:
             # This should contain two pieces of information:
             #   1. the name of the alignment block
             #   2. the location of the new alignment block file (this should be in the 'alignments/' sub-directory)
