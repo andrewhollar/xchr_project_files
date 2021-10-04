@@ -12,6 +12,7 @@ import time
 import shutil
 
 import run_first_rnaz_screen
+import run_locarna_screen
 import tabulate_rnaz_results
 import extract_stable_loci
 
@@ -111,13 +112,26 @@ def main():
     loci_dir = os.path.join(args.output_folder, 'loci')
     loci_alignment_list = extract_stable_loci.extract_loci(alignment_block_dict, initial_table, args.threshold, loci_dir, species, WINDOW_SIZE, WINDOW_SLIDE, True, stdout=False)
 
-    print(loci_alignment_list)
+    # print(loci_alignment_list)
 
     realignment_tables = [os.path.join(args.output_folder, 'locarna.d_%s.tab' % d) for d in args.delta]
 
+
+    #Realign loci
     for delta, realign_table in zip(args.delta, realignment_tables):
         locus_names, ref_clustals, ungapped_fastas = zip(*loci_alignment_list)
+        suffix = 'locarna{}.{}'.format('.g' if args.guide_tree else '', delta)
+        target_dirs = [x + '.{}.d'.format(suffix) for x in ref_clustals]
+        target_files = [x + '.{}'.format(suffix) for x in ref_clustals]
 
+        acd = True
+        verbose = True
+        locARNA_args = [(commands.mlocarna, a, b, c, d, delta, acd, args.guide_tree, verbose) for a,b,c,d in zip(ref_clustals, ungapped_fastas, target_dirs, target_files)]
+        print("Start: LocARNA realignment, Delta={}",format(delta), get_time(), file=errF)
+        locARNA_job_pool = multiprocessing.Pool(processes=args.processes)
+        locARNA_job_results = locARNA_job_pool.map_async(run_locarna_screen.run_locarna_pool, locARNA_args).get(99999999)
+        target_files = [x for x,y in zip(target_files, locARNA_job_results) if y]
+        print("End: LocARNA realignment, Delta={}",format(delta), get_time(), file=errF)
 
     #RNAz#
     
