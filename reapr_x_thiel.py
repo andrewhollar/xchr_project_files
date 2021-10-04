@@ -12,7 +12,7 @@ import time
 import run_first_rnaz_screen
 
 SAMPLE_DENOM = 100
-MAX_SAMPLES = 2     #sys.maxsize
+MAX_SAMPLES = 10     #sys.maxsize
 SAMPLE_LENGTH = 15
 
 STABILITY_THRESHOLD = -1  # Upper threshold on mean z score
