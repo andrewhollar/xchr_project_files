@@ -23,7 +23,8 @@ def run_locarna(locarna, clustal_path, ungap_fasta_path, target_dir, target_file
         % (locarna, acd_arg, guide_tree_arg, ref_arg, max_diff_arg, target_dir_arg, ungap_fasta_path)
 
     start_time = time.time()
-    subprocess.Popen(cmd, shell=True, stdout=open('/dev/null','w'), stderr=subprocess.STDOUT).wait()
+    # subprocess.Popen(cmd, shell=True, stdout=open('/dev/null','w'), stderr=subprocess.STDOUT).wait()
+    subprocess.Popen(cmd, shell=True, stderr=subprocess.STDOUT).wait()
     if verbose: print(cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds\n', file=sys.stderr)
 
     # Copy final alignment 'results/result.aln' and delete
