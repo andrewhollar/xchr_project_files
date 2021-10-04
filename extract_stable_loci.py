@@ -193,6 +193,7 @@ def generate_clustal(header_list, seq_list):
     """
 
     num_seqs = len(seq_list)
+    clustal_standard_header = 'CLUSTAL 2.0.10 multiple sequence alignment\n\n'
 
     # Remove columns that only contain gaps
     pop_offset = 0
