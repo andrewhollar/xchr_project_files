@@ -117,16 +117,16 @@ def run_first_rnaz_screen(alignment, no_reference, both_strands, window_size, wi
     num_slices = int(math.ceil((length - (window_size - window_slide)) / float(window_slide)))
 
     # Run rnazWindow
-    windows_path = os.path.join(tmp_dir, name + '.windows')
-    verbose_path = os.path.join(tmp_dir, name + '.windows.log')
+    windows_path = os.path.join(tmp_dir, "alignments/", name + '.windows')
+    verbose_path = os.path.join(tmp_dir, "alignments/", name + '.windows.log')
     log += run_rnazWindow(alignment, windows_path, verbose_path, no_reference, rnazWindow, window_size, window_slide, verbose)
 
     # Write the window to slice index map
-    win_to_slice_path = os.path.join(tmp_dir, name + '.windows.indices')
+    win_to_slice_path = os.path.join(tmp_dir, "alignments/", name + '.windows.indices')
     index_windows(verbose_path, [], num_slices, win_to_slice_path)
 
     # Run RNAz
-    rnaz_path = os.path.join(tmp_dir, name + '.rnaz')
+    rnaz_path = os.path.join(tmp_dir, "alignments/", name + '.rnaz')
     log += '\n' + run_RNAz(windows_path, rnaz_path, both_strands, structural, RNAz, verbose)
 
     if verbose: print(str(sys.stderr), log, "\n")

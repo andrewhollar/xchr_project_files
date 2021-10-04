@@ -65,9 +65,6 @@ def main():
     assert os.path.isfile(args.species), 'Error: {0} is not a file'.format(args.species)
     species = sorted([x for x in open(args.species).read().split('\n') if x != ''])
 
-    # print(alignment_blocks)
-    # print(species)
-
 
     #Run initial RNAz screen
 
@@ -79,10 +76,10 @@ def main():
     alignment_format = "MAF"
     # RNAz_OUT_DIR = os.path.join(OUT_DIR, "rnaz_1")
     RNAz_args = [(alignment, no_reference, both_strands, WINDOW_SIZE, WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, OUT_DIR, None, alignment_format, verbose) for alignment in alignment_block_paths]
-    print(errF, 'Start: First RNAz screen', get_time())
+    print(str(errF), 'Start: First RNAz screen', get_time())
     RNAz_job_pool = multiprocessing.Pool(processes=args.processes)
     RNAz_log_list = RNAz_job_pool.map_async(run_first_rnaz_screen.run_first_rnaz_screen_MP, RNAz_args).get(99999999)
-    print(errF, 'End: First RNAz screen', get_time())
+    print(str(errF), 'End: First RNAz screen', get_time())
 
     #Compile table of RNAz screen results
     RNAz_paths = [alignment + '.rnaz' for alignment in alignment_block_paths]
