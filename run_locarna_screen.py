@@ -24,7 +24,7 @@ def run_locarna(locarna, clustal_path, ungap_fasta_path, target_dir, target_file
 
     start_time = time.time()
     subprocess.Popen(cmd, shell=True, stdout=open('/dev/null','w'), stderr=subprocess.STDOUT).wait()
-    if verbose: print >>sys.stderr, cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds\n'
+    if verbose: print(cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds\n', file=sys.stderr)
 
     # Copy final alignment 'results/result.aln' and delete
     # intermediate directory unless final alignment wasn't created,
@@ -32,13 +32,13 @@ def run_locarna(locarna, clustal_path, ungap_fasta_path, target_dir, target_file
     result_path = os.path.join(target_dir, 'results', 'result.aln')
     if os.path.isfile(result_path):
         
-        utilities.fix_clustal_header(result_path)  # Fix clustal header (remove non-standard LocARNA header)
+        fix_clustal_header(result_path)  # Fix clustal header (remove non-standard LocARNA header)
         shutil.copyfile(result_path, target_file)   # Copy final alignment
         shutil.rmtree(target_dir)                   # Delete intermediate directory
 
         return True
     else:
-        if verbose: print >>sys.stderr, 'Error: no alignment could be produced.'
+        if verbose: print('Error: no alignment could be produced.', file=sys.stderr)
         return False
 
 def run_locarna_pool(x):
@@ -47,4 +47,18 @@ def run_locarna_pool(x):
     except KeyboardInterrupt:
         pass
     except:
-        print >>sys.stderr, traceback.print_exc()
+        print(traceback.print_exc(), file=sys.stderr)
+
+#Taken from REAPR-utilities
+def fix_clustal_header(clustal_path):
+    '''
+    Replaces the header line of a clustal alignment from a nonstandard
+    variation like LocARNA's clustal header to the standard header
+    found in constants.py.
+    '''
+    clustal_standard_header = 'CLUSTAL 2.0.10 multiple sequence alignment\n\n'
+
+    clustal_lines = open(clustal_path).read().split('\n')
+    assert clustal_lines[0][:len('CLUSTAL')] == 'CLUSTAL'
+    clustal_lines[0] = clustal_standard_header
+    open(clustal_path, 'w').write('\n'.join(clustal_lines))
