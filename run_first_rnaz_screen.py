@@ -26,14 +26,14 @@ def index_windows(log_path, other_removals, num_slices, win_to_slice_path):
     """
 
     verbose_log = [x for x in open(log_path).read().split('\n') if x !='']
-    print(verbose_log)
+    # print(verbose_log)
     # Output nothing if verbose log is empty
     if len(verbose_log) == 0: 
         open(win_to_slice_path, 'w').write('')
     else:
         # Compute <win_to_slice>[i] = slice index of the i-th window output by rnazWindows.pl
         discard_idx_list = [verbose_log[i-1].split(':')[0].split()[-1] for i,x in enumerate(verbose_log) if 'discarded' in x]
-        print(discard_idx_list)
+        # print(discard_idx_list)
         assert len(discard_idx_list) == len(set(discard_idx_list))
         # Offset the indices by 1 to make them 0-based
         discard_idx_list = [int(x) - 1 for x in discard_idx_list]
@@ -126,13 +126,20 @@ def run_first_rnaz_screen(alignment, no_reference, both_strands, window_size, wi
 
     # Write the window to slice index map
     win_to_slice_path = os.path.join(tmp_dir, "alignments/", name + '.windows.indices')
-    index_windows(verbose_path, [], num_slices, win_to_slice_path)
+    try:
+        index_windows(verbose_path, [], num_slices, win_to_slice_path)
 
-    # Run RNAz
-    rnaz_path = os.path.join(tmp_dir, "alignments/", name + '.rnaz')
-    log += '\n' + run_RNAz(windows_path, rnaz_path, both_strands, structural, RNAz, verbose)
+        # Run RNAz
+        rnaz_path = os.path.join(tmp_dir, "alignments/", name + '.rnaz')
+        log += '\n' + run_RNAz(windows_path, rnaz_path, both_strands, structural, RNAz, verbose)
 
-    if verbose: print(log + "\n", file=sys.stderr)
+        if verbose: print(log + "\n", file=sys.stderr)
+    except AssertionError:
+        os.remove(alignment)
+        os.remove(windows_path)
+        os.remove(verbose_path)
+        log += "Alignment was removed by the rnazWindow.pl filtering stage\n" 
+        
     return log
 
 def run_first_rnaz_screen_MP(jobs):

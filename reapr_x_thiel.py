@@ -8,6 +8,7 @@ import random
 from Bio import AlignIO
 import commands
 import time
+import shutil
 
 import run_first_rnaz_screen
 
@@ -50,6 +51,9 @@ def main():
 
     if not os.path.exists(OUT_DIR):
         os.makedirs(OUT_DIR)
+    else:
+        shutil.rmtree(OUT_DIR)
+        os.makedirs(OUT_DIR)
 
     process_maf_file(args.maf_file, OUT_DIR)
 
@@ -64,7 +68,6 @@ def main():
     
     assert os.path.isfile(args.species), 'Error: {0} is not a file'.format(args.species)
     species = sorted([x for x in open(args.species).read().split('\n') if x != ''])
-
 
     #Run initial RNAz screen
 
