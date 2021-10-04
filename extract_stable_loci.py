@@ -47,7 +47,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
     block_group_list = bin_list(all_win_recs, key = lambda x: x[0])
     num_paths = len(block_group_list)
 
-    print(block_dict)
+    # print(block_dict)
 
     for i, block_group in enumerate(block_group_list):
         

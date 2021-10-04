@@ -109,7 +109,7 @@ def main():
 
     #Extract stable loci
     loci_dir = os.path.join(args.output_folder, 'loci')
-    loci_alignment_list = extract_stable_loci.extract_loci(alignment_block_dict, initial_table, args.threshold, loci_dir, species, WINDOW_SIZE, WINDOW_SLIDE, False, stdout=False)
+    loci_alignment_list = extract_stable_loci.extract_loci(alignment_block_dict, initial_table, args.threshold, loci_dir, species, WINDOW_SIZE, WINDOW_SLIDE, True, stdout=False)
 
     print(loci_alignment_list)
 
