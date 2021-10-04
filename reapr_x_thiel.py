@@ -93,7 +93,7 @@ def main():
 
     #Compile table of RNAz screen results
 
-    for alignment_block
+    # for alignment_block
 
     alignment_block_paths = [a for a in alignment_block_paths if os.path.isfile(a)]
     RNAz_paths = [a + '.rnaz' for a in alignment_block_paths if os.path.isfile(a + '.rnaz')]
