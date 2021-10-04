@@ -24,7 +24,7 @@ def run_locarna(locarna, clustal_path, ungap_fasta_path, target_dir, target_file
 
     start_time = time.time()
     # subprocess.Popen(cmd, shell=True, stdout=open('/dev/null','w'), stderr=subprocess.STDOUT).wait()
-    p = subprocess.Popen(cmd, shell=True, stderr=subprocess.STDOUT)
+    subprocess.Popen(cmd, shell=True, stderr=subprocess.STDOUT).wait()
     # pc = p.communicate()
     # loc_out ,loc_err = pc[0], pc[1]
     if verbose: print(cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds\n', file=sys.stderr)
