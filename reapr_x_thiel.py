@@ -124,9 +124,9 @@ def main():
         target_dirs = [x + '.{}.d'.format(suffix) for x in ref_clustals]
         target_files = [x + '.{}'.format(suffix) for x in ref_clustals]
 
-        acd = True
+        alifold_consensus = False
         verbose = True
-        locARNA_args = [(commands.mlocarna, a, b, c, d, delta, acd, args.guide_tree, verbose) for a,b,c,d in zip(ref_clustals, ungapped_fastas, target_dirs, target_files)]
+        locARNA_args = [(commands.mlocarna, a, b, c, d, delta, alifold_consensus, args.guide_tree, verbose) for a,b,c,d in zip(ref_clustals, ungapped_fastas, target_dirs, target_files)]
         print("Start: LocARNA realignment, Delta={}".format(delta), get_time(), file=errF)
         locARNA_job_pool = multiprocessing.Pool(processes=args.processes)
         locARNA_job_results = locARNA_job_pool.map_async(run_locarna_screen.run_locarna_pool, locARNA_args).get(99999999)
