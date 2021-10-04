@@ -51,7 +51,9 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
 
     for i, block_group in enumerate(block_group_list):
         
-        block = block_group[0][0]
+        block = os.path.basename(block_group[0][0])
+            # name = os.path.basename(alignment)
+
         block_path = block_dict[block]
 
         if encode_multiz:
