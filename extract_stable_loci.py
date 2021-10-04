@@ -58,7 +58,8 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
 
         if encode_multiz:
             # Get MAF alignments of syntenic blocks
-            maf_list = [x for x in open(block_path + '.maf').read().split('\n') if len(x)>0 and x[0]=='s']
+            # maf_list = [x for x in open(block_path + '.maf').read().split('\n') if len(x)>0 and x[0]=='s']
+            maf_list = [x for x in open(block_path).read().split('\n') if len(x)>0 and x[0]=='s']
             seq_list = [x.split()[6] for x in maf_list]
 
             # Remove the chromosome names from the MAF headers
