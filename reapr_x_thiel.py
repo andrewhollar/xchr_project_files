@@ -116,7 +116,7 @@ def process_maf_file(path_to_maf, out_dir):
     alignment_block_idx = 0
     sample_size = 0
     for msa in AlignIO.parse(path_to_maf, "maf"):
-        if random.randint(1, SAMPLE_DENOM) == 1 and sample_size <= MAX_SAMPLES and len(msa[0].seq) >= SAMPLE_LENGTH:
+        if random.randint(1, SAMPLE_DENOM) == 1 and sample_size <= MAX_SAMPLES and len(msa[0].seq) >= SAMPLE_LENGTH or alignment_block_idx == 21:
             # This should contain two pieces of information:
             #   1. the name of the alignment block
             #   2. the location of the new alignment block file (this should be in the 'alignments/' sub-directory)
