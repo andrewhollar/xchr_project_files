@@ -13,8 +13,8 @@ def run_locarna(locarna, clustal_path, ungap_fasta_path, target_dir, target_file
 
     # Setup parameters
     acd_arg          = '--alifold-consensus-dp' if alifold_consensus_dp else ''
-    guide_tree_arg   = '--treefile {0}'.format(guide_tree) if guide_tree else ''
-    max_diff_arg     = '--max-diff {0}'.format(max_diff)
+    guide_tree_arg   = '--treefile={0}'.format(guide_tree) if guide_tree else ''
+    max_diff_arg     = '--max-diff={0}'.format(max_diff)
     ref_arg          = '--max-diff-aln={0}'.format(clustal_path)
     target_dir_arg   = '--tgtdir={0}'.format(target_dir)
 
