@@ -96,7 +96,8 @@ def run_RNAz(windows_path, rnaz_path, both_strands, structural_model, rnaz_comma
     start_time = time.time()
     p = subprocess.Popen(cmd, shell=True, stdout=rnaz_output, stderr=subprocess.PIPE)
     stderr = p.communicate()[1]
-    if str(stderr)!='': log += 'RNAz stderr:\n' + str(stderr)  # RNAz's stderr
+    # if str(stderr)!='': log += 'RNAz stderr:\n' + str(stderr)  # RNAz's stderr
+    if stderr.decode('UTF-8') != '': log += 'RNAz stderr:\n' + stderr.decode('UTF-8')
 
     # Print running time
     log += '\n' + cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds'
