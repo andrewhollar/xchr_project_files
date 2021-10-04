@@ -17,7 +17,7 @@ import tabulate_rnaz_results
 import extract_stable_loci
 
 SAMPLE_DENOM = 100
-MAX_SAMPLES = 5     #sys.maxsize
+MAX_SAMPLES = 1     #sys.maxsize
 SAMPLE_LENGTH = 15
 
 STABILITY_THRESHOLD = -1  # Upper threshold on mean z score
