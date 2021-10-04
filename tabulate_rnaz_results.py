@@ -179,7 +179,7 @@ def parse_windows(rnaz_path, log_path, block, index_path, alternate_strands, all
                             mean_single_seq_mfe, str(variance_single_seq_mfe), str(variance_z_score), \
                             block, str(slice_idx), str(locus_idx)]
         # Add information about which species are present
-        table_record.extend([str(x[1]) for x in sorted(species_present.iteritems(), key=lambda x: x[0])])
+        table_record.extend([str(x[1]) for x in sorted(species_present.items(), key=lambda x: x[0])])
         table_record_list.append(table_record)
     
         # Update the strand and window index
@@ -230,7 +230,7 @@ def merge_windows(table_record_list, threshold, alternate_strands, all_species):
     #            slice_idx_col,\
     #            locus_idx_col,\
     #            species_start_col
-    
+
     # Parsing RNAz files
     num_seq_col = 0
     strand_col = 2
