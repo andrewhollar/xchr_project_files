@@ -49,7 +49,11 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
     for i, block_group in enumerate(block_group_list):
         
         block = block_group[0][0]
-        block_path = block_dict[block]
+        try:
+            block_path = block_dict[block]
+        except KeyError:
+            print("{} has already been removed.".format(block))
+            continue
 
         if encode_multiz:
             # Get MAF alignments of syntenic blocks
@@ -74,7 +78,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
         if not os.path.isdir(locus_dir): os.makedirs(locus_dir)
         
         # Iterate over loci
-        locus_group_list = utilities.bin_list(block_group, key = lambda x: x[3])
+        locus_group_list = bin_list(block_group, key = lambda x: x[3])
         for locus_group in locus_group_list:
 
             # Take the union of the species present in this locus's window

@@ -65,7 +65,6 @@ def main():
     assert os.path.isfile(os.path.join(OUT_DIR, "alignment_blocks.txt")), 'Error: {0} is not a file.'.format(os.path.join(OUT_DIR, "alignment_blocks.txt"))
     alignment_blocks = [x.split('\t') for x in open(os.path.join(OUT_DIR, "alignment_blocks.txt")).read().split('\n') if x != '']
     alignment_block_dict = dict(alignment_blocks)
-    print(alignment_block_dict)
     alignment_block_names, alignment_block_paths = zip(*alignment_blocks)
 
     #Check that each of the extracted alignment blocks was successfully written to disk
