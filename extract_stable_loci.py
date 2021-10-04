@@ -51,7 +51,6 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
         block = block_group[0][0]
         block_path = block_dict[block]
 
-
         if encode_multiz:
             # Get MAF alignments of syntenic blocks
             maf_list = [x for x in open(block_path + '.maf').read().split('\n') if len(x)>0 and x[0]=='s']
