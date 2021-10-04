@@ -1,3 +1,4 @@
+from genericpath import isfile
 import sys
 import os
 import multiprocessing
@@ -11,6 +12,7 @@ import time
 import shutil
 
 import run_first_rnaz_screen
+import tabulate_rnaz_results
 
 SAMPLE_DENOM = 100
 MAX_SAMPLES = 10     #sys.maxsize
@@ -86,13 +88,14 @@ def main():
     print('End: First RNAz screen', get_time(), file=errF)
 
     #Compile table of RNAz screen results
-    RNAz_paths = [alignment + '.rnaz' for alignment in alignment_block_paths]
-    RNAz_log_paths = [alignment + '.windows.log' for alignment in alignment_block_paths]
-    RNAz_index_paths = [alignment + '.windows.indices' for alignment in alignment_block_paths]
+    alignment_block_paths = [a for a in alignment_block_paths if os.path.isfile(a)]
+    RNAz_paths = [a + '.rnaz' for a in alignment_block_paths if os.path.isfile(a + '.rnaz')]
+    RNAz_log_paths = [a + '.windows.log' for a in alignment_block_paths if os.path.isfile(a +'.windows.log')]
+    RNAz_index_paths = [a + '.windows.indices' for a in alignment_block_paths if os.path.isfile(a + '.windows.indices')]
     initial_table = os.path.join(OUT_DIR, 'first_rnaz_screen.table')
     alternate_strands = True
     merge = True
-
+    tabulate_rnaz_results.write_table(initial_table, RNAz_paths, alignment_block_paths, RNAz_log_paths, RNAz_index_paths, alternate_strands, merge, args.threshold, species)
 
 
     #RNAz#
