@@ -127,11 +127,11 @@ def main():
         acd = True
         verbose = True
         locARNA_args = [(commands.mlocarna, a, b, c, d, delta, acd, args.guide_tree, verbose) for a,b,c,d in zip(ref_clustals, ungapped_fastas, target_dirs, target_files)]
-        print("Start: LocARNA realignment, Delta={}",format(delta), get_time(), file=errF)
+        print("Start: LocARNA realignment, Delta={}".format(delta), get_time(), file=errF)
         locARNA_job_pool = multiprocessing.Pool(processes=args.processes)
         locARNA_job_results = locARNA_job_pool.map_async(run_locarna_screen.run_locarna_pool, locARNA_args).get(99999999)
         target_files = [x for x,y in zip(target_files, locARNA_job_results) if y]
-        print("End: LocARNA realignment, Delta={}",format(delta), get_time(), file=errF)
+        print("End: LocARNA realignment, Delta={}".format(delta), get_time(), file=errF)
 
     #RNAz#
     

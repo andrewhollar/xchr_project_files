@@ -6,7 +6,7 @@ import traceback
 import shutil
 # import utilities
 
-def run_locarna(locarna, clustal_path, ungap_fasta_path, target_dir, target_file, max_diff, alifold_consensus_dp, guide_tree, verbose=False):
+def run_locarna(locarna, clustal_path, ungap_fasta_path, target_dir, target_file, max_diff, alifold_consensus_dp, guide_tree, verbose=True):
     """Run LocARNA.  Returns True if successful, or False otherwise"""
 
     if not os.path.isdir(target_dir): os.makedirs(target_dir)
