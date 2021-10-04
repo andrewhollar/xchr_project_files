@@ -93,6 +93,7 @@ def main():
     #Compile table of RNAz screen results
 
     for block_name, block_path in alignment_block_dict.items():
+        print("Popping block {} : {}".format(block_name, block_path), file=errF)
         if not os.path.isfile(block_path):
             print("Popping block {} : {}".format(block_name, block_path), file=errF)
             alignment_block_dict.pop(block_name)
