@@ -49,11 +49,8 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
     for i, block_group in enumerate(block_group_list):
         
         block = block_group[0][0]
-        try:
-            block_path = block_dict[block]
-        except KeyError:
-            print("{} has already been removed.".format(block))
-            continue
+        block_path = block_dict[block]
+
 
         if encode_multiz:
             # Get MAF alignments of syntenic blocks
