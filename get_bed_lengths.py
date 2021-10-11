@@ -13,5 +13,5 @@ with open(sys.argv[1], "r") as bed_in:
             length_dict[entry_length] = 1
 
 
-for key in length_dict.keys():
+for key in sorted(length_dict.keys()):
     print(key, length_dict[key])
