@@ -11,7 +11,7 @@ with open(sys.argv[1], "r") as chromInfo:
         if len(line_tokens) > 1:
             # print(line_tokens)
 
-            out_lines.append("{}\t{}\n".format(line_tokens[1], line_tokens[2]))
+            out_lines.append("{}\t{}\n".format(line_tokens[1].strip(), line_tokens[2].strip()))
 
 
 with open(out_file, "w") as chromInfoBed:
