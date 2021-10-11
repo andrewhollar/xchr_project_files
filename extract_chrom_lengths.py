@@ -6,6 +6,9 @@ out_lines = []
 
 with open(sys.argv[1], "r") as chromInfo:
     for line in chromInfo.readlines():
+        if "size" in line:
+            continue
+
         line_tokens = line.split("|")
 
         if len(line_tokens) > 1:
