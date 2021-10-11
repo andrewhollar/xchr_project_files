@@ -12,4 +12,6 @@ with open(sys.argv[1], "r") as bed_in:
         else:
             length_dict[entry_length] = 1
 
-print(length_dict)
+
+for key in length_dict.keys():
+    print(key, length_dict[key])
