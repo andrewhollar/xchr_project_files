@@ -170,6 +170,27 @@ def get_seq_length(path, form):
                    
         # Sum up alignment lengths
         seq_length = sum([x[0] for x in maf_lengths])
+        
+    elif form=='CLUSTAL':
+
+        clustal_list = [x.split() for x in curr_align.split('\n') \
+                            if x!='' and x[:7]!='CLUSTAL']
+        clustal_list = [x for x in clustal_list if len(x) != 0]
+        header_list, seq_list = [], []
+        for x in clustal_list:
+            if x[0] in header_list:
+                seq_list[header_list.index(x[0])].append(x[1])
+            else:
+                header_list.append(x[0])
+                seq_list.append([x[1]])
+        seq_list = [''.join(x) for x in seq_list]
+        seq_lengths = [len(x) for x in seq_list]
+
+        # Ensure equal lengths
+        assert seq_lengths.count(seq_lengths[0]) == len(seq_lengths)
+
+        seq_length = int(seq_lengths[0])
+        
     else:
         raise Exception('Format not yet supported')
 
