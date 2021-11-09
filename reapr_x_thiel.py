@@ -136,7 +136,7 @@ def main():
         print >>errF, 'Start: RNAz screen on realigned loci, Delta=%s' % delta, get_time()
         pool = multiprocessing.Pool(processes=args.processes)
         pool.map_async(run_first_rnaz_screen.run_first_rnaz_screen_MP, RNAz2_args).get(99999999)
-        print >>errF, 'End: RNAz screen on realigned loci, Delta=%s' % delta, get_time()
+        print(errF, 'End: RNAz screen on realigned loci, Delta={}'.format(delta), get_time())
     
 # Method to pad an integer with zeros on the left, this returns a string of length num_positions.
 def pad_int(input_int, num_positions):
