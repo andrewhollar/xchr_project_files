@@ -133,7 +133,7 @@ def main():
         both_strands = False
         alignment_format='CLUSTAL'
         RNAz2_args = [(alignment, no_reference, both_strands, WINDOW_SIZE, WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, OUT_DIR, None, alignment_format, verbose) for alignment in target_files]
-        print >>errF, 'Start: RNAz screen on realigned loci, Delta=%s' % delta, get_time()
+        print(errF, 'Start: RNAz screen on realigned loci, Delta={}'.format(delta), get_time())
         pool = multiprocessing.Pool(processes=args.processes)
         pool.map_async(run_first_rnaz_screen.run_first_rnaz_screen_MP, RNAz2_args).get(99999999)
         print(errF, 'End: RNAz screen on realigned loci, Delta={}'.format(delta), get_time())
