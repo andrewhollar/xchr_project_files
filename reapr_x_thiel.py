@@ -52,7 +52,6 @@ def main():
 
     outF, errF = sys.stdout, sys.stderr
     OUT_DIR = args.output_folder
-    # print(OUT_DIR)
     parent_pid = os.getpid()
 
     if not os.path.exists(OUT_DIR):
@@ -92,7 +91,6 @@ def main():
     print('End: First RNAz screen', get_time(), file=errF)
 
     #Compile table of RNAz screen results
-
     for block_name, block_path in alignment_block_dict.items():
         if not os.path.isfile(block_path):
             print("Popping block {} : {}".format(block_name, block_path), file=errF)
@@ -107,15 +105,10 @@ def main():
     merge = True
     tabulate_rnaz_results.write_table(initial_table, RNAz_paths, alignment_block_paths, RNAz_log_paths, RNAz_index_paths, alternate_strands, merge, args.threshold, species)
 
-
     #Extract stable loci
     loci_dir = os.path.join(args.output_folder, 'loci')
     loci_alignment_list = extract_stable_loci.extract_loci(alignment_block_dict, initial_table, args.threshold, loci_dir, species, WINDOW_SIZE, WINDOW_SLIDE, True, stdout=False)
-
-    # print(loci_alignment_list)
-
     realignment_tables = [os.path.join(args.output_folder, 'locarna.d_%s.tab' % d) for d in args.delta]
-
 
     #Realign loci
     for delta, realign_table in zip(args.delta, realignment_tables):
@@ -133,7 +126,17 @@ def main():
         target_files = [x for x,y in zip(target_files, locARNA_job_results) if y]
         print("End: LocARNA realignment, Delta={}".format(delta), get_time(), file=errF)
 
-    #RNAz#
+        #RNAz#
+        no_reference = True 
+        structural = True 
+        verbose = True 
+        both_strands = False
+        alignment_format='CLUSTAL'
+        RNAz2_args = [(alignment, no_reference, both_strands, WINDOW_SIZE, WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, OUT_DIR, None, alignment_format, verbose) for alignment in target_files]
+        print >>errF, 'Start: RNAz screen on realigned loci, Delta=%s' % delta, get_time()
+        pool = multiprocessing.Pool(processes=args.processes)
+        pool.map_async(run_first_rnaz_screen.run_first_rnaz_screen_MP, RNAz2_args).get(99999999)
+        print >>errF, 'End: RNAz screen on realigned loci, Delta=%s' % delta, get_time()
     
 # Method to pad an integer with zeros on the left, this returns a string of length num_positions.
 def pad_int(input_int, num_positions):
@@ -147,7 +150,6 @@ def get_time():
     return '\nTime:\n' + time.strftime("%a, %d %b %Y %H:%M:%S", time.gmtime()) + '\nEpoch time: ' + str(time.time()) + '\n'
 
 def process_maf_file(path_to_maf, out_dir):
-
     alignments_out_dir = os.path.join(out_dir, "alignments/")
 
     if not os.path.exists(alignments_out_dir):
@@ -175,7 +177,6 @@ def process_maf_file(path_to_maf, out_dir):
                 sequence.seq = str(sequence.seq).upper()
 
             with open(alignment_block_output_location, "w") as block_out:
-                # print("writing alignment")
                 block_out.write("a\tscore=0.00\n")
                 for sequence in msa:
 
