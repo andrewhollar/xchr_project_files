@@ -81,7 +81,11 @@ def combine_tables(original_table, realign_tables, deltas, loci_dir, guide_tree,
         
     for line in initial_lines:
 
-        locus_name = '%s%s%s' % (line[block_col], utilities.block_locus_delim, line[locus_idx_col])
+        # -------------------------------------------------------------------------------
+        # EDIT: changed 'locus_name' to not include the '.maf' extension
+        locus_name = '%s%s%s' % (line[block_col].split('.')[0], utilities.block_locus_delim, line[locus_idx_col])
+        # -------------------------------------------------------------------------------
+
 
         # Many lines aren't considered because the window wasn't
         # assigned to a locus, or the locus couldn't be realigned
@@ -102,7 +106,7 @@ def combine_tables(original_table, realign_tables, deltas, loci_dir, guide_tree,
         features[3] = max(features[3], p_score)
 
         if alistat:
-            # Update aistat score before realignment
+            # Update alistat score before realignment
             original = os.path.join(loci_dir, locus_name + '.clustal')
             if features[4] == 'NA':
                 features[4] = run_alistat(commands.alistat, original)
