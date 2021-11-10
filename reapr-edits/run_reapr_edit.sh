@@ -8,5 +8,5 @@ deactivate
 
 #This is where REAPR is run (Python 2)
 source ~/reaprEnv/bin/activate
-python ~/xchr_project_files/reapr-edits/REAPR.py -a $OUTDIR/alignment_blocks.txt -s ~/6way.species -g ~/6way.newick -o $OUTDIR --alistat
+sudo python ~/xchr_project_files/reapr-edits/REAPR.py -a $OUTDIR/alignment_blocks.txt -s ~/6way.species -g ~/6way.newick -o $OUTDIR --alistat
 deactivate
