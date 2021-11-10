@@ -1,0 +1,162 @@
+-------------------------------------------------------------------------
+                       REAPR v1.0 Overview
+-------------------------------------------------------------------------
+
+
+REAPR (RE-Alignent for Prediction of Structural Non-coding RNA)
+realigns a whole genome alignment (WGA) to boost the prediction of
+structural non-coding RNAs (ncRNAs).  REAPR explicitly realigns based
+on both RNA sequence and structure, allowing it to correct
+misalignments of structural ncRNAs, especially of those with low
+sequence conservation across species.
+
+
+REAPR consists of three steps:
+
+(1) The screened whole genome alignment is sliced into windows. The
+    windows are filtered based on an alignment independent criterion
+    for structural RNA: thermodynamic stability of single RNA
+    structures. The stable windows are merged into stable loci.
+(2) Each stable locus is realigned based on sequence and structure
+    similarity. This results in a stable locus alignment that
+    correctly aligns RNA structure even when the locus was originally
+    misaligned.
+(3) A conventional ncRNA predictor is applied to estimate ncRNA
+    likelihood from the corrected locus alignment. Whereas a locus of
+    true ncRNA shows only unstable conserved structure in the original
+    alignment, if this structure was misaligned in the whole genome
+    alignment, the pipeline can reveal the stable conserved structure
+    of the ncRNA.
+
+REAPR efficiently runs on WGAs of eukaryotic-sized genomes.  It
+achieves this efficiency through the stability filter in (1) and by
+combining the fast RNA alignment tool LocARNA with a novel alignment
+banding algorithm in (2).  The banding algorithm restricts the search
+space of realignments to be within a limited deviation from the WGA.
+
+REAPR currently predicts ncRNAs from realignments in (3) using RNAz.
+Future support will be added to predict with EvoFold.
+
+Version: 1.0
+Contact: Michael Yu, michaelyu@alum.mit.edu
+
+
+-------------------------------------------------------------------------
+                            INSTALL
+-------------------------------------------------------------------------
+
+Run REAPR with python v2.7 or higher (see Usage).  No other
+compilation is necessary, except installing and configuring other
+packages.
+
+The following software packages are required
+
+-- LocARNA v1.7.1 or higher     
+   http://groups.csail.mit.edu/cb/reapr/Software/locarna-1.7.1.tar.gz   
+
+-- RNAz v2.0 or higher          
+   http://www.tbi.univie.ac.at/~wash/RNAz/
+   
+-- ViennaRNA v2.0.5 or higher
+   http://www.tbi.univie.ac.at/~ivo/RNA/      
+   
+-- squid v1.9 or higher (optional; contains alistat for computing sequence identities)
+   http://selab.janelia.org/software.html
+
+-- compalignp (optional; for computing the difference between alignments)
+   http://www.biophys.uni-duesseldorf.de/bralibase/
+
+
+Configure the location of the above packages and commands with
+
+Command: python configure.py [-h] [--locarna-prefix LOCARNA_PREFIX] 
+	 	[--rnaz-prefix RNAZ_PREFIX] [--alistat ALISTAT]
+		[--compalignp COMPALIGNP]
+
+--help              Display help message
+--locarna-prefix    Installation directory of LocARNA package.
+--rnaz-prefix       Installation directory of RNAz package.
+--alistat           Path to alistat command from squid package.
+--compalignp        Path to compalignp command
+
+If a command or software package can be found in the shell path such
+that a command's filename is sufficient for running it on the
+terminal, then you do not need to configure its location through
+configure.py.  For example, if LocARNA was installed to '/usr/local',
+which is typically both on the shell path and the default directory of
+LocARNA if installed as root, then you do not need to include the
+option '--locarna-prefix' in configure.py
+
+-------------------------------------------------------------------------
+                            USAGE
+-------------------------------------------------------------------------
+
+Formatting the WGA before running REAPR:
+
+(1) The WGA must be in MAF format.  Each alignment block of the WGA must
+    be in a separate MAF file.
+(2) Create a file with two columns separated by tabs.  The first
+    column lists the names of the WGA blocks , and the second column lists
+    the location of the corresponding MAF alignment files.
+(3) Create a file with a list of all species in the WGA, separated by
+    newlines.  The species names must match those used in MAF alignment
+    files.
+(4) Create a file with a Newick-format tree, without branch lengths,
+    of all species.  This tree is used as the guide for progressive
+    alignment by LocARNA.
+
+
+Run REAPR with the command
+
+Command: python REAPR.py [options]
+
+-h  --help            show this help message and exit
+-a  --alignments      Space-separated list of WGA alignment block files.
+-s  --species         Space-separated list of species in WGA. Species names
+                      must be the same as those listed in the alignment
+                      block files.
+
+-g  --guide-tree      Species guide tree (in Newick format, without branch
+    		      lengths) for progressive alignment by LocARNA.
+-o  --output-folder   Directory to write output files  (Default: present 
+    		      working directory)
+-d  --delta           Space-separated list of realignment deviations.
+    		      (Default: 20)
+-t  --threshold       Stability filter threshold. Filter out windows whose
+                      mean MFE z-score is above this threshold (Default: -1)
+-p  --processes       Number of cores to use for multiprocessing (Default: 1)
+-r  --ram-disk 	      Location of RAM Disk to write temporary files.
+                      Specifying a RAM Disk minimizes random access on
+                      disk storage.  This is highly recommended as
+                      REAPR will write many small files.  (Note: this
+                      is typically /dev/shm in Ubuntu, and other Linux
+                      systems)
+--alistat             Compute sequence identities of alignments using alistat
+--compalignp          Compute change between original alignment and realignment
+		      using compalignp
+
+
+-------------------------------------------------------------------------
+                               Output
+-------------------------------------------------------------------------
+
+REAPR will generate the following files in the folder specified with
+--output-folder
+
+(1) A 'wga' folder containing the resulting files of an RNAz screen on the 
+    original WGA.
+(2) A table 'original_wga.tab' containing a summary of the RNAz screen
+    on the original WGA.
+(3) A 'loci' folder containing the resulting files from realigning loci and
+    running an RNAz screen on the realignments.
+(4) For every delta <d> specified for --delta, the tables
+    'locarna.g.<d>.tab' containing a summary of the RNAz screen on the realignments.
+(5) A table 'summary.tab' containing a summary of REAPR.  It includes
+    the RNAz score of every locus based on its alignment in the
+    original WGA and after realignment.  If specified with --alistat
+    or --compalign, it also includes the sequence identities, computed
+    by alistat, of the loci in the original WGA and after realignment,
+    and how different the realignment is from the original, computed
+    using compalignp.
+
+The first line of every table contains a header describing every column.

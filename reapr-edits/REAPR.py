@@ -1,0 +1,212 @@
+import os, sys, multiprocessing, argparse, shutil, traceback, subprocess
+
+import run_RNAz_screen
+import tabulate_rnaz_results
+import extract_loci
+import realign_loci_locarna
+import combine_tables
+import commands
+import utilities
+import random
+# -------------------------------------------------------------------------------
+# EDIT: Added the import of the AlignIO module from biopython
+from Bio import AlignIO
+# -------------------------------------------------------------------------------
+
+
+
+# -------------------------------------------------------------------------------
+# EDIT: Added the following parameters in order to limit the number of alignment blocks
+SAMPLE_DENOM = 100
+MAX_SAMPLES = 1     #sys.maxsize
+SAMPLE_LENGTH = 15
+random.seed(35)
+# -------------------------------------------------------------------------------
+
+
+def main():
+    parser = argparse.ArgumentParser(description='Realign a WGA and predict structural ncRNAs.')
+    parser.add_argument('-a', '--alignments', required=False, help='Space-separated list of WGA alignment block files.') #EDIT: changed the required option to FALSE
+    parser.add_argument('-s', '--species', required=True, help='Space-separated list of species in WGA.  Species names must be the same as those listed in the alignment block files.')
+    parser.add_argument('-g', '--guide-tree', required=True, help='Species guide tree (in Newick format, without branch lengths) for progressive alignment by LocARNA.')
+    parser.add_argument('-o', '--output-folder', default=os.getcwd(), help='Directory to write output files.  (Default: present working directory)')
+    parser.add_argument('-d', '--delta', type=int, default=[20], nargs='+', help='Space-separated list of realignment deviations. (Default: 20)')
+    parser.add_argument('-t', '--threshold', type=float, default=utilities.STABILITY_THRESHOLD, help='Stability filter threshold.  Filter out windows whose mean MFE z-score is above this threshold (Default: -1)')
+    parser.add_argument('-p', '--processes', type=int, default=utilities.PROCESSES, help='Number of cores to use for multiprocessing (Default: 1)')
+    parser.add_argument('-r', '--ram-disk', help='Location of RAM Disk to write temporary files.  Minimizes random access on disk storage.  This is highly recommended as REAPR will write many small files. (Note: this is typically /dev/shm in Ubuntu, and other Linux systems)')
+    parser.add_argument('--alistat', action='store_true', help='Compute sequence identities of alignments using alistat')
+    parser.add_argument('--compalignp', action='store_true', help='Compute change between original alignment and realignment using compalignp')
+   
+    # -------------------------------------------------------------------------------
+    # EDIT: Added the following argument to replace the --alignments option from REAPR v1.
+    parser.add_argument('-m', '--maf-file', required=True, help='The input alignment MAF file.')
+    # -------------------------------------------------------------------------------
+
+    args = parser.parse_args()
+
+    outF, errF = sys.stdout, sys.stderr
+    parent_pid = os.getpid()
+
+    # Setup temporary directory
+    if args.ram_disk is None: tmp_dir = None
+    else:
+        utilities.directory_exists(args.ram_disk)
+        tmp_dir = os.path.join(args.ram_disk, 'REAPR.'+utilities.get_random_string(8))
+        os.makedirs(tmp_dir)
+    
+    # -------------------------------------------------------------------------------
+    # EDIT: Added the following call to process_maf_file() to automate some of the input steps present in REAPR v1.
+    OUT_DIR = args.output_folder
+    process_maf_file(args.maf_file, OUT_DIR)
+    # -------------------------------------------------------------------------------   
+
+    try:
+        # WGA alignment block files
+        utilities.file_exists(args.alignments)
+        blocks = [x.split('\t') for x in open(args.alignments).read().split('\n') if x!='']
+        block_dict = dict(blocks)
+        block_names, block_paths = zip(*blocks)
+        for a in block_paths: utilities.file_exists(a)
+
+        # List of species
+        utilities.file_exists(args.species)
+        species = sorted([x for x in open(args.species).read().split('\n') if x!=''])
+
+        ### Run RNAz screen on WGA ###
+        
+        # Locate RNAz and rnazWindow.pl
+        no_reference, structural, verbose, both_strands = True, False, True, True
+        alignment_format='MAF'
+        out_dir = os.path.join(args.output_folder, 'wga')
+        target_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, out_dir, tmp_dir, alignment_format, verbose) for alignment in block_paths] 
+        print >>errF, 'Start: RNAz screen on WGA', utilities.get_time()
+        pool = multiprocessing.Pool(processes=args.processes)        
+        log_list = pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, target_args).get(99999999)
+        print >>errF, 'End: RNAz screen on WGA', utilities.get_time()
+
+        ### Compile table of RNAz screen results ###
+        rnaz_paths = [a + '.rnaz' for a in block_paths]              # RNAz output
+        log_paths = [a + '.windows.log' for a in block_paths]        # rnazWindow verbose logs
+        index_paths = [a + '.windows.indices' for a in block_paths]  # window to slice indices map
+        initial_table = os.path.join(args.output_folder, 'original_wga.tab')
+        alternate_strands, merge = True, True
+        tabulate_rnaz_results.write_table(initial_table, rnaz_paths, block_names, log_paths, index_paths, alternate_strands, merge, args.threshold, species)
+
+        ### Extract stable loci ###
+        loci_dir = os.path.join(args.output_folder, 'loci')
+        loci_alignment_list = extract_loci.extract_loci(block_dict, initial_table, args.threshold, loci_dir, species, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, False, stdout=False)
+
+        realign_tables = [os.path.join(args.output_folder, 'locarna.d_%s.tab' % d) for d in args.delta]
+
+        for delta, realign_table in zip(args.delta, realign_tables):
+
+            ### Realign loci ###
+
+            # Setup alignment file paths 
+            locus_names, ref_clustals, ungap_fastas = zip(*loci_alignment_list)
+            suffix = 'locarna{0}.{1}'.format('.g' if args.guide_tree else '', delta)
+            target_dirs =  [x + '.%s.d' % suffix for x in ref_clustals]
+            target_files = [x + '.%s'   % suffix for x in ref_clustals]
+
+            # Realign loci
+            acd, verbose = True, True
+            target_args = [(commands.mlocarna, a, b, c, d, delta, acd, args.guide_tree, verbose) for a,b,c,d in zip(ref_clustals, ungap_fastas, target_dirs, target_files)]
+            print >>errF, 'Start: LocARNA realignment, Delta=%s' % delta, utilities.get_time()
+            pool = multiprocessing.Pool(processes=args.processes)
+            success = pool.map_async(realign_loci_locarna.run_locarna_pool, target_args).get(99999999)
+            target_files = [x for x,y in zip(target_files, success) if y]
+            print >>errF, 'End: LocARNA realignment, Delta=%s' % delta, utilities.get_time()
+
+            ### Run RNAz screen on realigned loci ###
+            no_reference, structural, verbose, both_strands = True, True, True, False
+            alignment_format='CLUSTAL'
+            target_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, None, tmp_dir, alignment_format, verbose) for alignment in target_files]
+            print >>errF, 'Start: RNAz screen on realigned loci, Delta=%s' % delta, utilities.get_time()
+            pool = multiprocessing.Pool(processes=args.processes)
+            pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, target_args).get(99999999)
+            print >>errF, 'End: RNAz screen on realigned loci, Delta=%s' % delta, utilities.get_time()
+            
+            ### Compile tables of RNAz results ###
+            rnaz_paths = [a + '.rnaz' for a in target_files]              # RNAz output
+            log_paths = [a + '.windows.log' for a in target_files]        # rnazWindow verbose logs
+            index_paths = [a + '.windows.indices' for a in target_files]  # window to slice indices map
+            alternate_strands, merge = False, False
+            block_names = locus_names
+            tabulate_rnaz_results.write_table(realign_table, rnaz_paths, block_names, log_paths, index_paths, alternate_strands, merge, args.threshold, species)
+
+        # Combine tables
+        combine_tables.combine_tables(initial_table, realign_tables, args.delta, loci_dir, True, species, args.alistat, args.compalignp, os.path.join(args.output_folder, 'summary.tab'))
+
+    except KeyboardInterrupt:
+        print >>errF, 'Outside except, terminating pool'
+        pool.terminate()
+
+    except:
+        print >>errF, traceback.print_exc()
+    finally:
+        # # Kill descendant processes, i.e. those with same group id
+        # group_processes = subprocess.Popen('pgrep -g %s' % (parent_pid), shell=True, stdout=subprocess.PIPE).communicate()[0].split()
+        # group_processes.remove(str(parent_pid))
+        # subprocess.Popen('kill -9 %s' % (' '.join(group_processes)), shell=True).wait()
+
+        # Clear temporary directory in RAM Disk
+        if tmp_dir and os.path.isdir(tmp_dir): shutil.rmtree(tmp_dir)
+
+
+# -------------------------------------------------------------------------------
+# EDIT: Added the following function to generate the required files from the input MAF file
+def process_maf_file(path_to_maf, out_dir):
+    alignments_out_dir = os.path.join(out_dir, "alignments/")
+
+    if not os.path.exists(alignments_out_dir):
+        os.makedirs(alignments_out_dir)
+
+    reapr_alignment_map = []
+    alignment_block_idx = 0
+    sample_size = 0
+    for msa in AlignIO.parse(path_to_maf, "maf"):
+        if random.randint(1, SAMPLE_DENOM) == 1 and sample_size <= MAX_SAMPLES and len(msa[0].seq) >= SAMPLE_LENGTH:
+            # This should contain two pieces of information:
+            #   1. the name of the alignment block
+            #   2. the location of the new alignment block file (this should be in the 'alignments/' sub-directory)
+            reapr_alignment_entry = []
+
+            # create an output file name for this alignment block
+            alignment_block_name = "6way_block_" + pad_int(alignment_block_idx, 8) + ".maf"
+            reapr_alignment_entry.append(alignment_block_name)
+
+            # use the file name to create a location for the output file
+            alignment_block_output_location = os.path.join(out_dir, "alignments/", alignment_block_name)
+            reapr_alignment_entry.append(alignment_block_output_location)
+
+            for sequence in msa:
+                sequence.seq = str(sequence.seq).upper()
+
+            with open(alignment_block_output_location, "w") as block_out:
+                block_out.write("a\tscore=0.00\n")
+                for sequence in msa:
+
+                    if sequence.annotations['strand'] == 1:
+                        strand_char = "+"
+                    else:
+                        strand_char = "-"
+
+                    block_out.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format("s", sequence.id, sequence.annotations['start'], sequence.annotations['size'], strand_char, sequence.annotations['srcSize'], str(sequence.seq).upper()))
+
+            reapr_alignment_map.append(reapr_alignment_entry)
+            sample_size += 1
+
+        if sample_size > MAX_SAMPLES:
+            break
+
+        alignment_block_idx += 1
+
+    # write the alignment block map file to the './reapr_preprocess/' directory
+    with open(os.path.join(out_dir, "alignment_blocks.txt"), "w") as blocks_out: 
+        for entry in reapr_alignment_map:
+            blocks_out.write("{}\t{}\n".format(entry[0], entry[1]))
+# -------------------------------------------------------------------------------
+
+
+if __name__=='__main__':
+    main()
