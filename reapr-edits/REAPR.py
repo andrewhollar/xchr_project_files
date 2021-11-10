@@ -79,6 +79,13 @@ def main():
         no_reference, structural, verbose, both_strands = True, False, True, True
         alignment_format='MAF'
         out_dir = os.path.join(args.output_folder, 'wga')
+        
+        # -------------------------------------------------------------------------------
+        # EDIT: Added a call to make the output directory to avoid downstream IOErrors
+        if not os.path.isdir(out_dir): 
+            os.makedirs(out_dir)
+        # -------------------------------------------------------------------------------
+
         target_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, out_dir, tmp_dir, alignment_format, verbose) for alignment in block_paths] 
         print >>errF, 'Start: RNAz screen on WGA', utilities.get_time()
         pool = multiprocessing.Pool(processes=args.processes)        
