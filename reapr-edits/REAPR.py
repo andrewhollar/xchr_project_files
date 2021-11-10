@@ -10,7 +10,8 @@ import utilities
 import random
 # -------------------------------------------------------------------------------
 # EDIT: Added the import of the AlignIO module from biopython
-from Bio import AlignIO
+# BioPython requires python 3.6+ (i.e. not compatible with REAPR v1, which is based on python 2.7)
+# from Bio import AlignIO
 # -------------------------------------------------------------------------------
 
 
@@ -26,7 +27,7 @@ random.seed(35)
 
 def main():
     parser = argparse.ArgumentParser(description='Realign a WGA and predict structural ncRNAs.')
-    parser.add_argument('-a', '--alignments', required=False, help='Space-separated list of WGA alignment block files.') #EDIT: changed the required option to FALSE
+    parser.add_argument('-a', '--alignments', required=True, help='Space-separated list of WGA alignment block files.') #EDIT: changed the required option to FALSE
     parser.add_argument('-s', '--species', required=True, help='Space-separated list of species in WGA.  Species names must be the same as those listed in the alignment block files.')
     parser.add_argument('-g', '--guide-tree', required=True, help='Species guide tree (in Newick format, without branch lengths) for progressive alignment by LocARNA.')
     parser.add_argument('-o', '--output-folder', default=os.getcwd(), help='Directory to write output files.  (Default: present working directory)')
@@ -39,7 +40,7 @@ def main():
    
     # -------------------------------------------------------------------------------
     # EDIT: Added the following argument to replace the --alignments option from REAPR v1.
-    parser.add_argument('-m', '--maf-file', required=True, help='The input alignment MAF file.')
+    # parser.add_argument('-m', '--maf-file', required=True, help='The input alignment MAF file.')
     # -------------------------------------------------------------------------------
 
     args = parser.parse_args()
@@ -56,8 +57,8 @@ def main():
     
     # -------------------------------------------------------------------------------
     # EDIT: Added the following call to process_maf_file() to automate some of the input steps present in REAPR v1.
-    OUT_DIR = args.output_folder
-    process_maf_file(args.maf_file, OUT_DIR)
+    # OUT_DIR = args.output_folder
+    # process_maf_file(args.maf_file, OUT_DIR)
     # -------------------------------------------------------------------------------   
 
     try:
@@ -151,61 +152,6 @@ def main():
 
         # Clear temporary directory in RAM Disk
         if tmp_dir and os.path.isdir(tmp_dir): shutil.rmtree(tmp_dir)
-
-
-# -------------------------------------------------------------------------------
-# EDIT: Added the following function to generate the required files from the input MAF file
-def process_maf_file(path_to_maf, out_dir):
-    alignments_out_dir = os.path.join(out_dir, "alignments/")
-
-    if not os.path.exists(alignments_out_dir):
-        os.makedirs(alignments_out_dir)
-
-    reapr_alignment_map = []
-    alignment_block_idx = 0
-    sample_size = 0
-    for msa in AlignIO.parse(path_to_maf, "maf"):
-        if random.randint(1, SAMPLE_DENOM) == 1 and sample_size <= MAX_SAMPLES and len(msa[0].seq) >= SAMPLE_LENGTH:
-            # This should contain two pieces of information:
-            #   1. the name of the alignment block
-            #   2. the location of the new alignment block file (this should be in the 'alignments/' sub-directory)
-            reapr_alignment_entry = []
-
-            # create an output file name for this alignment block
-            alignment_block_name = "6way_block_" + pad_int(alignment_block_idx, 8) + ".maf"
-            reapr_alignment_entry.append(alignment_block_name)
-
-            # use the file name to create a location for the output file
-            alignment_block_output_location = os.path.join(out_dir, "alignments/", alignment_block_name)
-            reapr_alignment_entry.append(alignment_block_output_location)
-
-            for sequence in msa:
-                sequence.seq = str(sequence.seq).upper()
-
-            with open(alignment_block_output_location, "w") as block_out:
-                block_out.write("a\tscore=0.00\n")
-                for sequence in msa:
-
-                    if sequence.annotations['strand'] == 1:
-                        strand_char = "+"
-                    else:
-                        strand_char = "-"
-
-                    block_out.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format("s", sequence.id, sequence.annotations['start'], sequence.annotations['size'], strand_char, sequence.annotations['srcSize'], str(sequence.seq).upper()))
-
-            reapr_alignment_map.append(reapr_alignment_entry)
-            sample_size += 1
-
-        if sample_size > MAX_SAMPLES:
-            break
-
-        alignment_block_idx += 1
-
-    # write the alignment block map file to the './reapr_preprocess/' directory
-    with open(os.path.join(out_dir, "alignment_blocks.txt"), "w") as blocks_out: 
-        for entry in reapr_alignment_map:
-            blocks_out.write("{}\t{}\n".format(entry[0], entry[1]))
-# -------------------------------------------------------------------------------
 
 
 if __name__=='__main__':
