@@ -15,6 +15,7 @@ import run_first_rnaz_screen
 import run_locarna_screen
 import tabulate_rnaz_results
 import extract_stable_loci
+import combine_tables
 
 SAMPLE_DENOM = 100
 MAX_SAMPLES = 1     #sys.maxsize
@@ -137,6 +138,17 @@ def main():
         pool = multiprocessing.Pool(processes=args.processes)
         pool.map_async(run_first_rnaz_screen.run_first_rnaz_screen_MP, RNAz2_args).get(99999999)
         print(errF, 'End: RNAz screen on realigned loci, Delta={}'.format(delta), get_time())
+    
+        ### Compile tables of RNAz results ###
+        rnaz_paths = [a + '.rnaz' for a in target_files]              # RNAz output
+        log_paths = [a + '.windows.log' for a in target_files]        # rnazWindow verbose logs
+        index_paths = [a + '.windows.indices' for a in target_files]  # window to slice indices map
+        alternate_strands, merge = False, False
+        block_names = locus_names
+        tabulate_rnaz_results.write_table(realign_table, rnaz_paths, block_names, log_paths, index_paths, alternate_strands, merge, args.threshold, species)
+
+    # Combine tables
+    combine_tables.combine_tables(initial_table, realignment_tables, args.delta, loci_dir, True, species, False, False, os.path.join(args.output_folder, 'summary.tab'))
     
 # Method to pad an integer with zeros on the left, this returns a string of length num_positions.
 def pad_int(input_int, num_positions):
