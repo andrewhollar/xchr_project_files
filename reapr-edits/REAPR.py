@@ -105,13 +105,19 @@ def main():
         alternate_strands, merge = True, True
         tabulate_rnaz_results.write_table(initial_table, rnaz_paths, block_names, log_paths, index_paths, alternate_strands, merge, args.threshold, species)
 
+        # -------------------------------------------------------------------------------
+        # EDIT: Added print statement to assist in debugging.
+        print species
+        # -------------------------------------------------------------------------------
+
+
         ### Extract stable loci ###
         loci_dir = os.path.join(args.output_folder, 'loci')
         loci_alignment_list = extract_loci.extract_loci(block_dict, initial_table, args.threshold, loci_dir, species, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, False, stdout=False)
         
         # -------------------------------------------------------------------------------
         # EDIT: Added print statement to assist in debugging.
-        print(loci_alignment_list)
+        print loci_alignment_list
         # -------------------------------------------------------------------------------
 
 
