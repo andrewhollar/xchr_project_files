@@ -21,7 +21,12 @@ import os, glob, sys, math, argparse
 import utilities
 
 # The start and end strings that separate the RNAz output of consecutive windows
-start_border = '############################  RNAz 2.0  ##############################'
+# -------------------------------------------------------------------------------
+# EDIT: Changed the start_border to match the updated RNAz output. This is needed to 
+#       correctly parse the RNAz output.
+start_border = '############################  RNAz 2.1.1  ##############################'
+# -------------------------------------------------------------------------------
+
 end_border = '######################################################################'
 
 def get_table_header(all_species):
@@ -67,7 +72,13 @@ def parse_windows(rnaz_path, log_path, block, index_path, alternate_strands, all
     """
 
     # The start and end character sequences that separate the RNAz output of consecutive windows
-    start_border = '############################  RNAz 2.0  ##############################'
+    
+    # -------------------------------------------------------------------------------
+    # EDIT: Changed the start_border to match the updated RNAz output. This is needed to 
+    #       correctly parse the RNAz output.
+    start_border = '############################  RNAz 2.1.1  ##############################'
+    # -------------------------------------------------------------------------------
+
     end_border   = '######################################################################'
 
     window_results_list = open(rnaz_path).read().split(start_border)[1:]
