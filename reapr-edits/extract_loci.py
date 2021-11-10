@@ -108,7 +108,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             ungap_fasta_string = '\n'.join(['>' + x + '\n' + y.replace('-', '') for x,y in zip(locus_header_list, locus_seq_list)]) + '\n'
             open(ungap_fasta_path, 'w').write(ungap_fasta_string)
 
-            locus_name = '%s%s%s' % (block_filepath, utilities.block_locus_delim, locus_idx)
+            locus_name = '%s%s%s' % (block, utilities.block_locus_delim, locus_idx)
             loci_alignment_list.append([locus_name, clustal_path, ungap_fasta_path])
 
         
