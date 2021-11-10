@@ -79,7 +79,14 @@ def run_RNAz(windows_path, rnaz_path, both_strands, structural_model, rnaz_comma
 
     both_strands = '--both-strands' if both_strands else ''
     structural_model = '-l' if structural_model else ''
-    cmd = '%s -d %s %s --show-gaps --cutoff=0 %s' % (rnaz_command, structural_model, both_strands, windows_path)
+    #cmd = '%s -d %s %s --show-gaps --cutoff=0 %s' % (rnaz_command, structural_model, both_strands, windows_path)
+
+    # -------------------------------------------------------------------------------
+    # EDIT: Removed the '--show-gaps' command line parameter as it is no longer supported in RNAz 2.1.1
+    cmd = '%s -d %s %s --cutoff=0 %s' % (rnaz_command, structural_model, both_strands, windows_path)
+    # -------------------------------------------------------------------------------
+
+
 
     # Open output files with 1mb buffer
     rnaz_output = open(rnaz_path, 'w', 1000000)    
