@@ -28,13 +28,13 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
     num_paths = len(block_group_list)
     for i, block_group in enumerate(block_group_list):
         
+        block = block_group[0][0].split('.')[0]
+        block_path = block_dict[block]
         
         # -------------------------------------------------------------------------------
-        # EDIT: Remove '.maf' from filepath, this will be used to name a directory
-        block = block_group[0][0].split('.')[0]
+        # EDIT: Create new variable to act as name for output directory
+        block_filepath = block_group[0][0].split('.')[0]
         # -------------------------------------------------------------------------------
-    
-        block_path = block_dict[block]
     
         if encode_multiz:
             # Get MAF alignments of syntenic blocks
@@ -60,7 +60,11 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             header_list = [a[1] for a in maf_list]
 
         # Make directory for syntenic block's loci
-        locus_dir = os.path.join(loci_dir, block)
+        # -------------------------------------------------------------------------------
+        # EDIT: changed the location of the locus output directory, this removes the .maf from the filepath
+        locus_dir = os.path.join(loci_dir, block_filepath)
+        # -------------------------------------------------------------------------------
+        
         if not os.path.isdir(locus_dir): os.makedirs(locus_dir)
         
         # Iterate over loci
