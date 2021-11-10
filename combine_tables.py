@@ -1,6 +1,7 @@
 import sys, os, argparse, bisect, subprocess
 # import utilities 
 import commands
+from functools import reduce
 
 def run_alistat(alistat, alignment):
     """ <alignment> needs to be CLUSTAL format. """
