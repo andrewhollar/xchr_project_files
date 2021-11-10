@@ -1,5 +1,5 @@
 import sys, os, argparse, bisect, subprocess
-import utilities 
+# import utilities 
 import commands
 
 def run_alistat(alistat, alignment):
@@ -22,25 +22,36 @@ def run_compalignp(compalignp, ref_path, test_path):
         return float(stdout)
     except:
         print >>sys.stderr, stdout
-        0 / asdf
+#         # 0 / asdf
 
 def combine_tables(original_table, realign_tables, deltas, loci_dir, guide_tree, species, alistat, compalignp, output_table):
 
-    from utilities\
-        import num_seq_col,\
-               strand_col,\
-               mean_z_score_col,\
-               p_score_col,\
-               block_col,\
-               slice_idx_col,\
-               locus_idx_col,\
-               species_start_col
-
+    # from utilities\
+    #     import num_seq_col,\
+    #            strand_col,\
+    #            mean_z_score_col,\
+    #            p_score_col,\
+    #            block_col,\
+    #            slice_idx_col,\
+    #            locus_idx_col,\
+    #            species_start_col
+               
+    num_seq_col = 0
+    strand_col = 2
+    mean_z_score_col = 11
+    p_score_col = 16
+    block_col = 21
+    slice_idx_col = 22
+    locus_idx_col = 23
+    species_start_col = 24
+    # Delimiter character to join wga block names and loci numbers to form loci names
+    block_locus_delim = '/'
+    
     # Read initial table. Skip windows not assigned to a locus for not
     # passing stability threshold
     initial_lines = [x.split() for x in open(original_table).read().split('\n')[1:]
                         if x!='' and x[0]!='#' and x.split()[locus_idx_col]!='NA']
-    locus_names = sorted(set(['%s%s%s' % (line[block_col], utilities.block_locus_delim, line[locus_idx_col]) for line in initial_lines]))
+    locus_names = sorted(set(['%s%s%s' % (line[block_col], block_locus_delim, line[locus_idx_col]) for line in initial_lines]))
 
     # Make dictionary mapping locus name to a list of features:
     # -- min slice index
@@ -77,7 +88,7 @@ def combine_tables(original_table, realign_tables, deltas, loci_dir, guide_tree,
         
     for line in initial_lines:
 
-        locus_name = '%s%s%s' % (line[block_col], utilities.block_locus_delim, line[locus_idx_col])
+        locus_name = '%s%s%s' % (line[block_col], block_locus_delim, line[locus_idx_col])
 
         # Many lines aren't considered because the window wasn't
         # assigned to a locus, or the locus couldn't be realigned
@@ -127,9 +138,9 @@ def combine_tables(original_table, realign_tables, deltas, loci_dir, guide_tree,
     # in order of increasingly important features (think radix sort)
     
     # Sort by locus index
-    loci.sort(key=lambda a: int(a[0].split(utilities.block_locus_delim)[1]))
+    loci.sort(key=lambda a: int(a[0].split(block_locus_delim)[1]))
     # Sort by wga block
-    loci.sort(key=lambda a: a[0].split(utilities.block_locus_delim)[0])
+    loci.sort(key=lambda a: a[0].split(block_locus_delim)[0])
     # Sort by max difference in RNAz scores before vs after realignment
     loci.sort(key=lambda a: - max([a[1][5+3*i] - a[1][3] for i in range(len(deltas))]))
 
