@@ -28,7 +28,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
     num_paths = len(block_group_list)
     for i, block_group in enumerate(block_group_list):
         
-        block = block_group[0][0].split('.')[0]
+        block = block_group[0][0]
         block_path = block_dict[block]
         
         # -------------------------------------------------------------------------------
