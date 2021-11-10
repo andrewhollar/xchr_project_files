@@ -113,7 +113,12 @@ def combine_tables(original_table, realign_tables, deltas, loci_dir, guide_tree,
                 features[4] = run_alistat(commands.alistat, original)
 
         for i, d in enumerate(deltas):
-            realignment = os.path.join(loci_dir, locus_name + '.clustal.%s.%s' % (realign_suffix,d))
+            
+            # -------------------------------------------------------------------------------
+            # EDIT: changed 'locus_name' to not include the '.maf' extension
+            realignment = os.path.join(loci_dir, locus_name.replace('.maf', '') + '.clustal.%s.%s' % (realign_suffix,d))
+            # -------------------------------------------------------------------------------
+
 
             if alistat:
                 # Update alistat score after realignment
