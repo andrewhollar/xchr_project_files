@@ -76,7 +76,11 @@ def main():
         ### Run RNAz screen on WGA ###
         
         # Locate RNAz and rnazWindow.pl
-        no_reference, structural, verbose, both_strands = True, False, True, True
+        # -------------------------------------------------------------------------------
+        # EDIT: Changed the value of 'no_reference' to False, because we are using Human as a reference.    
+        no_reference, structural, verbose, both_strands = False, False, True, True
+        # -------------------------------------------------------------------------------
+
         alignment_format='MAF'
         
         # -------------------------------------------------------------------------------
@@ -136,7 +140,10 @@ def main():
             print >>errF, 'End: LocARNA realignment, Delta=%s' % delta, utilities.get_time()
 
             ### Run RNAz screen on realigned loci ###
-            no_reference, structural, verbose, both_strands = True, True, True, False
+            # -------------------------------------------------------------------------------
+            # EDIT: Changed the value of 'no_reference' to False, because we are using Human as a reference.  
+            no_reference, structural, verbose, both_strands = False, True, True, False
+            # -------------------------------------------------------------------------------
             alignment_format='CLUSTAL'
             target_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, None, tmp_dir, alignment_format, verbose) for alignment in target_files]
             print >>errF, 'Start: RNAz screen on realigned loci, Delta=%s' % delta, utilities.get_time()
