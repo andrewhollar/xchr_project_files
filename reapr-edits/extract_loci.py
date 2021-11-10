@@ -28,20 +28,20 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
     num_paths = len(block_group_list)
     for i, block_group in enumerate(block_group_list):
         
-        block = block_group[0][0]
         
         # -------------------------------------------------------------------------------
         # EDIT: Remove '.maf' from filepath, this will be used to name a directory
-        block_path = block_dict[block].split('.')[0]
+        block = block_group[0][0].split('.')[0]
         # -------------------------------------------------------------------------------
     
+        block_path = block_dict[block]
     
         if encode_multiz:
             # Get MAF alignments of syntenic blocks
             
             # -------------------------------------------------------------------------------
             # EDIT: Removed additional '.maf' from filepath as it is not needed.
-            maf_list = [x for x in open(block_path + '.maf').read().split('\n') if len(x)>0 and x[0]=='s']
+            maf_list = [x for x in open(block_path).read().split('\n') if len(x)>0 and x[0]=='s']
             # -------------------------------------------------------------------------------
             
             seq_list = [x.split()[6] for x in maf_list]
