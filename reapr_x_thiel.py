@@ -140,12 +140,18 @@ def main():
         print(errF, 'End: RNAz screen on realigned loci, Delta={}'.format(delta), get_time())
     
         ### Compile tables of RNAz results ###
-        rnaz_paths = [a + '.rnaz' for a in target_files]              # RNAz output
-        log_paths = [a + '.windows.log' for a in target_files]        # rnazWindow verbose logs
-        index_paths = [a + '.windows.indices' for a in target_files]  # window to slice indices map
+        rnaz_paths = [a + '.rnaz' for a in target_files if os.path.isfile(a + '.rnaz')]              # RNAz output
+        log_paths = [a + '.windows.log' for a in target_files if os.path.isfile(a + '.windows.log')]        # rnazWindow verbose logs
+        index_paths = [a + '.windows.indices' for a in target_files if os.path.isfile(a + '.windows.indices')]  # window to slice indices map
         alternate_strands, merge = False, False
         block_names = locus_names
         tabulate_rnaz_results.write_table(realign_table, rnaz_paths, block_names, log_paths, index_paths, alternate_strands, merge, args.threshold, species)
+
+
+    # alignment_block_paths = [a for a in alignment_block_paths if os.path.isfile(a)]
+    # RNAz_paths = [a + '.rnaz' for a in alignment_block_paths if os.path.isfile(a + '.rnaz')]
+    # RNAz_log_paths = [a + '.windows.log' for a in alignment_block_paths if os.path.isfile(a +'.windows.log')]
+    # RNAz_index_paths = [a + '.windows.indices' for a in alignment_block_paths if os.path.isfile(a + '.windows.indices')]
 
     # Combine tables
     combine_tables.combine_tables(initial_table, realignment_tables, args.delta, loci_dir, True, species, False, False, os.path.join(args.output_folder, 'summary.tab'))
