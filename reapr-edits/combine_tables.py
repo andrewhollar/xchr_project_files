@@ -22,7 +22,11 @@ def run_compalignp(compalignp, ref_path, test_path):
         return float(stdout)
     except:
         print >>sys.stderr, stdout
-        0 / asdf
+        
+        # -------------------------------------------------------------------------------
+        # EDIT: Commented out the following line, as it appears this was left in erroneously
+        #0 / asdf
+        # -------------------------------------------------------------------------------
 
 def combine_tables(original_table, realign_tables, deltas, loci_dir, guide_tree, species, alistat, compalignp, output_table):
 
