@@ -93,7 +93,7 @@ def combine_tables(original_table, realign_tables, deltas, loci_dir, guide_tree,
 
         # Many lines aren't considered because the window wasn't
         # assigned to a locus, or the locus couldn't be realigned
-        if loci_dict.has_key(locus_name): features = loci_dict[locus_name]
+        if locus_name in loci_dict: features = loci_dict[locus_name]
         else:                             continue
 
         # Update slice index range
