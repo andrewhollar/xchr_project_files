@@ -86,8 +86,6 @@ def run_RNAz(windows_path, rnaz_path, both_strands, structural_model, rnaz_comma
     cmd = '%s -d %s %s --cutoff=0 %s' % (rnaz_command, structural_model, both_strands, windows_path)
     # -------------------------------------------------------------------------------
 
-
-
     # Open output files with 1mb buffer
     rnaz_output = open(rnaz_path, 'w', 1000000)    
     

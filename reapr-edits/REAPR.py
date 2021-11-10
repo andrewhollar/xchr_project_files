@@ -78,7 +78,12 @@ def main():
         # Locate RNAz and rnazWindow.pl
         no_reference, structural, verbose, both_strands = True, False, True, True
         alignment_format='MAF'
-        out_dir = os.path.join(args.output_folder, 'wga')
+        
+        # -------------------------------------------------------------------------------
+        # EDIT: Changed the name of the output folder to match previous changes. All output
+        #       will go into the 'alignments/' directory within the args.output_folder.
+        out_dir = os.path.join(args.output_folder, 'alignments')
+        # -------------------------------------------------------------------------------
         
         # -------------------------------------------------------------------------------
         # EDIT: Added a call to make the output directory to avoid downstream IOErrors
