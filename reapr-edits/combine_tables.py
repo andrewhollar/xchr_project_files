@@ -84,6 +84,7 @@ def combine_tables(original_table, realign_tables, deltas, loci_dir, guide_tree,
         # -------------------------------------------------------------------------------
         # EDIT: changed 'locus_name' to not include the '.maf' extension
         locus_name = '%s%s%s' % (line[block_col].split('.')[0], utilities.block_locus_delim, line[locus_idx_col])
+        print locus_name
         # -------------------------------------------------------------------------------
 
 
