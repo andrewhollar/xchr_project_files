@@ -17,11 +17,12 @@ import random
 
 
 # -------------------------------------------------------------------------------
-# EDIT: Added the following parameters in order to limit the number of alignment blocks
-SAMPLE_DENOM = 100
-MAX_SAMPLES = 1     #sys.maxsize
-SAMPLE_LENGTH = 15
-random.seed(35)
+# EDIT: Added the following parameters in order to limit the number of alignment blocks.
+#       This is now moved to the file: process_maf_file.py.
+# SAMPLE_DENOM = 100
+# MAX_SAMPLES = 1     #sys.maxsize
+# SAMPLE_LENGTH = 15
+# random.seed(35)
 # -------------------------------------------------------------------------------
 
 
@@ -62,9 +63,16 @@ def main():
     # -------------------------------------------------------------------------------   
 
     try:
-        # WGA alignment block files
+        # Check if the MAF alignment block-index file exists.
         utilities.file_exists(args.alignments)
+        
+        # Load the MAF alignment blocks into a list. Each entry in this list 
         blocks = [x.split('\t') for x in open(args.alignments).read().split('\n') if x!='']
+        
+        print blocks[0]
+        print blocks
+        raise ValueError("end")
+    
         block_dict = dict(blocks)
         block_names, block_paths = zip(*blocks)
         for a in block_paths: utilities.file_exists(a)
