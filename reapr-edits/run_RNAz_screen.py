@@ -53,24 +53,19 @@ def index_windows(log_path, other_removals, num_slices, win_to_slice_path):
 # EDIT: Add this method which acts as a filter prior to running rnazWindow. This 
 #       uses the rnazSelectSeqs command to remove sequences that have 100% MPI with
 #       the reference species.
-def run_rnazSelectSeqs(alignment_path, rnazSelectSeqs_output_path, error_log_path, rnazSelectSeqs_command):
-    
-    # log = ''
-    
+def run_rnazSelectSeqs(alignment_path, rnazSelectSeqs_output_path, rnazSelectSeqs_command):
+
     cmd = '%s --max-id=99 %s' % (rnazSelectSeqs_command, alignment_path)
     
-    rnazSelectSeqs_error_log = open(error_log_path, 'w', int(1e6)) 
     rnazSelectSeqs_output = open(rnazSelectSeqs_output_path, 'w', int(1e6)) 
     
     start_time = time.time()
-    subprocess.Popen(cmd, shell=True, stdout=rnazSelectSeqs_output, stderr=rnazSelectSeqs_error_log).wait()
+    subprocess.Popen(cmd, shell=True, stdout=rnazSelectSeqs_output, stderr=subprocess.PIPE).wait()
     log = cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds'
     
-    rnazSelectSeqs_error_log.close()
     rnazSelectSeqs_output.close()
 
     return log
-    
 # -------------------------------------------------------------------------------
 
 def run_rnazWindow(align_path, windows_path, verbose_path, no_reference, rnazWindow_command, window_size, window_slide, verbose=False):
@@ -198,17 +193,18 @@ def eval_alignment(alignment, no_reference, both_strands, window_size, window_sl
 
     # -------------------------------------------------------------------------------
     # EDIT: Run rnazSelectSeqs
-    
     filtered_maf_path = os.path.join(tmp_dir, alignment_name[:-4] + '.filtered.maf')
-    selectSeqs_error_log = os.path.join(tmp_dir, alignment_name[:-4] + '.filtered.log')
-    log += run_rnazSelectSeqs(alignment, filtered_maf_path, selectSeqs_error_log, rnazSelectSeqs)    
+    log += run_rnazSelectSeqs(alignment, filtered_maf_path, rnazSelectSeqs)    
     # -------------------------------------------------------------------------------   
 
 
     # Run rnazWindow
     windows_path = os.path.join(tmp_dir, alignment_name + '.windows')
     verbose_path = os.path.join(tmp_dir, alignment_name + '.windows.log')
-    log += run_rnazWindow(alignment, windows_path, verbose_path, no_reference, rnazWindow, window_size, window_slide, verbose)
+    # -------------------------------------------------------------------------------
+    # EDIT: Changed the input alignment to be the output from rnazSelectSeqs.
+    log += run_rnazWindow(filtered_maf_path, windows_path, verbose_path, no_reference, rnazWindow, window_size, window_slide, verbose)
+    # -------------------------------------------------------------------------------
 
     # Write the window to slice index map
     win_to_slice_path = os.path.join(tmp_dir, alignment_name + '.windows.indices')
