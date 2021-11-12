@@ -99,7 +99,7 @@ def run_rnazWindow(align_path, windows_path, verbose_path, no_reference, rnazWin
     subprocess.Popen(cmd, shell=True, stdout=window_output, stderr=verbose_log).wait()
 
     # Print running time
-    log = cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds'
+    log = '\n' + cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds'
 
     verbose_log.close()
     window_output.close()
