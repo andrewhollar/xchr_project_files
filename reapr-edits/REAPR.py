@@ -104,7 +104,11 @@ def main():
             os.makedirs(out_dir)
         # -------------------------------------------------------------------------------
 
-        rnaz_1_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, out_dir, tmp_dir, alignment_format, verbose) for alignment in block_paths] 
+        # -------------------------------------------------------------------------------
+        # EDIT: Added the rnazSelectSeqs.pl as an argument.
+        rnaz_1_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, commands.rnazSelectSeqs, out_dir, tmp_dir, alignment_format, verbose) for alignment in block_paths] 
+        # -------------------------------------------------------------------------------
+
         print >>errF, 'Start: RNAz screen on WGA', utilities.get_time()
         pool = multiprocessing.Pool(processes=args.processes)        
         log_list = pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, rnaz_1_args).get(99999999)

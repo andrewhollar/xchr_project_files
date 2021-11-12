@@ -49,6 +49,30 @@ def index_windows(log_path, other_removals, num_slices, win_to_slice_path):
 
         open(win_to_slice_path, 'w').write('\n'.join([str(x) for x in win_to_slice]) + '\n')
 
+# -------------------------------------------------------------------------------
+# EDIT: Add this method which acts as a filter prior to running rnazWindow. This 
+#       uses the rnazSelectSeqs command to remove sequences that have 100% MPI with
+#       the reference species.
+def run_rnazSelectSeqs(alignment_path, rnazSelectSeqs_output_path, error_log_path, rnazSelectSeqs_command):
+    
+    # log = ''
+    
+    cmd = '%s --max-id=99 %s' % (rnazSelectSeqs_command, alignment_path)
+    
+    rnazSelectSeqs_error_log = open(error_log_path, 'w', int(1e6)) 
+    rnazSelectSeqs_output = open(rnazSelectSeqs_output_path, 'w', int(1e6)) 
+    
+    start_time = time.time()
+    subprocess.Popen(cmd, shell=True, stdout=rnazSelectSeqs_output, stderr=rnazSelectSeqs_error_log).wait()
+    log = cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds'
+    
+    rnazSelectSeqs_error_log.close()
+    rnazSelectSeqs_output.close()
+
+    return log
+    
+# -------------------------------------------------------------------------------
+
 def run_rnazWindow(align_path, windows_path, verbose_path, no_reference, rnazWindow_command, window_size, window_slide, verbose=False):
     """ 
     Runs rnazWindow.pl on the alignment in <align_path> and outputs
@@ -61,9 +85,10 @@ def run_rnazWindow(align_path, windows_path, verbose_path, no_reference, rnazWin
     #       2) Changed the --min-id value from 0 to 40 to remove alignment blocks with too low a 
     #       mean pairwise identity.
     #       3) Added the --min-length=50 option to remove sequences below that length.
+    #       4) Added the --max-masked=1.0 option to match Clayton's script.
     #       Both changes were done to match the Thiel publication.
 
-    cmd = '%s --min-length=50 --window=%s --slide=%s --verbose --max-seqs=40 --min-id=40 --max-gap=0.7 %s %s' % (rnazWindow_command, str(window_size), str(window_slide), no_reference, align_path)
+    cmd = '%s --min-length=50 --window=%s --slide=%s --verbose --max-seqs=40 --min-id=40 --max-gap=0.7 --max-masked=1.0 %s %s' % (rnazWindow_command, str(window_size), str(window_slide), no_reference, align_path)
     # -------------------------------------------------------------------------------
 
     # Open output files with 1mb buffer
@@ -95,8 +120,10 @@ def run_RNAz(windows_path, rnaz_path, both_strands, structural_model, rnaz_comma
     #cmd = '%s -d %s %s --show-gaps --cutoff=0 %s' % (rnaz_command, structural_model, both_strands, windows_path)
 
     # -------------------------------------------------------------------------------
-    # EDIT: Removed the '--show-gaps' command line parameter as it is no longer supported in RNAz 2.1.1
-    cmd = '%s -d %s %s --cutoff=0 %s' % (rnaz_command, structural_model, both_strands, windows_path)
+    # EDIT: 1) Removed the '--show-gaps' command line parameter as it is no longer supported in RNAz 2.1.1
+    #       2) Changed the cutoff from 0.0 to 0.5 to only report those that pass the threshold. 
+    #          >> This is likely to cause problems with the rest of the pipeline.
+    cmd = '%s -d %s %s --cutoff=0.5 %s' % (rnaz_command, structural_model, both_strands, windows_path)
     # -------------------------------------------------------------------------------
 
     # Open output files with 1mb buffer
@@ -115,7 +142,10 @@ def run_RNAz(windows_path, rnaz_path, both_strands, structural_model, rnaz_comma
 
     return log
 
-def eval_alignment(alignment, no_reference, both_strands, window_size, window_slide, structural, RNAz, rnazWindow, out_dir, tmp_dir, alignment_format, verbose=False):
+# -------------------------------------------------------------------------------
+# EDIT: Added the rnazSelectSeqs argument, which provides the location of the perl script.
+# -------------------------------------------------------------------------------
+def eval_alignment(alignment, no_reference, both_strands, window_size, window_slide, structural, RNAz, rnazWindow, rnazSelectSeqs, out_dir, tmp_dir, alignment_format, verbose=False):
     """
     Run an RNAz screen on a MAF alignment
        1.) Slice alignment into windows with rnazWindows.pl
@@ -165,6 +195,15 @@ def eval_alignment(alignment, no_reference, both_strands, window_size, window_sl
 
     # Number of sliding windows spanning the block
     num_slices = int(math.ceil((alignment_length - (window_size - window_slide)) / float(window_slide)))
+
+    # -------------------------------------------------------------------------------
+    # EDIT: Run rnazSelectSeqs
+    
+    filtered_maf_path = os.path.join(tmp_dir, alignment_name[:-4] + '.filtered.maf')
+    selectSeqs_error_log = os.path.join(tmp_dir, alignment_name[:-4] + '.filtered.log')
+    run_rnazSelectSeqs(alignment, filtered_maf_path, selectSeqs_error_log, rnazSelectSeqs)    
+    # -------------------------------------------------------------------------------   
+
 
     # Run rnazWindow
     windows_path = os.path.join(tmp_dir, alignment_name + '.windows')

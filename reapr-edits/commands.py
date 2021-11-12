@@ -1,5 +1,6 @@
 mlocarna='mlocarna'
 RNAz='RNAz'
 rnazWindow='/usr/local/share/RNAz/perl/rnazWindow.pl'
+rnazSelectSeqs='/usr/local/share/RNAz/perl/rnazSelectSeqs.pl'
 alistat='/home/ahollar/software/squid-1.9g/alistat'
 compalignp='compalignp'
