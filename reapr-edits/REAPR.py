@@ -110,6 +110,9 @@ def main():
         log_list = pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, rnaz_1_args).get(99999999)
         print >>errF, 'End: RNAz screen on WGA', utilities.get_time()
 
+
+
+
         ### Compile table of RNAz screen results ###
         rnaz_paths = [a + '.rnaz' for a in block_paths]              # RNAz output
         log_paths = [a + '.windows.log' for a in block_paths]        # rnazWindow verbose logs

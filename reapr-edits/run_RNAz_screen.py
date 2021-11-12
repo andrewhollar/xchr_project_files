@@ -179,6 +179,14 @@ def eval_alignment(alignment, no_reference, both_strands, window_size, window_sl
 
     # Run RNAz
     rnaz_path = os.path.join(tmp_dir, alignment_name + '.rnaz')
+    
+    # -------------------------------------------------------------------------------
+    # EDIT: attempting to prevent RNAz from running when the alignment block has been filtered out.
+    if os.stat(windows_path).st_size == 0:
+        print "Empty alignment file"
+    # -------------------------------------------------------------------------------
+
+        
     log += '\n' + run_RNAz(windows_path, rnaz_path, both_strands, structural, RNAz, verbose)
 
     if redirect:
