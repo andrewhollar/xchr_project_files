@@ -122,7 +122,7 @@ def run_RNAz(windows_path, rnaz_path, both_strands, structural_model, rnaz_comma
     # EDIT: 1) Removed the '--show-gaps' command line parameter as it is no longer supported in RNAz 2.1.1
     #       2) Changed the cutoff from 0.0 to 0.5 to only report those that pass the threshold. 
     #          >> This is likely to cause problems with the rest of the pipeline.
-    cmd = '%s -d %s %s --cutoff=0.5 %s' % (rnaz_command, structural_model, both_strands, windows_path)
+    cmd = '%s -d %s %s --cutoff=0.0 %s' % (rnaz_command, structural_model, both_strands, windows_path)
     # -------------------------------------------------------------------------------
 
     # Open output files with 1mb buffer
