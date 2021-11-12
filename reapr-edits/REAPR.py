@@ -106,7 +106,7 @@ def main():
 
         # -------------------------------------------------------------------------------
         # EDIT: Added the rnazSelectSeqs.pl as an argument.
-        rnaz_1_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, commands.rnazSelectSeqs, out_dir, tmp_dir, alignment_format, verbose) for alignment in block_paths] 
+        rnaz_1_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, commands.rnazSelectSeqs, out_dir, tmp_dir, alignment_format, verbose, 1) for alignment in block_paths] 
         # -------------------------------------------------------------------------------
 
         print >>errF, 'Start: RNAz screen on WGA', utilities.get_time()
@@ -161,10 +161,10 @@ def main():
             no_reference, structural, verbose, both_strands = False, True, True, False
             # -------------------------------------------------------------------------------
             alignment_format='CLUSTAL'
-            target_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, None, tmp_dir, alignment_format, verbose) for alignment in target_files]
+            rnaz_2_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, commands.rnazSelectSeqs, None, tmp_dir, alignment_format, verbose, 2) for alignment in target_files]
             print >>errF, 'Start: RNAz screen on realigned loci, Delta=%s' % delta, utilities.get_time()
             pool = multiprocessing.Pool(processes=args.processes)
-            pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, target_args).get(99999999)
+            pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, rnaz_2_args).get(99999999)
             print >>errF, 'End: RNAz screen on realigned loci, Delta=%s' % delta, utilities.get_time()
             
             ### Compile tables of RNAz results ###

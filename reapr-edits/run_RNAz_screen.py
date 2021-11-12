@@ -144,7 +144,7 @@ def run_RNAz(windows_path, rnaz_path, both_strands, structural_model, rnaz_comma
 # -------------------------------------------------------------------------------
 # EDIT: Added the rnazSelectSeqs argument, which provides the location of the perl script.
 # -------------------------------------------------------------------------------
-def eval_alignment(alignment, no_reference, both_strands, window_size, window_slide, structural, RNAz, rnazWindow, rnazSelectSeqs, out_dir, tmp_dir, alignment_format, verbose=False):
+def eval_alignment(alignment, no_reference, both_strands, window_size, window_slide, structural, RNAz, rnazWindow, rnazSelectSeqs, out_dir, tmp_dir, alignment_format, verbose=False, pass_idx):
     """
     Run an RNAz screen on a MAF alignment
        1.) Slice alignment into windows with rnazWindows.pl
@@ -195,12 +195,12 @@ def eval_alignment(alignment, no_reference, both_strands, window_size, window_sl
     # Number of sliding windows spanning the block
     num_slices = int(math.ceil((alignment_length - (window_size - window_slide)) / float(window_slide)))
 
-    # -------------------------------------------------------------------------------
-    # EDIT: Run rnazSelectSeqs
-    filtered_maf_path = os.path.join(tmp_dir, alignment_name[:-4] + '.filtered.maf')
-    log += run_rnazSelectSeqs(alignment, filtered_maf_path, rnazSelectSeqs)    
-    # -------------------------------------------------------------------------------   
-
+    if pass_idx == 1:
+        # -------------------------------------------------------------------------------
+        # EDIT: Run rnazSelectSeqs
+        filtered_maf_path = os.path.join(tmp_dir, alignment_name[:-4] + '.filtered.maf')
+        log += run_rnazSelectSeqs(alignment, filtered_maf_path, rnazSelectSeqs)    
+        # -------------------------------------------------------------------------------   
 
     # Run rnazWindow
     windows_path = os.path.join(tmp_dir, alignment_name + '.windows')
