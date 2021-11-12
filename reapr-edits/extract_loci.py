@@ -19,6 +19,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
     all_win_recs = open(table_path).read().split('\n')[1:] # Read out header
     all_win_recs = (x.split('\t') for x in all_win_recs if x !='')
     all_win_recs = [(x[block_col], x[strand_col], int(x[slice_idx_col]), int(x[locus_idx_col]), x[species_start_col: species_end_col]) for x in all_win_recs if x[locus_idx_col] != 'NA']
+    print all_win_recs[0]
     
     # List of triples (locus name, locus alignment file (clustal format), ungapped locus (fasta format))
     loci_alignment_list = []

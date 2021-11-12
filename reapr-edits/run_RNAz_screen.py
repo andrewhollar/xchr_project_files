@@ -144,7 +144,7 @@ def run_RNAz(windows_path, rnaz_path, both_strands, structural_model, rnaz_comma
 # -------------------------------------------------------------------------------
 # EDIT: Added the rnazSelectSeqs argument, which provides the location of the perl script.
 # -------------------------------------------------------------------------------
-def eval_alignment(alignment, no_reference, both_strands, window_size, window_slide, structural, RNAz, rnazWindow, rnazSelectSeqs, out_dir, tmp_dir, alignment_format, verbose, pass_idx):
+def eval_alignment(alignment, no_reference, both_strands, window_size, window_slide, structural, RNAz, rnazWindow, rnazSelectSeqs, out_dir, tmp_dir, alignment_format, pass_idx, verbose=False):
     """
     Run an RNAz screen on a MAF alignment
        1.) Slice alignment into windows with rnazWindows.pl

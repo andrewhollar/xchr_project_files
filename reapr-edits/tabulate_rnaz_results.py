@@ -316,7 +316,7 @@ def write_table(table_path, rnaz_paths, block_names, log_paths, index_paths, alt
     for i, (rnaz_path, block_name, log_path, index_path) in enumerate(zip(rnaz_paths, block_names, log_paths, index_paths)):
 
         # Parse the windows
-        table_record_list = parse_windows  (rnaz_path, log_path, block_name, index_path, alternate_strands, species)
+        table_record_list = parse_windows(rnaz_path, log_path, block_name, index_path, alternate_strands, species)
 
         # Merge windows that pass the stability threshold, and record
         # windows that overlap but didn't merged because of
