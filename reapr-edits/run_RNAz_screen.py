@@ -24,7 +24,14 @@ def index_windows(log_path, other_removals, num_slices, win_to_slice_path):
         open(win_to_slice_path, 'w').write('')
     else:
         # Compute <win_to_slice>[i] = slice index of the i-th window output by rnazWindows.pl
-        discard_idx_list = [verbose_log[i-1].split(':')[0].split()[-1] for i,x in enumerate(verbose_log) if 'discarded' in x]
+
+        # -------------------------------------------------------------------------------
+        # EDIT: Attempting to update the discard_idx_list, I suspect that this no longer works due
+        #       to changes made to the output of rnazWindow.pl
+        #discard_idx_list = [verbose_log[i-1].split(':')[0].split()[-1] for i,x in enumerate(verbose_log) if 'discarded' in x]
+        discard_idx_list = [verbose_log[i-2].split(':')[1].split()[-1] for i,x in enumerate(verbose_log) if 'discarded' in x]
+        # -------------------------------------------------------------------------------
+        
         print(discard_idx_list)
         assert len(discard_idx_list) == len(set(discard_idx_list))
         # Offset the indices by 1 to make them 0-based
