@@ -62,11 +62,11 @@ def run_rnazWindow(align_path, windows_path, verbose_path, no_reference, rnazWin
     # EDIT: 1) Added the --max-gap=0.7 option to remove sequences with too many gap characters.
     #       2) Changed the --min-id value from 0 to 40 to remove alignment blocks with too low a 
     #       mean pairwise identity.
+    #       3) Added the --min-length=50 option to remove sequences below that length.
     #       Both changes were done to match the Thiel publication.
 
-    cmd = '%s --window=%s --slide=%s --verbose --max-seqs=40 --min-id=40 --max-gap=0.7 %s %s' % (rnazWindow_command, str(window_size), str(window_slide), no_reference, align_path)
+    cmd = '%s --min-length=50 --window=%s --slide=%s --verbose --max-seqs=40 --min-id=40 --max-gap=0.7 %s %s' % (rnazWindow_command, str(window_size), str(window_slide), no_reference, align_path)
     # -------------------------------------------------------------------------------
-
 
     # Open output files with 1mb buffer
     verbose_log = open(verbose_path, 'w', int(1e6)) 
