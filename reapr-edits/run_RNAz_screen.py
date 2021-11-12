@@ -61,7 +61,11 @@ def run_rnazSelectSeqs(alignment_path, rnazSelectSeqs_output_path, rnazSelectSeq
     
     start_time = time.time()
     subprocess.Popen(cmd, shell=True, stdout=rnazSelectSeqs_output, stderr=subprocess.PIPE).wait()
-    log = cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds'
+    log = cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds\n'
+    
+    
+        # log = cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds'
+
     
     rnazSelectSeqs_output.close()
 
