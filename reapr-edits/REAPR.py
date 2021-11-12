@@ -66,19 +66,21 @@ def main():
         # Check if the MAF alignment block-index file exists.
         utilities.file_exists(args.alignments)
         
-        # Load the MAF alignment blocks into a list. Each entry in this list 
+        # Load the MAF alignment block information into a list. Each entry in this list is a list containing two values:
+        #       1: Name of the alignment block
+        #       2: Filepath of the alignment block
+        #       Ex: ['6way_block_00000085.maf', '/home/ahollar/reapr_x/alignments/6way_block_00000085.maf']
         blocks = [x.split('\t') for x in open(args.alignments).read().split('\n') if x!='']
-        
-        print blocks[0]
-        print blocks
-        raise ValueError("end")
-    
         block_dict = dict(blocks)
         block_names, block_paths = zip(*blocks)
+        
+        # Check if all of the alignment block filepaths exist.
         for a in block_paths: utilities.file_exists(a)
 
-        # List of species
+        # Check if the file containing the list of species exists
         utilities.file_exists(args.species)
+        
+        # Load the names of the species included in the MSA into a list.
         species = sorted([x for x in open(args.species).read().split('\n') if x!=''])
 
         ### Run RNAz screen on WGA ###
@@ -88,7 +90,6 @@ def main():
         # EDIT: Changed the value of 'no_reference' to False, because we are using Human as a reference.    
         no_reference, structural, verbose, both_strands = False, False, True, True
         # -------------------------------------------------------------------------------
-
         alignment_format='MAF'
         
         # -------------------------------------------------------------------------------
@@ -103,10 +104,10 @@ def main():
             os.makedirs(out_dir)
         # -------------------------------------------------------------------------------
 
-        target_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, out_dir, tmp_dir, alignment_format, verbose) for alignment in block_paths] 
+        rnaz_1_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, out_dir, tmp_dir, alignment_format, verbose) for alignment in block_paths] 
         print >>errF, 'Start: RNAz screen on WGA', utilities.get_time()
         pool = multiprocessing.Pool(processes=args.processes)        
-        log_list = pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, target_args).get(99999999)
+        log_list = pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, rnaz_1_args).get(99999999)
         print >>errF, 'End: RNAz screen on WGA', utilities.get_time()
 
         ### Compile table of RNAz screen results ###

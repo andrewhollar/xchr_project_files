@@ -43,7 +43,6 @@ def index_windows(log_path, other_removals, num_slices, win_to_slice_path):
 
         open(win_to_slice_path, 'w').write('\n'.join([str(x) for x in win_to_slice]) + '\n')
 
-
 def run_rnazWindow(align_path, windows_path, verbose_path, no_reference, rnazWindow_command, window_size, window_slide, verbose=False):
     """ 
     Runs rnazWindow.pl on the alignment in <align_path> and outputs
@@ -51,7 +50,15 @@ def run_rnazWindow(align_path, windows_path, verbose_path, no_reference, rnazWin
     """
 
     no_reference = '--no-reference' if no_reference else ''
-    cmd = '%s --window=%s --slide=%s --verbose --max-seqs=40 --min-id=0 %s %s' % (rnazWindow_command, str(window_size), str(window_slide), no_reference, align_path)
+    # -------------------------------------------------------------------------------
+    # EDIT: 1) Added the --max-gap=0.7 option to remove sequences with too many gap characters.
+    #       2) Changed the --min-id value from 0 to 40 to remove alignment blocks with too low a 
+    #       mean pairwise identity.
+    #       Both changes were done to match the Thiel publication.
+
+    cmd = '%s --window=%s --slide=%s --verbose --max-seqs=40 --min-id=40 --max-gap=0.7 %s %s' % (rnazWindow_command, str(window_size), str(window_slide), no_reference, align_path)
+    # -------------------------------------------------------------------------------
+
 
     # Open output files with 1mb buffer
     verbose_log = open(verbose_path, 'w', int(1e6)) 
@@ -112,13 +119,13 @@ def eval_alignment(alignment, no_reference, both_strands, window_size, window_sl
     -------------------------------------------
     alignment       : File path to MAF alignment
     log             : File handler to logging file
-    window_size     :
-    window_slide    :
+    window_size     : The number of columns in each window
+    window_slide    : The number of columns to move
     RNAz            :
     rnazWindow      :
     out_dir         :
     verbose         :
-    no_reference    :
+    no_reference    : 
 
     Output
     ------------------------------------------
@@ -142,39 +149,43 @@ def eval_alignment(alignment, no_reference, both_strands, window_size, window_sl
         tmp_dir = os.path.join(tmp_dir, x)
         os.mkdir(tmp_dir)
 
+    # Initialize the log variable to hold the output from rnazWindow and RNAz procedures.
     log = ''
 
-    name = os.path.basename(alignment)
+    alignment_name = os.path.basename(alignment)
 
     # Length of alignment (i.e. # of columns)
-    length = utilities.get_seq_length(alignment, form=alignment_format)
+    alignment_length = utilities.get_seq_length(alignment, form=alignment_format)
 
     # Number of sliding windows spanning the block
-    num_slices = int(math.ceil((length - (window_size - window_slide)) / float(window_slide)))
+    num_slices = int(math.ceil((alignment_length - (window_size - window_slide)) / float(window_slide)))
 
     # Run rnazWindow
-    windows_path = os.path.join(tmp_dir, name + '.windows')
-    verbose_path = os.path.join(tmp_dir, name + '.windows.log')
+    windows_path = os.path.join(tmp_dir, alignment_name + '.windows')
+    verbose_path = os.path.join(tmp_dir, alignment_name + '.windows.log')
     log += run_rnazWindow(alignment, windows_path, verbose_path, no_reference, rnazWindow, window_size, window_slide, verbose)
 
     # Write the window to slice index map
-    win_to_slice_path = os.path.join(tmp_dir, name + '.windows.indices')
+    win_to_slice_path = os.path.join(tmp_dir, alignment_name + '.windows.indices')
     index_windows(verbose_path, [], num_slices, win_to_slice_path)
 
     # Run RNAz
-    rnaz_path = os.path.join(tmp_dir, name + '.rnaz')
+    rnaz_path = os.path.join(tmp_dir, alignment_name + '.rnaz')
     log += '\n' + run_RNAz(windows_path, rnaz_path, both_strands, structural, RNAz, verbose)
 
     if redirect:
         for suffix in ['.windows', '.windows.log', '.rnaz', '.windows.indices']:
-            dest = os.path.join(out_dir, name + suffix)
+            dest = os.path.join(out_dir, alignment_name + suffix)
             if os.path.isfile(dest): os.remove(dest)   # remove before writing
-            shutil.move(os.path.join(tmp_dir, name + suffix), dest)
+            shutil.move(os.path.join(tmp_dir, alignment_name + suffix), dest)
         shutil.rmtree(tmp_dir)
 
     if verbose: print >>sys.stderr, log + '\n'
     return log
 
+
+# This method is the main driver of the first RNAz screen. This will begin the procedure on
+# each of the alignment blocks of the MAF MSA.
 def eval_alignment_multiprocessing(x):
     try:
         return eval_alignment(*x)

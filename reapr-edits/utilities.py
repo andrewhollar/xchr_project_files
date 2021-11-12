@@ -613,8 +613,12 @@ clustal_standard_header = 'CLUSTAL 2.0.10 multiple sequence alignment\n\n'
 
 # Parameters for sliding window across WGA
 WINDOW_SIZE = 120   # Length of Window
-WINDOW_SLIDE = 40   # Length of slide from window to window
 
+# -------------------------------------------------------------------------------
+# EDIT: Changed the window-slide value to 20 to match the Thiel publication.
+WINDOW_SLIDE = 20   # Length of slide from window to window
+# -------------------------------------------------------------------------------
+        
 STABILITY_THRESHOLD = -1  # Upper threshold on mean z score
 
 PROCESSES = 1  # Number of process to parallelize
