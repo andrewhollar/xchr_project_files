@@ -81,7 +81,10 @@ def parse_windows(rnaz_path, log_path, block, index_path, alternate_strands, all
 
     end_border   = '######################################################################'
 
-    window_results_list = open(rnaz_path).read().split(start_border)[1:]
+    try:
+        window_results_list = open(rnaz_path).read().split(start_border)[1:]
+    except IOError:
+        return []
     win_to_slice = [int(x) for x in open(index_path).read().split('\n') if x != '']
     win_idx = 0         # Keep track of the window index
     strand = 'forward'  # Keep track of the window strand
