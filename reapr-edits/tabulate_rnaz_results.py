@@ -81,10 +81,14 @@ def parse_windows(rnaz_path, log_path, block, index_path, alternate_strands, all
 
     end_border   = '######################################################################'
 
+    # -------------------------------------------------------------------------------
+    # EDIT: Added a try/except block to assess the case where an .rnaz file is not produced.
     try:
         window_results_list = open(rnaz_path).read().split(start_border)[1:]
     except IOError:
         return []
+    # -------------------------------------------------------------------------------
+
     win_to_slice = [int(x) for x in open(index_path).read().split('\n') if x != '']
     win_idx = 0         # Keep track of the window index
     strand = 'forward'  # Keep track of the window strand
@@ -244,8 +248,12 @@ def merge_windows(table_record_list, threshold, alternate_strands, all_species):
     # Sort the windows according to their slice index
     table_record_list.sort(key=lambda x: int(x[slice_idx_col]))
 
+    # -------------------------------------------------------------------------------
     # Filter for windows that are below the MFE z-score threshold
-    filtered_list = [x for x in table_record_list if float(x[mean_z_score_col]) <= threshold]
+    # EDIT: Change the column used for filtering. Instead of using the mean_z_score_column, use the p_score_col
+    # filtered_list = [x for x in table_record_list if float(x[mean_z_score_col]) <= threshold]
+    filtered_list = [x for x in table_record_list if float(x[p_score_col]) >= threshold]
+    # -------------------------------------------------------------------------------
 
     # Merge only same strands of windows
     locus_idx = 0    # Counter for the current locus index
