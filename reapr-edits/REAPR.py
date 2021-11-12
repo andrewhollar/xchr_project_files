@@ -155,6 +155,8 @@ def main():
             target_files = [x for x,y in zip(target_files, success) if y]
             print >>errF, 'End: LocARNA realignment, Delta=%s' % delta, utilities.get_time()
 
+            raise IOError("End")
+
             ### Run RNAz screen on realigned loci ###
             # -------------------------------------------------------------------------------
             # EDIT: Changed the value of 'no_reference' to False, because we are using Human as a reference.  
