@@ -201,7 +201,7 @@ def eval_alignment(alignment, no_reference, both_strands, window_size, window_sl
     
     filtered_maf_path = os.path.join(tmp_dir, alignment_name[:-4] + '.filtered.maf')
     selectSeqs_error_log = os.path.join(tmp_dir, alignment_name[:-4] + '.filtered.log')
-    run_rnazSelectSeqs(alignment, filtered_maf_path, selectSeqs_error_log, rnazSelectSeqs)    
+    log += run_rnazSelectSeqs(alignment, filtered_maf_path, selectSeqs_error_log, rnazSelectSeqs)    
     # -------------------------------------------------------------------------------   
 
 
