@@ -30,11 +30,20 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
     # Iterate over syntenic blocks
     # The bin_list utility method will create seperate lists of window records according to the MAF file they originated from.
     block_group_list = utilities.bin_list(all_win_recs, key = lambda x: x[0])
-    num_paths = len(block_group_list)
+    # -------------------------------------------------------------------------------
+    # EDIT: removed unused variable.
+    # num_paths = len(block_group_list)
+    # -------------------------------------------------------------------------------
+
     for i, block_group in enumerate(block_group_list):
         
+        # Get the name of the block (including the .maf extension) 
+        # Ex: 6way_block_00000085.maf
         block = block_group[0][0]
+        
+        
         block_path = block_dict[block]
+        print block_path
         
         # -------------------------------------------------------------------------------
         # EDIT: Create new variable to act as name for output directory
