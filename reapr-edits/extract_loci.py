@@ -114,7 +114,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             # -------------------------------------------------------------------------------
 
             else:
-                print "Need to retrieve nucleotides from the Genome FASTA files."
+                print "Need to retrieve nucleotides from the Genome FASTA files. %s" % (block)
 
             for k, header in enumerate(header_list):
                 if species_present[all_species.index(header)]:
