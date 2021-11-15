@@ -85,7 +85,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             species_present = [False for x in all_species]
             for window in locus_group:
                 print window
-                print int(window[4])
+                print bool(int(window[4]))
                 species_present = [bool(int(x)) or y for x,y in zip(window[4], species_present)]
 
             # Extract the locus's sequences and fasta headers 
