@@ -195,6 +195,9 @@ def eval_alignment(alignment, no_reference, both_strands, window_size, window_sl
     # Number of sliding windows spanning the block
     num_slices = int(math.ceil((alignment_length - (window_size - window_slide)) / float(window_slide)))
 
+    print alignment_name
+    print num_slices
+
     if pass_idx == 1:
         # -------------------------------------------------------------------------------
         # EDIT: Run rnazSelectSeqs

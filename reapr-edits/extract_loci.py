@@ -73,7 +73,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             seq_list = [a[6] for a in maf_list]
             header_list = [a[1] for a in maf_list]
 
-        utilities.get_alignment_block_sequence_lengths(maf_list)
+        alignment_block_genomic_coordinates = utilities.get_alignment_block_sequence_lengths(maf_list)
 
         # Make directory for syntenic block's loci
         # -------------------------------------------------------------------------------
@@ -96,6 +96,14 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             locus_seq_list = []
             start_slice_idx = min([window[2] for window in locus_group])
             end_slice_idx = max([window[2] for window in locus_group])
+            # -------------------------------------------------------------------------------
+            # Number of sliding windows spanning the block
+            alignment_length = alignment_block_genomic_coordinates[all_species[0]][1] - alignment_block_genomic_coordinates[all_species[0]][0]
+            num_slices_in_original_maf = int(math.ceil((alignment_length - (win_size - win_slide)) / float(win_slide)))
+            print block_path
+            print num_slices_in_original_maf
+            # -------------------------------------------------------------------------------
+
             start_column = start_slice_idx * win_slide
             end_column = end_slice_idx * win_slide + win_size
             for k, header in enumerate(header_list):

@@ -597,7 +597,7 @@ def directory_exists(f):
 # -------------------------------------------------------------------------------
 # EDIT: Added method to retrieve the genomic coordinates of the sequences included in the alignment block.
 def get_alignment_block_sequence_lengths(maf_sequence_lines):
-    species_genomic_coordinates = []
+    species_genomic_coordinates = {}
     
     for maf_sequence in maf_sequence_lines:
         maf_sequence_line_tokens = maf_sequence.split('\t')
@@ -605,9 +605,9 @@ def get_alignment_block_sequence_lengths(maf_sequence_lines):
         species_start = int(maf_sequence_line_tokens[2])
         species_end = species_start + int(maf_sequence_line_tokens[3])
         
-        species_genomic_coordinates.append((species_name, species_start, species_end))
+        species_genomic_coordinates[species_name] = (species_start, species_end)
     
-    print species_genomic_coordinates
+    return species_genomic_coordinates
 # -------------------------------------------------------------------------------
 
 
