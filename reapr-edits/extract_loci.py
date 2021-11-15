@@ -128,6 +128,9 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             # Remove columns with only gaps
             locus_seq_list = utilities.remove_redundant_gaps(locus_seq_list)
 
+            if "6way_block_00000740" in block:
+                print locus_seq_list
+
             ### Write locus ###
             locus_idx = str(locus_group[0][3])
 
