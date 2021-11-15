@@ -28,8 +28,8 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
     loci_alignment_list = []
 
     # Iterate over syntenic blocks
+    # The bin_list utility method will create seperate lists of window records according to the MAF file they originated from.
     block_group_list = utilities.bin_list(all_win_recs, key = lambda x: x[0])
-    print block_group_list
     num_paths = len(block_group_list)
     for i, block_group in enumerate(block_group_list):
         
