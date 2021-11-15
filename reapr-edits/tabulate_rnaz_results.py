@@ -184,8 +184,8 @@ def parse_windows(rnaz_path, log_path, block, index_path, alternate_strands, all
             variance_z_score += (z_score - float(mean_z_score))**2
             
         # -------------------------------------------------------------------------------
-        if "6way_block_00000740" in block:
-            print species_present    
+        # if "6way_block_00000740" in block:
+        #     print species_present    
         # -------------------------------------------------------------------------------
         
         variance_single_seq_mfe = round(variance_single_seq_mfe /  float(sequences), 2)
