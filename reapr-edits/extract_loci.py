@@ -113,6 +113,9 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                 end_column += win_slide
             # -------------------------------------------------------------------------------
 
+            else:
+                print "Need to retrieve nucleotides from the Genome FASTA files."
+
             for k, header in enumerate(header_list):
                 if species_present[all_species.index(header)]:
                     locus_header_list.append(header)
