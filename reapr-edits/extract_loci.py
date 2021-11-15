@@ -56,6 +56,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             maf_list = [x for x in open(block_path).read().split('\n') if len(x)>0 and x[0]=='s']
             # -------------------------------------------------------------------------------
             seq_list = [x.split()[6] for x in maf_list]
+            print seq_list
 
             # Remove the chromosome names from the MAF headers
             # This is needed for concordance with the species guide tree for LocARNA
@@ -84,10 +85,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             # Take the union of the species present in this locus's window
             species_present = [False for x in all_species]
             for window in locus_group:
-                print window
-                # print bool(int(window[4]))
                 species_present = [bool(int(x)) or y for x,y in zip(window[4], species_present)]
-                print species_present
 
             # Extract the locus's sequences and fasta headers 
             locus_header_list = []
