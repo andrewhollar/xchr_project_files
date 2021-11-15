@@ -57,11 +57,11 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             # -------------------------------------------------------------------------------
             
             seq_list = [x.split()[6] for x in maf_list]
-            print seq_list
 
             # Remove the chromosome names from the MAF headers
             # This is needed for concordance with the species guide tree for LocARNA
             header_list = [x.split()[1].split('.')[0] for x in maf_list]
+            print header_list
 
         else:
             # Parse MAF alignment
