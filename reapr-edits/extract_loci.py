@@ -51,14 +51,13 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
     
         if encode_multiz:
             # Get MAF alignments of syntenic blocks
-            
             # -------------------------------------------------------------------------------
             # EDIT: Removed additional '.maf' from filepath as it is not needed.
             maf_list = [x for x in open(block_path).read().split('\n') if len(x)>0 and x[0]=='s']
-            print maf_list
             # -------------------------------------------------------------------------------
             
             seq_list = [x.split()[6] for x in maf_list]
+            print seq_list
 
             # Remove the chromosome names from the MAF headers
             # This is needed for concordance with the species guide tree for LocARNA
