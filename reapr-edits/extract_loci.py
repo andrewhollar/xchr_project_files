@@ -78,13 +78,14 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
         if not os.path.isdir(locus_dir): os.makedirs(locus_dir)
         
         # Iterate over loci
+        # This separates the windows by the previously assigned locus index.
         locus_group_list = utilities.bin_list(block_group, key = lambda x: x[3])
-        print locus_group_list
         for locus_group in locus_group_list:
 
             # Take the union of the species present in this locus's window
             species_present = [False for x in all_species]
             for window in locus_group:
+                print window
                 species_present = [bool(int(x)) or y for x,y in zip(window[4], species_present)]
 
             # Extract the locus's sequences and fasta headers 
