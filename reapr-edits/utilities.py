@@ -594,6 +594,13 @@ def directory_exists(f):
     assert os.path.isdir(f), 'Error: {0} is not a directory'.format(f)
 
 
+# -------------------------------------------------------------------------------
+# EDIT: Added method to retrieve the genomic coordinates of the sequences included in the alignment block.
+def get_alignment_block_sequence_lengths(alignment_block_path):
+    block_entries = [x for x in open(alignment_block_path).read().split('\n') if len(x)>0 and x[0]=='s']
+    print block_entries
+# -------------------------------------------------------------------------------
+
 
 # Fixed parameters: do not change #
 #----------------------------------
