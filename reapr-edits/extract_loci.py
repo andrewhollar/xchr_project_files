@@ -108,7 +108,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             # -------------------------------------------------------------------------------
             # EDIT: add 20nt flanking regions to loci that have those regions in the initial alignment block.
             if start_slice_idx != 0 and (num_slices_in_original_maf - end_slice_idx) > 0:  
-                print "adding 20nt to both ends of this locus"
+                #print "adding 20nt to both ends of this locus"
                 start_column -= win_slide
                 end_column += win_slide
             # -------------------------------------------------------------------------------
@@ -129,7 +129,9 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             locus_seq_list = utilities.remove_redundant_gaps(locus_seq_list)
 
             if "6way_block_00000740" in block:
-                print locus_seq_list
+                print species_present
+                print maf_list
+                #print locus_seq_list
 
             ### Write locus ###
             locus_idx = str(locus_group[0][3])
