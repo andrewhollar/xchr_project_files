@@ -58,7 +58,7 @@ def get_table_header(all_species):
     table_header = '#' + '\t'.join(table_header) + '\n'
     return table_header
 
-def parse_windows(rnaz_path, log_path, block, index_path, alternate_strands, all_species):
+def parse_windows(rnaz_path, log_path, block, index_path, alternate_strands, all_species, encode_multiz=True):
     """
     Returns a list table_record_list where the i-th element is a list
     describing the i-th window of a syntenic block.
@@ -160,15 +160,18 @@ def parse_windows(rnaz_path, log_path, block, index_path, alternate_strands, all
             species = lines[i][1:].split()[0] # Extract the species name
             
             # -------------------------------------------------------------------------------
-            if "6way_block_00000740" in block:
-                print species
+            # if "6way_block_00000740" in block:
+            #     print species
             # -------------------------------------------------------------------------------
             
             if species == 'consensus': continue # Skip the consensus sequence
 
-            # # Hack for the Encode Multiz alignment in order to remove the chromosome name from the species identifier in the RNAz output
-            # if args.encode_multiz: species = species.split('.')[0]
-
+            # -------------------------------------------------------------------------------
+            # EDIT: uncommented the following line to remove the '.chr' extension from species names.
+            # Hack for the Encode Multiz alignment in order to remove the chromosome name from the species identifier in the RNAz output
+            if encode_multiz: species = species.split('.')[0]
+            # -------------------------------------------------------------------------------
+        
             # if '2R_19576798_19582822.maf.rnaz' in rnaz_path and SVM_RNA_prob == '0.667406':
             #     print >>sys.stderr, species, species_present, all_species
 
