@@ -14,7 +14,7 @@ def run_locarna(locarna, clustal_path, ungap_fasta_path, target_dir, target_file
     target_dir_arg   = '--tgtdir={0}'.format(target_dir)
 
     # Run LocARNA, (don't include --write-structure because it's unnecessary since intermediate directory will be deleted?)
-    cmd = '%s %s %s %s %s --keep-sequence-order --verbose %s %s' \
+    cmd = '%s %s %s %s %s --keep-sequence-order %s %s' \
         % (locarna, acd_arg, guide_tree_arg, ref_arg, max_diff_arg, target_dir_arg, ungap_fasta_path)
 
     start_time = time.time()
