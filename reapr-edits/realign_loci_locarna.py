@@ -19,7 +19,7 @@ def run_locarna(locarna, clustal_path, ungap_fasta_path, target_dir, target_file
 
     start_time = time.time()
     # subprocess.Popen(cmd, shell=True, stdout=open('/dev/null','w'), stderr=subprocess.STDOUT).wait()
-    subprocess.Popen(cmd, shell=True, stdout=subprocess.STDOUT, stderr=subprocess.STDOUT).wait()
+    subprocess.Popen(cmd, shell=True, stdout=subprocess.STDOUT, stderr=subprocess.PIPE).wait()
     if verbose: print >>sys.stderr, cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds\n'
 
     # Copy final alignment 'results/result.aln' and delete
