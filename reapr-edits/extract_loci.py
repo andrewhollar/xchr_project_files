@@ -55,13 +55,11 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             # EDIT: Removed additional '.maf' from filepath as it is not needed.
             maf_list = [x for x in open(block_path).read().split('\n') if len(x)>0 and x[0]=='s']
             # -------------------------------------------------------------------------------
-            
             seq_list = [x.split()[6] for x in maf_list]
 
             # Remove the chromosome names from the MAF headers
             # This is needed for concordance with the species guide tree for LocARNA
             header_list = [x.split()[1].split('.')[0] for x in maf_list]
-            print header_list
 
         else:
             # Parse MAF alignment
@@ -75,13 +73,13 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
         # Make directory for syntenic block's loci
         # -------------------------------------------------------------------------------
         # EDIT: changed the location of the locus output directory, this removes the .maf from the filepath
-        locus_dir = os.path.join(loci_dir, block_filepath)
+        locus_dir = os.path.join(loci_dir, block.split('.')[0])
         # -------------------------------------------------------------------------------
-        
         if not os.path.isdir(locus_dir): os.makedirs(locus_dir)
         
         # Iterate over loci
         locus_group_list = utilities.bin_list(block_group, key = lambda x: x[3])
+        print locus_group_list
         for locus_group in locus_group_list:
 
             # Take the union of the species present in this locus's window
