@@ -82,6 +82,8 @@ def main():
         
         # Load the names of the species included in the MSA into a list.
         species = sorted([x for x in open(args.species).read().split('\n') if x!=''])
+        
+        print species
 
         ### Run RNAz screen on WGA ###
         
