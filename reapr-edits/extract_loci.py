@@ -97,15 +97,22 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             start_slice_idx = min([window[2] for window in locus_group])
             end_slice_idx = max([window[2] for window in locus_group])
             # -------------------------------------------------------------------------------
-            # Number of sliding windows spanning the block
+            # Number of sliding windows spanning the unfiltered block
             alignment_length = alignment_block_genomic_coordinates[all_species[0]][1] - alignment_block_genomic_coordinates[all_species[0]][0]
             num_slices_in_original_maf = int(math.ceil((alignment_length - (win_size - win_slide)) / float(win_slide)))
-            print block_path
-            print num_slices_in_original_maf
             # -------------------------------------------------------------------------------
 
             start_column = start_slice_idx * win_slide
             end_column = end_slice_idx * win_slide + win_size
+
+            # -------------------------------------------------------------------------------
+            # EDIT: add 20nt flanking regions to loci that have those regions in the initial alignment block.
+            if start_slice_idx != 0 and (num_slices_in_original_maf - end_slice_idx) > 0:  
+                print "adding 20nt to both ends of this locus"
+                start_column -= win_slide
+                end_column += win_slide
+            # -------------------------------------------------------------------------------
+
             for k, header in enumerate(header_list):
                 if species_present[all_species.index(header)]:
                     locus_header_list.append(header)
