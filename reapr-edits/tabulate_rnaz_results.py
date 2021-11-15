@@ -169,7 +169,7 @@ def parse_windows(rnaz_path, log_path, block, index_path, alternate_strands, all
             # -------------------------------------------------------------------------------
             # EDIT: uncommented the following line to remove the '.chr' extension from species names.
             # Hack for the Encode Multiz alignment in order to remove the chromosome name from the species identifier in the RNAz output
-            if encode_multiz: species = species.split('.')[0]
+            # if encode_multiz: species = species.split('.')[0]
             # -------------------------------------------------------------------------------
         
             # if '2R_19576798_19582822.maf.rnaz' in rnaz_path and SVM_RNA_prob == '0.667406':
