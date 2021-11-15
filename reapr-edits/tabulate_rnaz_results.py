@@ -158,6 +158,12 @@ def parse_windows(rnaz_path, log_path, block, index_path, alternate_strands, all
         for i in range(lines.index(end_border) + 2, len(lines) - 2, 3):
             assert lines[i][0] == '>' # Make sure that lines[i] is the start of a sequence's data
             species = lines[i][1:].split()[0] # Extract the species name
+            
+            # -------------------------------------------------------------------------------
+            if "6way_block_00000740" in block:
+                print species
+            # -------------------------------------------------------------------------------
+            
             if species == 'consensus': continue # Skip the consensus sequence
 
             # # Hack for the Encode Multiz alignment in order to remove the chromosome name from the species identifier in the RNAz output
