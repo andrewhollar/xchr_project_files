@@ -44,7 +44,6 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
         # Get the filepath to the alignment block
         block_path = block_dict[block]
         
-        utilities.get_alignment_block_sequence_lengths(block_path)
         
         # -------------------------------------------------------------------------------
         # EDIT: Create new variable to act as name for output directory
@@ -73,6 +72,8 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             
             seq_list = [a[6] for a in maf_list]
             header_list = [a[1] for a in maf_list]
+
+        utilities.get_alignment_block_sequence_lengths(maf_list)
 
         # Make directory for syntenic block's loci
         # -------------------------------------------------------------------------------
