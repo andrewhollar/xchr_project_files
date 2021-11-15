@@ -81,7 +81,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
         # This separates the windows by the previously assigned locus index.
         locus_group_list = utilities.bin_list(block_group, key = lambda x: x[3])
         for locus_group in locus_group_list:
-
+            print locus_group
             # Take the union of the species present in this locus's window
             species_present = [False for x in all_species]
             for window in locus_group:
