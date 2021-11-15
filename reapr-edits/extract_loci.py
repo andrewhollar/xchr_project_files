@@ -37,17 +37,16 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
 
     for i, block_group in enumerate(block_group_list):
         
-        # Get the name of the block (including the .maf extension) 
+        # Get the name of the alignment block (including the .maf extension) 
         # Ex: 6way_block_00000085.maf
         block = block_group[0][0]
         
-        
+        # Get the filepath to the alignment block
         block_path = block_dict[block]
-        print block_path
         
         # -------------------------------------------------------------------------------
         # EDIT: Create new variable to act as name for output directory
-        block_filepath = block_group[0][0].split('.')[0]
+        # block_filepath = block_group[0][0].split('.')[0]
         # -------------------------------------------------------------------------------
     
         if encode_multiz:
@@ -56,6 +55,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             # -------------------------------------------------------------------------------
             # EDIT: Removed additional '.maf' from filepath as it is not needed.
             maf_list = [x for x in open(block_path).read().split('\n') if len(x)>0 and x[0]=='s']
+            print maf_list
             # -------------------------------------------------------------------------------
             
             seq_list = [x.split()[6] for x in maf_list]
