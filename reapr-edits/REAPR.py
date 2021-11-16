@@ -83,8 +83,6 @@ def main():
         # Load the names of the species included in the MSA into a list.
         species = sorted([x for x in open(args.species).read().split('\n') if x!=''])
         
-        print species
-
         ### Run RNAz screen on WGA ###
         
         # Locate RNAz and rnazWindow.pl
@@ -154,7 +152,7 @@ def main():
             target_files = [x for x,y in zip(target_files, success) if y]
             print >>errF, 'End: LocARNA realignment, Delta=%s' % delta, utilities.get_time()
 
-            raise IOError("End")
+            # raise IOError("End")
 
             ### Run RNAz screen on realigned loci ###
             # -------------------------------------------------------------------------------
