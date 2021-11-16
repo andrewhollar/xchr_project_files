@@ -150,6 +150,7 @@ def main():
             pool = multiprocessing.Pool(processes=args.processes)
             success = pool.map_async(realign_loci_locarna.run_locarna_pool, target_args).get(99999999)
             target_files = [x for x,y in zip(target_files, success) if y]
+            print target_files
             print >>errF, 'End: LocARNA realignment, Delta=%s' % delta, utilities.get_time()
 
             # raise IOError("End")
