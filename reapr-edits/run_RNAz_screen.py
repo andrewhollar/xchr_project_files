@@ -210,7 +210,10 @@ def eval_alignment(alignment, no_reference, both_strands, window_size, window_sl
     verbose_path = os.path.join(tmp_dir, alignment_name + '.windows.log')
     # -------------------------------------------------------------------------------
     # EDIT: Changed the input alignment to be the output from rnazSelectSeqs.
-    log += run_rnazWindow(filtered_maf_path, windows_path, verbose_path, no_reference, rnazWindow, window_size, window_slide, verbose)
+    if pass_idx == 1:
+        log += run_rnazWindow(filtered_maf_path, windows_path, verbose_path, no_reference, rnazWindow, window_size, window_slide, verbose)
+    else:
+        log += run_rnazWindow(alignment, windows_path, verbose_path, no_reference, rnazWindow, window_size, window_slide, verbose)
     # -------------------------------------------------------------------------------
 
     # Write the window to slice index map
