@@ -70,6 +70,13 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             header_list = [x.split()[1].split('.')[0] for x in maf_list]
             # print header_list
 
+            # -------------------------------------------------------------------------------
+            # Edit: Added another list to get the contigs of the sequences included in the alignment block
+            contig_list = [x.split()[1].split('.')[1] for x in maf_list]
+            print contig_list
+            # -------------------------------------------------------------------------------
+
+
         else:
             # Parse MAF alignment
             maf_list = [[a.split('\t') for a in x.split('\n') if a!='' and a[0]=='s'] for x in open(block_path).read().split('a score') if x!='']
@@ -103,29 +110,42 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             # Extract the locus's sequences and fasta headers 
             locus_header_list = []
             locus_seq_list = []
+            
+            # These are the indices of the start and end of the windows within the locus.
             start_slice_idx = min([window[2] for window in locus_group])
             end_slice_idx = max([window[2] for window in locus_group])
-            # -------------------------------------------------------------------------------
-            # Number of sliding windows spanning the unfiltered block
-            alignment_length = alignment_block_genomic_coordinates[all_species[0]][1] - alignment_block_genomic_coordinates[all_species[0]][0]
-            num_slices_in_original_maf = int(math.ceil((alignment_length - (win_size - win_slide)) / float(win_slide)))
-            # -------------------------------------------------------------------------------
-
+            
+            # These are the indices of the start and end of the sequence included within the
             start_column = start_slice_idx * win_slide
             end_column = end_slice_idx * win_slide + win_size
+            
+            # -------------------------------------------------------------------------------
+            # Number of sliding windows spanning the unfiltered block
+            #alignment_length = alignment_block_genomic_coordinates[all_species[0]][1] - alignment_block_genomic_coordinates[all_species[0]][0]
+            #num_slices_in_original_maf = int(math.ceil((alignment_length - (win_size - win_slide)) / float(win_slide)))
+            # -------------------------------------------------------------------------------
+            # BED information
+            
+
+
 
             # -------------------------------------------------------------------------------
             # EDIT: add 20nt flanking regions to loci that have those regions in the initial alignment block.
-            if start_slice_idx != 0 and (num_slices_in_original_maf - end_slice_idx) > 0:  
-                #print "adding 20nt to both ends of this locus"
-                start_column -= win_slide
-                end_column += win_slide
-            # -------------------------------------------------------------------------------
-            else:
-                print "Need to retrieve nucleotides from the Genome FASTA files. %s" % (block)
+            # if start_slice_idx != 0 and (num_slices_in_original_maf - end_slice_idx) > 0:  
+            #     #print "adding 20nt to both ends of this locus"
+            #     start_column -= win_slide
+            #     end_column += win_slide
+            # # -------------------------------------------------------------------------------
+            # else:
+            #     print "Need to retrieve nucleotides from the Genome FASTA files. %s" % (block)
 
             for k, header in enumerate(header_list):
                 if species_present[all_species.index(header)]:
+                    
+                    # BED information
+                    
+                    
+                    
                     locus_header_list.append(header)
                     locus_seq_list.append(seq_list[k][start_column : end_column])
 
