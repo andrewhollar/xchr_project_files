@@ -616,6 +616,10 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx):
     
     bed_filepath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".bed")
     bed_error_outpath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".log")
+    
+    if species == "Homo_sapiens":
+        contig = human_molecule_to_contig_dict[contig]
+    
     bed_entry = "\t".join([contig, str(start), str(end)])
     open(bed_filepath, "w").write(bed_entry)
     
@@ -641,6 +645,9 @@ species_to_genome_dict = {"Homo_sapiens": os.path.join(GENOME_DIR, "GCA_00000140
                         "Canis_lupus_familiaris": os.path.join(GENOME_DIR, "GCF_000002285.3_CanFam3.1_genomic.fna"), \
                         "Sus_scrofa": os.path.join(GENOME_DIR, "GCF_000003025.5_Sscrofa10.2_genomic.fna"), \
                         "Oryctolagus_cuniculus": os.path.join(GENOME_DIR, "GCF_000003625.3_OryCun2.0_genomic.fna")}
+
+
+human_molecule_to_contig_dict = {'chrX': "CM000685.2"}
 
 
 # Fixed parameters: do not change #
