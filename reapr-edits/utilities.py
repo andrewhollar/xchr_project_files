@@ -610,7 +610,7 @@ def get_alignment_block_sequence_lengths(maf_sequence_lines):
     return species_genomic_coordinates
 
 # EDIT: Added method to retrieve the flanked sequence of nucleotides.
-def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx):
+def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, unflanked_seq):
     from commands import BEDTOOLS
     # print species_to_genome_dict['Homo_sapiens']
     
@@ -636,6 +636,9 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx):
     print 'Running time: ' + str(time.time() - start_time) + ' seconds'
     
     bed_error.close()
+    
+    flanked_seq = open(flanked_output).read()
+    assert unflanked_seq in flanked_seq
 
 # -------------------------------------------------------------------------------
 
