@@ -93,11 +93,9 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
         # -------------------------------------------------------------------------------
         # EDIT: changed the location of the locus output directory, this removes the .maf from the filepath
         locus_dir = os.path.join(loci_dir, block.split('.')[0])
-        locus_bed_dir = os.path.join(locus_dir, locus_idx + "_BED_FILES")
         
         # -------------------------------------------------------------------------------
         if not os.path.isdir(locus_dir): os.makedirs(locus_dir)
-        if not os.path.isdir(locus_bed_dir): os.makedirs(locus_bed_dir)
 
         
         # Iterate over loci
@@ -105,7 +103,15 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
         locus_group_list = utilities.bin_list(block_group, key = lambda x: x[3])
         for locus_group in locus_group_list:
             
+            
             locus_idx = str(locus_group[0][3])
+
+            # -------------------------------------------------------------------------------
+            # EDIT: added subdirectory to hold the BED files pertaining to this locus
+            locus_bed_dir = os.path.join(locus_dir, locus_idx + "_BED_FILES")
+            if not os.path.isdir(locus_bed_dir): os.makedirs(locus_bed_dir)
+            # -------------------------------------------------------------------------------
+
             
             # Take the union of the species present in this locus's window
             species_present = [False for x in all_species]
