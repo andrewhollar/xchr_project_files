@@ -3,7 +3,7 @@ import utilities
 
 
 
-def write_bed_file():
+#def write_bed_file():
     
 
 
