@@ -93,8 +93,12 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
         # -------------------------------------------------------------------------------
         # EDIT: changed the location of the locus output directory, this removes the .maf from the filepath
         locus_dir = os.path.join(loci_dir, block.split('.')[0])
+        locus_bed_dir = os.path.join(locus_dir, locus_idx + "_BED_FILES")
+        
         # -------------------------------------------------------------------------------
         if not os.path.isdir(locus_dir): os.makedirs(locus_dir)
+        if not os.path.isdir(locus_bed_dir): os.makedirs(locus_bed_dir)
+
         
         # Iterate over loci
         # This separates the windows by the previously assigned locus index.
@@ -164,7 +168,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     # bed_lengths.append(bed_end - bed_start)
                     
                     print (species_name, contig_name, bed_start, bed_end)
-                    utilities.get_flanked_sequence(species_name, contig_name, bed_start, bed_end, locus_dir, locus_idx)
+                    utilities.get_flanked_sequence(species_name, contig_name, bed_start, bed_end, locus_bed_dir, locus_idx)
                     
                     locus_header_list.append(species_name)
                     locus_seq_list.append(seq_list[k][start_column : end_column])
