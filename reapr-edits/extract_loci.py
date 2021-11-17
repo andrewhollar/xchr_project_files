@@ -100,7 +100,8 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
         # This separates the windows by the previously assigned locus index.
         locus_group_list = utilities.bin_list(block_group, key = lambda x: x[3])
         for locus_group in locus_group_list:
-            # print locus_group
+            
+            locus_idx = str(locus_group[0][3])
             
             # Take the union of the species present in this locus's window
             species_present = [False for x in all_species]
@@ -139,8 +140,8 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             # else:
             #     print "Need to retrieve nucleotides from the Genome FASTA files. %s" % (block)
 
-            unflanked_lengths = []
-            bed_lengths = []
+            # unflanked_lengths = []
+            # bed_lengths = []
 
             for k, species_name in enumerate(header_list):
                 if species_present[all_species.index(species_name)]:
@@ -159,17 +160,17 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     bed_start = alignment_block_genomic_coordinates[species_name][0] + len(leading_sequence) - win_slide
                     bed_end = alignment_block_genomic_coordinates[species_name][1] - len(trailing_sequence) + win_slide
                     
-                    unflanked_lengths.append(len(seq_list[k][start_column : end_column]))
-                    bed_lengths.append(bed_end - bed_start)
+                    # unflanked_lengths.append(len(seq_list[k][start_column : end_column]))
+                    # bed_lengths.append(bed_end - bed_start)
                     
                     print (species_name, contig_name, bed_start, bed_end)
-                    # utilities.get_flanked_sequence(species_name, contig_name, bed_start, bed_end)
+                    utilities.get_flanked_sequence(species_name, contig_name, bed_start, bed_end, locus_dir, locus_idx)
                     
                     locus_header_list.append(species_name)
                     locus_seq_list.append(seq_list[k][start_column : end_column])
                     
-            print unflanked_lengths
-            print bed_lengths
+            # print unflanked_lengths
+            # print bed_lengths
 
             # Check to take the complement strand
             if locus_group[0][1] == 'reverse':
@@ -183,8 +184,8 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             #     print maf_list
                 #print locus_seq_list
 
+
             ### Write locus ###
-            locus_idx = str(locus_group[0][3])
 
             # Clustal format
             clustal_path = os.path.join(locus_dir, locus_idx + '.clustal')

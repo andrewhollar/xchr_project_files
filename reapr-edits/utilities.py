@@ -608,7 +608,17 @@ def get_alignment_block_sequence_lengths(maf_sequence_lines):
         species_genomic_coordinates[species_name] = (species_start, species_end)
     
     return species_genomic_coordinates
+
+# EDIT: Added method to retrieve the flanked sequence of nucleotides.
+def get_flanked_sequence(species, contig, start, end, locus_dir, locus_idx):
+    
+    bed_filepath = os.path.join(locus_dir, locus_idx + "." + species + ".bed")
+    bed_entry = "\t".join([contig, str(start), str(end)])
+    open(bed_filepath, "w").write(bed_entry)
+    
+
 # -------------------------------------------------------------------------------
+
 
 
 # Fixed parameters: do not change #
