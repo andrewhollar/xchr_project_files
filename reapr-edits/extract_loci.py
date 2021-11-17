@@ -1,6 +1,12 @@
 import os, glob, math, sys, subprocess, time, threading, random, argparse, traceback
 import utilities
 
+
+
+def write_bed_file():
+    
+
+
 def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win_size, win_slide, encode_multiz, stdout=True):
 
     from utilities\
@@ -74,7 +80,8 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             header_list = [a[1] for a in maf_list]
 
         alignment_block_genomic_coordinates = utilities.get_alignment_block_sequence_lengths(maf_list)
-
+        print alignment_block_genomic_coordinates
+        
         # Make directory for syntenic block's loci
         # -------------------------------------------------------------------------------
         # EDIT: changed the location of the locus output directory, this removes the .maf from the filepath
@@ -112,7 +119,6 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                 start_column -= win_slide
                 end_column += win_slide
             # -------------------------------------------------------------------------------
-
             else:
                 print "Need to retrieve nucleotides from the Genome FASTA files. %s" % (block)
 
