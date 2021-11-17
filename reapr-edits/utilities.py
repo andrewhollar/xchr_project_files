@@ -617,11 +617,11 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, 
     bed_filepath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".bed")
     bed_error_outpath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".log")
     
-    if species == "Homo_sapiens" and contig == "chrX":
-        contig = human_molecule_to_contig_dict[contig]
+    # if species == "Homo_sapiens" and contig == "chrX":
+    #     contig = human_molecule_to_contig_dict[contig]
         
-    if species == "Canis_lupus_familiaris" and contig == "chrX":
-        contig = dog_molecule_to_contig_dict[contig]
+    # if species == "Canis_lupus_familiaris" and contig == "chrX":
+    #     contig = dog_molecule_to_contig_dict[contig]
     
     bed_entry = "\t".join([contig, str(start), str(end)])
     open(bed_filepath, "w").write(bed_entry)
@@ -652,14 +652,26 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, 
 
 
 
-GENOME_DIR = '/home/ahollar/alignments/7way_genomes'
-species_to_genome_dict = {"Homo_sapiens": os.path.join(GENOME_DIR, "GCA_000001405.27_GRCh38.p12_genomic.fna"), \
-                        "Macaca_mulatta": os.path.join(GENOME_DIR, "GCA_000772875.3_Mmul_8.0.1_genomic.fna"), \
-                        "Callithrix_jacchus": os.path.join(GENOME_DIR, "GCA_002754865.1_ASM275486v1_genomic.fna"), \
-                        "Mus_musculus": os.path.join(GENOME_DIR, "GCF_000001635.26_GRCm38.p6_genomic.fna"), \
-                        "Canis_lupus_familiaris": os.path.join(GENOME_DIR, "GCA_000002285.3_canfam4_genomic.fna"), \
-                        "Sus_scrofa": os.path.join(GENOME_DIR, "GCF_000003025.5_Sscrofa10.2_genomic.fna"), \
-                        "Oryctolagus_cuniculus": os.path.join(GENOME_DIR, "GCF_000003625.3_OryCun2.0_genomic.fna")}
+# GENOME_DIR = '/home/ahollar/alignments/7way_genomes'
+# species_to_genome_dict = {"Homo_sapiens": os.path.join(GENOME_DIR, "GCA_000001405.27_GRCh38.p12_genomic.fna"), \
+#                         "Macaca_mulatta": os.path.join(GENOME_DIR, "GCA_000772875.3_Mmul_8.0.1_genomic.fna"), \
+#                         "Callithrix_jacchus": os.path.join(GENOME_DIR, "GCA_002754865.1_ASM275486v1_genomic.fna"), \
+#                         "Mus_musculus": os.path.join(GENOME_DIR, "GCF_000001635.26_GRCm38.p6_genomic.fna"), \
+#                         "Canis_lupus_familiaris": os.path.join(GENOME_DIR, "GCA_000002285.3_canfam4_genomic.fna"), \
+#                         "Sus_scrofa": os.path.join(GENOME_DIR, "GCF_000003025.5_Sscrofa10.2_genomic.fna"), \
+#                         "Oryctolagus_cuniculus": os.path.join(GENOME_DIR, "GCF_000003625.3_OryCun2.0_genomic.fna")}
+
+
+
+GENOME_DIR = '/home/ahollar/alignments/7way_extracted'
+species_to_genome_dict = {"Homo_sapiens": os.path.join(GENOME_DIR, "Homo_sapiens_extracted.fa"), \
+                        "Macaca_mulatta": os.path.join(GENOME_DIR, "Macaca_mulatta_extracted.fa"), \
+                        "Callithrix_jacchus": os.path.join(GENOME_DIR, "Callithrix_jacchus_extracted.fa"), \
+                        "Mus_musculus": os.path.join(GENOME_DIR, "Mus_musculus_extracted.fa"), \
+                        "Canis_lupus_familiaris": os.path.join(GENOME_DIR, "Canis_lupus_familiaris_extracted.fa"), \
+                        "Sus_scrofa": os.path.join(GENOME_DIR, "Sus_scrofa_extracted.fa"), \
+                        "Oryctolagus_cuniculus": os.path.join(GENOME_DIR, "Oryctolagus_cuniculus_extracted.fa")}
+
 
 
 human_molecule_to_contig_dict = {'chrX': "CM000685.2"}
