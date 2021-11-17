@@ -637,7 +637,7 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx):
 # -------------------------------------------------------------------------------
 
 # old Macaca_mulatta: GCF_000772875.2_Mmul_8.0.1_genomic.fna
-# new Macaca_mulatta: ‘GCA_000772875.2_Mmul_8.0_genomic.fna.gz
+# new Macaca_mulatta: GCA_000772875.2_Mmul_8.0_genomic.fna
 
 
 GENOME_DIR = '/home/ahollar/alignments/7way_genomes'
