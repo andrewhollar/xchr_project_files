@@ -5,8 +5,8 @@ import shutil
 from Bio import AlignIO
 
 SAMPLE_DENOM = 100
-MAX_SAMPLES = 20    #sys.maxsize
-MIN_SPECIES = 7
+MAX_SAMPLES = 5    #sys.maxsize
+MIN_SPECIES = 2
 # SAMPLE_LENGTH = 15
 random.seed(500)
 
