@@ -139,14 +139,29 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             # else:
             #     print "Need to retrieve nucleotides from the Genome FASTA files. %s" % (block)
 
-            for k, header in enumerate(header_list):
-                if species_present[all_species.index(header)]:
-                    
+            for k, species_name in enumerate(header_list):
+                if species_present[all_species.index(species_name)]:
+                                        
                     # BED information
+                    contig_name = contig_list[k]
                     
                     
+                    leading_sequence = seq_list[k][:start_column]
+                    print leading_sequence
+                    leading_sequence = leading_sequence.replace("-", '')
                     
-                    locus_header_list.append(header)
+                    trailing_sequence = seq_list[k][end_column:]
+                    print trailing_sequence
+                    trailing_sequence = trailing_sequence.replace("-", '')
+
+        
+                    bed_start = alignment_block_genomic_coordinates[species_name][0] + len(leading_sequence) - win_slide
+                    bed_end = alignment_block_genomic_coordinates[species_name][1] - len(trailing_sequence) + win_slide
+                    
+                    
+                    print (species_name, contig_name, bed_start, bed_end)
+                    
+                    locus_header_list.append(species_name)
                     locus_seq_list.append(seq_list[k][start_column : end_column])
 
             # Check to take the complement strand
