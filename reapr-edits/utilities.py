@@ -611,14 +611,16 @@ def get_alignment_block_sequence_lengths(maf_sequence_lines):
 
 # EDIT: Added method to retrieve the flanked sequence of nucleotides.
 def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx):
-    
+    from commands import BEDTOOLS
     # print species_to_genome_dict['Homo_sapiens']
-    
     
     bed_filepath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".bed")
     bed_entry = "\t".join([contig, str(start), str(end)])
     open(bed_filepath, "w").write(bed_entry)
     
+    flanked_output = os.path.join(locus_bed_dir, locus_idx + "." + species + ".flanked.fa")
+    
+    cmd = '%s getfasta -fi %s -fo %s -bed %s' % (BEDTOOLS, species_to_genome_dict[species], flanked_output, bed_filepath)
 
 # -------------------------------------------------------------------------------
 
