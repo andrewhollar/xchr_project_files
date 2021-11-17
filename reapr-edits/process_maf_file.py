@@ -5,9 +5,9 @@ import shutil
 from Bio import AlignIO
 
 SAMPLE_DENOM = 100
-MAX_SAMPLES = 2    #sys.maxsize
+MAX_SAMPLES = 10    #sys.maxsize
 SAMPLE_LENGTH = 15
-random.seed(35)
+# random.seed(35)
 
 # -------------------------------------------------------------------------------
 # EDIT: Added the following function to generate the required files from the input MAF file
