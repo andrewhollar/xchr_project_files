@@ -73,6 +73,10 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             # -------------------------------------------------------------------------------
             # Edit: Added another list to get the contigs of the sequences included in the alignment block
             contig_list = [x.split()[1].split('.')[1] for x in maf_list]
+            contig_list = []
+            for entry in maf_list:
+                contig_list.append(".".join(entry.split()[1].split('.')[1:]))
+                # entry_name = ".".join(entry_name[1:])
             # print contig_list
             # -------------------------------------------------------------------------------
 
