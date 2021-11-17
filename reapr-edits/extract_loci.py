@@ -80,6 +80,9 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             # print contig_list
             # -------------------------------------------------------------------------------
 
+            maf_start_pos_list = [x.split()[2] for x in maf_list]
+            maf_end_pos_list = [int(x.split()[2]) + int(x.split()[3])  for x in maf_list]
+
 
         else:
             # Parse MAF alignment
@@ -180,7 +183,9 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     unflanked_seq = seq_list[k][start_column : end_column].replace("-", "")
                     
                     print (species_name, contig_name, bed_start, bed_end)
-                    utilities.get_flanked_sequence(species_name, contig_name, bed_start, bed_end, locus_bed_dir, locus_idx, unflanked_seq)
+                    
+                    utilities.confirm_matching_sequence(species_name, contig_name, maf_start_pos_list[k], maf_end_pos_list[k], locus_bed_dir, locus_idx, seq_list[k].replace("-", ""))
+                    # utilities.get_flanked_sequence(species_name, contig_name, bed_start, bed_end, locus_bed_dir, locus_idx, unflanked_seq)
                     
                     locus_header_list.append(species_name)
                     locus_seq_list.append(seq_list[k][start_column : end_column])
