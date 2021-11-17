@@ -624,7 +624,13 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx):
 
 
 GENOME_DIR = '/home/ahollar/alignments/7way_genomes'
-species_to_genome_dict = {"Homo_sapiens": os.path.join(GENOME_DIR, "GCA_000001405.27_GRCh38.p12_genomic.fna"), ""}
+species_to_genome_dict = {"Homo_sapiens": os.path.join(GENOME_DIR, "GCA_000001405.27_GRCh38.p12_genomic.fna"), \
+                        "Macaca_mulatta": os.path.join(GENOME_DIR, "GCF_000772875.2_Mmul_8.0.1_genomic.fna"), \
+                        "Callithrix_jacchus": os.path.join(GENOME_DIR, "GCA_002754865.1_ASM275486v1_genomic.fna"), \
+                        "Mus_musculus": os.path.join(GENOME_DIR, "GCF_000001635.26_GRCm38.p6_genomic.fna"), \
+                        "Canis_lupus_familiaris": os.path.join(GENOME_DIR, "GCF_000002285.3_CanFam3.1_genomic.fna"), \
+                        "Sus_scrofa": os.path.join(GENOME_DIR, "GCF_000003025.5_Sscrofa10.2_genomic.fna"), \
+                        "Oryctolagus_cuniculus": os.path.join(GENOME_DIR, "GCF_000003625.3_OryCun2.0_genomic.fna")}
 
 
 # Fixed parameters: do not change #
