@@ -33,8 +33,8 @@ for msa in AlignIO.parse(maf_in_filepath, "maf"):
 
     if len(alignment_block) > 1:
         alignment_blocks.append(MultipleSeqAlignment(alignment_block))
-    else:
-        print("only 1 sequence remains in the alignment block, skipping")
+    # else:
+    #     print("only 1 sequence remains in the alignment block, skipping")
     # alignment_blocks.append(msa)
 
 # Write all alignment blocks that have more than 1 species contained.
