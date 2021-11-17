@@ -15,7 +15,7 @@ alignment_block_lengths = {}
 
 num_msas = 0
 for msa in AlignIO.parse(maf_filepath, "maf"):
-    if msa[0].annotations['size'] >= 15:
+    if msa[0].annotations['size'] >= 50:
         num_msas += 1
 
     if msa[0].annotations['size'] in alignment_block_lengths:

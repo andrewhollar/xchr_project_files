@@ -612,7 +612,7 @@ def get_alignment_block_sequence_lengths(maf_sequence_lines):
 # EDIT: Added method to retrieve the flanked sequence of nucleotides.
 def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx):
     
-    print species_to_genome_dict['Homo_sapiens']
+    # print species_to_genome_dict['Homo_sapiens']
     
     
     bed_filepath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".bed")
@@ -624,7 +624,7 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx):
 
 
 GENOME_DIR = '/home/ahollar/alignments/7way_genomes'
-species_to_genome_dict = {"Homo_sapiens": os.path.join(GENOME_DIR, "GCA_000001405.27_GRCh38.p12_genomic.fna")}
+species_to_genome_dict = {"Homo_sapiens": os.path.join(GENOME_DIR, "GCA_000001405.27_GRCh38.p12_genomic.fna"), ""}
 
 
 # Fixed parameters: do not change #
