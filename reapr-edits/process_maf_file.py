@@ -36,7 +36,7 @@ def main(path_to_maf, OUT_DIR):
             reapr_alignment_entry = []
 
             # create an output file name for this alignment block
-            alignment_block_name = "6way_block_" + pad_int(alignment_block_idx, 8) + ".maf"
+            alignment_block_name = "7way_block_" + pad_int(alignment_block_idx, 8) + ".maf"
             reapr_alignment_entry.append(alignment_block_name)
 
             # use the file name to create a location for the output file
