@@ -664,6 +664,10 @@ def confirm_matching_sequence(species, contig, start, end, locus_bed_dir, locus_
     bed_error.close()
     
     extracted_seq = open(extracted_output).read()
+    
+    print alignment_seq.lower()
+    print extracted_seq.lower()
+    
     assert alignment_seq.lower()
     assert extracted_seq.lower()
     
