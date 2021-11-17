@@ -73,7 +73,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             # -------------------------------------------------------------------------------
             # Edit: Added another list to get the contigs of the sequences included in the alignment block
             contig_list = [x.split()[1].split('.')[1] for x in maf_list]
-            print contig_list
+            # print contig_list
             # -------------------------------------------------------------------------------
 
 
@@ -87,7 +87,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             header_list = [a[1] for a in maf_list]
 
         alignment_block_genomic_coordinates = utilities.get_alignment_block_sequence_lengths(maf_list)
-        print alignment_block_genomic_coordinates
+        # print alignment_block_genomic_coordinates
         
         # Make directory for syntenic block's loci
         # -------------------------------------------------------------------------------
@@ -100,7 +100,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
         # This separates the windows by the previously assigned locus index.
         locus_group_list = utilities.bin_list(block_group, key = lambda x: x[3])
         for locus_group in locus_group_list:
-            print locus_group
+            # print locus_group
             
             # Take the union of the species present in this locus's window
             species_present = [False for x in all_species]
@@ -139,7 +139,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             # else:
             #     print "Need to retrieve nucleotides from the Genome FASTA files. %s" % (block)
 
-
+            unflanked_lengths = []
             bed_lengths = []
 
             for k, species_name in enumerate(header_list):
@@ -159,13 +159,16 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     bed_start = alignment_block_genomic_coordinates[species_name][0] + len(leading_sequence) - win_slide
                     bed_end = alignment_block_genomic_coordinates[species_name][1] - len(trailing_sequence) + win_slide
                     
+                    unflanked_lengths.append(len(seq_list[k][start_column : end_column]))
                     bed_lengths.append(bed_end - bed_start)
                     
                     print (species_name, contig_name, bed_start, bed_end)
+                    utilities.get_flanked_sequence(species_name, contig_name, bed_start, bed_end)
                     
                     locus_header_list.append(species_name)
                     locus_seq_list.append(seq_list[k][start_column : end_column])
                     
+            print unflanked_lengths
             print bed_lengths
 
             # Check to take the complement strand
