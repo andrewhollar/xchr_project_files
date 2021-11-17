@@ -638,8 +638,8 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, 
     bed_error.close()
     
     flanked_seq = open(flanked_output).read()
-    print unflanked_seq.lower
-    print flanked_seq.lower
+    print unflanked_seq.lower()
+    print flanked_seq.lower()
     assert unflanked_seq.lower() in flanked_seq.lower()
 
 # -------------------------------------------------------------------------------
