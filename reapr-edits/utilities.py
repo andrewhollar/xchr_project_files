@@ -625,7 +625,7 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx):
     
     cmd = '%s getfasta -fi %s -fo %s -bed %s' % (BEDTOOLS, species_to_genome_dict[species], flanked_output, bed_filepath)
     start_time = time.time()
-    subprocess.Popen(cmd, shell=True, stdout=bed_error, stderr=subprocess.PIPE).wait()
+    subprocess.Popen(cmd, shell=True, stdout=bed_error, stderr=bed_error).wait()
     print 'Running time: ' + str(time.time() - start_time) + ' seconds'
     
     bed_error.close()
