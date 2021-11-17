@@ -148,11 +148,11 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     # BED information
                     contig_name = contig_list[k]
                 
-                    leading_sequence = seq_list[k][:start_column].replace("-", '')
+                    leading_sequence = seq_list[k][:start_column]#.replace("-", '')
                     # print leading_sequence
                     # leading_sequence = leading_sequence.replace("-", '')
                     
-                    trailing_sequence = seq_list[k][end_column:].replace("-", '')
+                    trailing_sequence = seq_list[k][end_column:]#.replace("-", '')
                     # print trailing_sequence
                     # trailing_sequence = trailing_sequence.replace("-", '')
 
