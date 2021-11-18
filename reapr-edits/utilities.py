@@ -671,7 +671,14 @@ def confirm_matching_sequence(species, contig, start, end, locus_bed_dir, locus_
     print alignment_seq.lower()
     print extracted_seq.lower()
     
-    assert alignment_seq.lower() == extracted_seq.lower()
+    
+    if alignment_seq.lower() != extracted_seq.lower():
+        print species, contig, locus_bed_dir
+    
+    # try: 
+    #     assert alignment_seq.lower() == extracted_seq.lower()
+    # except AssertionError:
+    #     pr
     
 # -------------------------------------------------------------------------------
 
