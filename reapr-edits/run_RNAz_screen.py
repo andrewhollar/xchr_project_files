@@ -31,23 +31,27 @@ def index_windows(log_path, other_removals, num_slices, win_to_slice_path):
         #discard_idx_list = [verbose_log[i-1].split(':')[0].split()[-1] for i,x in enumerate(verbose_log) if 'discarded' in x]
         discard_idx_list = [verbose_log[i-2].split(':')[1].split()[-1] for i,x in enumerate(verbose_log) if 'discarded' in x]
         # -------------------------------------------------------------------------------        
-        assert len(discard_idx_list) == len(set(discard_idx_list))
-        # Offset the indices by 1 to make them 0-based
-        discard_idx_list = [int(x) - 1 for x in discard_idx_list]
-        # # Bad implementation if verbose log doesn't have a line for the last window
-        # # Total number of sliced windows in contig
-        # for i in range(len(verbose_log)-1, -1, -1):
-        #     if verbose_log[i].split()[2] == 'window':
-        #         num_slices = int(verbose_log[i].split(':')[0].split()[3])
-        #         break
-        win_to_slice = sorted(list(set(range(num_slices)) - set(discard_idx_list)))
+        
+        try:
+            assert len(discard_idx_list) == len(set(discard_idx_list))
+            # Offset the indices by 1 to make them 0-based
+            discard_idx_list = [int(x) - 1 for x in discard_idx_list]
+            # # Bad implementation if verbose log doesn't have a line for the last window
+            # # Total number of sliced windows in contig
+            # for i in range(len(verbose_log)-1, -1, -1):
+            #     if verbose_log[i].split()[2] == 'window':
+            #         num_slices = int(verbose_log[i].split(':')[0].split()[3])
+            #         break
+            win_to_slice = sorted(list(set(range(num_slices)) - set(discard_idx_list)))
 
-        # Remove other window indices that were removed after rnazWindows.pl.
-        # For example, because of the removal of consensus gap seq
-        for pop_offset, i in enumerate(other_removals):
-            win_to_slice.pop(i - pop_offset)
+            # Remove other window indices that were removed after rnazWindows.pl.
+            # For example, because of the removal of consensus gap seq
+            for pop_offset, i in enumerate(other_removals):
+                win_to_slice.pop(i - pop_offset)
 
-        open(win_to_slice_path, 'w').write('\n'.join([str(x) for x in win_to_slice]) + '\n')
+            open(win_to_slice_path, 'w').write('\n'.join([str(x) for x in win_to_slice]) + '\n')
+        except AssertionError:
+            print log_path, discard_idx_list
 
 # -------------------------------------------------------------------------------
 # EDIT: Add this method which acts as a filter prior to running rnazWindow. This 
