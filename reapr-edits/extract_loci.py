@@ -81,8 +81,9 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             # -------------------------------------------------------------------------------
 
             maf_start_pos_list = [int(x.split()[2]) for x in maf_list]
-            maf_end_pos_list = [int(x.split()[2]) + int(x.split()[3])  for x in maf_list]
+            maf_entry_length_list = [int(x.split()[3])  for x in maf_list]
             maf_direction_list = [x.split()[4] for x in maf_list]
+            maf_contig_lengths_list = [int(x.split()[5]) for x in maf_list]
 
 
         else:
@@ -184,8 +185,14 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     # unflanked_seq = seq_list[k][start_column : end_column].replace("-", "")
                     
                     # print (species_name, contig_name, bed_start, bed_end)
+                    maf_start_pos = maf_start_pos_list[k]
+                    maf_end_pos = maf_start_pos_list[k] + maf_entry_length_list[k]
                     
-                    utilities.confirm_matching_sequence(species_name, contig_name, maf_start_pos_list[k], maf_end_pos_list[k], locus_bed_dir, locus_idx, seq_list[k].replace("-", "").strip(), maf_direction_list[k])
+                    if maf_direction_list[k] == "-":
+                        maf_start_pos = maf_contig_lengths_list[k] - maf_start_pos_list[k]
+                        maf_end_pos = maf_start_pos + maf_entry_length_list[k]
+                    
+                    utilities.confirm_matching_sequence(species_name, contig_name, maf_start_pos, maf_end_pos, locus_bed_dir, locus_idx, seq_list[k].replace("-", "").strip(), maf_direction_list[k])
                     # utilities.get_flanked_sequence(species_name, contig_name, bed_start, bed_end, locus_bed_dir, locus_idx, unflanked_seq)
                     
                     locus_header_list.append(species_name)
