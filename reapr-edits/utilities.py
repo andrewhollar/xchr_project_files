@@ -649,7 +649,7 @@ def confirm_matching_sequence(species, contig, start, end, locus_bed_dir, locus_
     bed_filepath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".bed")
     bed_error_outpath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".log")
     
-    bed_entry = "\t".join([contig, str(start), str(end), str(species), 0, sequence_direction])
+    bed_entry = "\t".join([contig, str(start), str(end), str(species), "0", sequence_direction])
     open(bed_filepath, "w").write(bed_entry)
     
     bed_error = open(bed_error_outpath, 'w', int(1e6))
