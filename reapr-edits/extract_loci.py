@@ -176,8 +176,8 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     # print trailing_sequence
                     # trailing_sequence = trailing_sequence.replace("-", '')
 
-                    bed_start = alignment_block_genomic_coordinates[species_name][0] + len(leading_sequence) - win_slide
-                    bed_end = alignment_block_genomic_coordinates[species_name][1] - len(trailing_sequence) + win_slide
+                    bed_start = alignment_block_genomic_coordinates[species_name][0] + len(leading_sequence)
+                    bed_end = alignment_block_genomic_coordinates[species_name][1] - len(trailing_sequence)
                     
                     # unflanked_lengths.append(len(seq_list[k][start_column : end_column]))
                     # bed_lengths.append(bed_end - bed_start)
