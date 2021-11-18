@@ -657,16 +657,16 @@ def confirm_matching_sequence(species, contig, start, end, locus_bed_dir, locus_
     extracted_output = os.path.join(locus_bed_dir, locus_idx + "." + species + ".extracted.fa")
     
     cmd = '%s getfasta -fi %s -fo %s -s -bed %s' % (BEDTOOLS, species_to_genome_dict[species], extracted_output, bed_filepath)   
-    start_time = time.time()
+    # start_time = time.time()
     subprocess.Popen(cmd, shell=True, stdout=bed_error, stderr=bed_error).wait()
-    print 'Running time: ' + str(time.time() - start_time) + ' seconds'
+    # print 'Running time: ' + str(time.time() - start_time) + ' seconds'
     
     bed_error.close()
     
     extracted_seq = open(extracted_output).read().split('\n')[1].strip()
     
     
-    assert alignment_seq.lower() == extracted_seq.lower()
+    #assert alignment_seq.lower() == extracted_seq.lower()
     
     # if sequence_direction == "-":
     #     extracted_seq = complement(extracted_seq)
@@ -676,6 +676,8 @@ def confirm_matching_sequence(species, contig, start, end, locus_bed_dir, locus_
     
     
     if alignment_seq.lower() != extracted_seq.lower():
+        print alignment_seq.lower()
+        print extracted_seq.lower()
         print species, contig, locus_bed_dir
     
     # try: 
