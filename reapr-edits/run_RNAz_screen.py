@@ -29,7 +29,28 @@ def index_windows(log_path, other_removals, num_slices, win_to_slice_path):
         # EDIT: Attempting to update the discard_idx_list, I suspect that this no longer works due
         #       to changes made to the output of rnazWindow.pl
         #discard_idx_list = [verbose_log[i-1].split(':')[0].split()[-1] for i,x in enumerate(verbose_log) if 'discarded' in x]
-        discard_idx_list = [verbose_log[i-2].split(':')[1].split()[-1] for i,x in enumerate(verbose_log) if 'discarded' in x]
+        # discard_idx_list = [verbose_log[i-2].split(':')[1].split()[-1] for i,x in enumerate(verbose_log) if 'discarded' in x]
+        
+        discard_idx_list = []
+        
+        for i, line in enumerate(verbose_log):
+            if 'discarded' in line:
+                if 'window' not in verbose_log[i - 1]:
+                    discard_idx_list.append(verbose_log[i - 2].split(':')[1].split()[-1])
+                else:
+                    discard_idx_list.append(verbose_log[i - 1].split(':')[0].split()[-1])
+        
+        # example #1
+#         Outside training range: Alignment 1, window 15: Seq 3: base composition out of range.
+#         Removing Seq 3
+#         Alignment 1 discarded: No sequences left.
+        
+        # example #2
+        # Alignment 1, window 45: Removing seq 2: too many gaps.
+        # Alignment 1 discarded: Too few sequences left.
+        
+        
+        
         # -------------------------------------------------------------------------------        
         
         try:
