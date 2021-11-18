@@ -208,7 +208,10 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                 locus_seq_list = [utilities.complement(x) for x in locus_seq_list]
 
             # Remove columns with only gaps
-            locus_seq_list = utilities.remove_redundant_gaps(locus_seq_list)
+            # -------------------------------------------------------------------------------
+            # There should not be any gaps at this point
+            # locus_seq_list = utilities.remove_redundant_gaps(locus_seq_list)
+            # -------------------------------------------------------------------------------
 
             # if "6way_block_00000740" in block:
             #     print species_present
