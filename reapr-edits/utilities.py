@@ -665,11 +665,14 @@ def confirm_matching_sequence(species, contig, start, end, locus_bed_dir, locus_
     
     extracted_seq = open(extracted_output).read().split('\n')[1].strip()
     
-    if sequence_direction == "-":
-        extracted_seq = complement(extracted_seq)
     
-    print alignment_seq.lower(), "\n"
-    print extracted_seq.lower(), "\n"
+    assert alignment_seq.lower() == extracted_seq.lower()
+    
+    # if sequence_direction == "-":
+    #     extracted_seq = complement(extracted_seq)
+    
+    # print alignment_seq.lower(), "\n"
+    # print extracted_seq.lower(), "\n"
     
     
     if alignment_seq.lower() != extracted_seq.lower():
