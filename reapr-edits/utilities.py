@@ -667,7 +667,7 @@ def confirm_matching_sequence(species, contig, start, end, locus_bed_dir, locus_
             bed_error = open(bed_error_outpath, 'w', int(1e6))
 
             extracted_output = os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa')
-            cmd = '%s getfasta -fi %s -fo -s %s -bed %s' % (BEDTOOLS, species_to_genome_dict[species], extracted_output, bed_filepath)   
+            cmd = '%s getfasta -fi %s -fo %s -s -bed %s' % (BEDTOOLS, species_to_genome_dict[species], extracted_output, bed_filepath)   
             subprocess.Popen(cmd, shell=True, stdout=bed_error, stderr=bed_error).wait()
             bed_error.close()
 
