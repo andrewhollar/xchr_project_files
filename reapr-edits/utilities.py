@@ -668,8 +668,8 @@ def confirm_matching_sequence(species, contig, start, end, locus_bed_dir, locus_
     if sequence_direction == "-":
         extracted_seq = complement(extracted_seq)
     
-    print alignment_seq.lower()
-    print extracted_seq.lower()
+    print alignment_seq.lower(), "\n"
+    print extracted_seq.lower(), "\n"
     
     
     if alignment_seq.lower() != extracted_seq.lower():
