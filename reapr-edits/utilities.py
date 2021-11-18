@@ -643,33 +643,44 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, 
     assert unflanked_seq.lower() in flanked_seq.lower()
 
 
-def confirm_matching_sequence(species, contig, start, end, locus_bed_dir, locus_idx, alignment_seq, sequence_direction):
+def confirm_matching_sequence(species, contig, start, end, locus_bed_dir, locus_idx, alignment_seq, sequence_direction, contig_length):
     from commands import BEDTOOLS
-
     bed_filepath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".bed")
     bed_error_outpath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".log")
-    
-    bed_entry = "\t".join([contig, str(start), str(end)])
-    open(bed_filepath, "w").write(bed_entry)
-    
-    bed_error = open(bed_error_outpath, 'w', int(1e6))
-    
-    extracted_output = os.path.join(locus_bed_dir, locus_idx + "." + species + ".extracted.fa")
-    
-    cmd = '%s getfasta -fi %s -fo %s -bed %s' % (BEDTOOLS, species_to_genome_dict[species], extracted_output, bed_filepath)   
-    # start_time = time.time()
-    subprocess.Popen(cmd, shell=True, stdout=bed_error, stderr=bed_error).wait()
-    # print 'Running time: ' + str(time.time() - start_time) + ' seconds'
-    
-    bed_error.close()
-    
-    extracted_seq = open(extracted_output).read().split('\n')[1].strip()
-    
-    
-    #assert alignment_seq.lower() == extracted_seq.lower()
-    
+
+
     if sequence_direction == "-":
-        extracted_seq = complement(extracted_seq)
+        bed_entry = "\t".join([contig, "0", str(contig_length)])
+        open(bed_filepath, "w").write(bed_entry)
+        bed_error = open(bed_error_outpath, 'w', int(1e6))
+
+        extracted_output = os.path.join(locus_bed_dir, locus_idx + "." + species + ".extracted.fa")
+        cmd = '%s getfasta -fi %s -fo %s -bed %s' % (BEDTOOLS, species_to_genome_dict[species], extracted_output, bed_filepath)   
+        subprocess.Popen(cmd, shell=True, stdout=bed_error, stderr=bed_error).wait()
+        bed_error.close()
+
+        extracted_seq = open(extracted_output).read().split('\n')[1].strip()
+        assert len(extracted_seq) == contig_length
+        
+    else:
+        bed_entry = "\t".join([contig, str(start), str(end)])
+        open(bed_filepath, "w").write(bed_entry)
+        bed_error = open(bed_error_outpath, 'w', int(1e6))
+        
+        extracted_output = os.path.join(locus_bed_dir, locus_idx + "." + species + ".extracted.fa")
+        
+        cmd = '%s getfasta -fi %s -fo %s -bed %s' % (BEDTOOLS, species_to_genome_dict[species], extracted_output, bed_filepath)   
+        # start_time = time.time()
+        subprocess.Popen(cmd, shell=True, stdout=bed_error, stderr=bed_error).wait()
+        # print 'Running time: ' + str(time.time() - start_time) + ' seconds'
+        
+        bed_error.close()
+        
+        extracted_seq = open(extracted_output).read().split('\n')[1].strip()
+        assert alignment_seq.lower() == extracted_seq.lower()
+    
+    # if sequence_direction == "-":
+        # extracted_seq = complement(extracted_seq)
     
     # print alignment_seq.lower(), "\n"
     # print extracted_seq.lower(), "\n"
