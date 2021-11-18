@@ -112,7 +112,6 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
         locus_group_list = utilities.bin_list(block_group, key = lambda x: x[3])
         for locus_group in locus_group_list:
             
-            
             locus_idx = str(locus_group[0][3])
 
             # -------------------------------------------------------------------------------
@@ -192,11 +191,14 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     #     maf_start_pos = maf_contig_lengths_list[k] - maf_start_pos_list[k]
                     #     maf_end_pos = maf_start_pos + maf_entry_length_list[k]
                     
-                    utilities.confirm_matching_sequence(species_name, contig_name, maf_start_pos, maf_end_pos, locus_bed_dir, locus_idx, seq_list[k].replace("-", "").strip(), maf_direction_list[k], maf_contig_lengths_list[k])
+                    #utilities.confirm_matching_sequence(species_name, contig_name, maf_start_pos, maf_end_pos, locus_bed_dir, locus_idx, seq_list[k].replace("-", "").strip(), maf_direction_list[k], maf_contig_lengths_list[k])
                     # utilities.get_flanked_sequence(species_name, contig_name, bed_start, bed_end, locus_bed_dir, locus_idx, unflanked_seq)
                     
+                    flanked_sequence = utilities.get_flanked_sequence(species_name, contig_name, maf_start_pos, maf_end_pos, locus_bed_dir, locus_idx, seq_list[k].replace("-", "").strip(), maf_direction_list[k], maf_contig_lengths_list[k])
+                    
                     locus_header_list.append(species_name)
-                    locus_seq_list.append(seq_list[k][start_column : end_column])
+                    #locus_seq_list.append(seq_list[k][start_column : end_column])
+                    locus_seq_list.append(flanked_sequence)
                     
             # print unflanked_lengths
             # print bed_lengths
@@ -217,9 +219,9 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             ### Write locus ###
 
             # Clustal format
-            clustal_path = os.path.join(locus_dir, locus_idx + '.clustal')
-            clustal_string = utilities.generate_clustal(locus_header_list, locus_seq_list)
-            open(clustal_path, 'w').write(clustal_string)
+            # clustal_path = os.path.join(locus_dir, locus_idx + '.clustal')
+            # clustal_string = utilities.generate_clustal(locus_header_list, locus_seq_list)
+            # open(clustal_path, 'w').write(clustal_string)
 
             # Ungapped Fasta format
             ungap_fasta_path = os.path.join(locus_dir, locus_idx + '.ungap')            
@@ -227,8 +229,8 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             open(ungap_fasta_path, 'w').write(ungap_fasta_string)
 
             locus_name = '%s%s%s' % (block, utilities.block_locus_delim, locus_idx)
-            loci_alignment_list.append([locus_name, clustal_path, ungap_fasta_path])
-
+            # old : loci_alignment_list.append([locus_name, clustal_path, ungap_fasta_path])
+            loci_alignment_list.append([locus_name, ungap_fasta_path])
         
     # -------------------------------------------------------------------------------
     # EDIT: Changed variable name from 'locus_alignment_list' to 'loci_alignment_list' as 

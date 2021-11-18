@@ -1,7 +1,9 @@
 import os, glob, math, sys, subprocess, time, threading, random, argparse, traceback, multiprocessing, shutil
 import utilities
 
-def run_locarna(locarna, clustal_path, ungap_fasta_path, target_dir, target_file, max_diff, alifold_consensus_dp, guide_tree, verbose=False):
+#def run_locarna(locarna, clustal_path, ungap_fasta_path, target_dir, target_file, max_diff, alifold_consensus_dp, guide_tree, verbose=False):
+def run_locarna(locarna, ungap_fasta_path, target_dir, target_file, max_diff, alifold_consensus_dp, guide_tree, verbose=False):
+
     """Run LocARNA.  Returns True if successful, or False otherwise"""
 
     if not os.path.isdir(target_dir): os.makedirs(target_dir)
@@ -10,15 +12,16 @@ def run_locarna(locarna, clustal_path, ungap_fasta_path, target_dir, target_file
     acd_arg          = '--alifold-consensus-dp' if alifold_consensus_dp else ''
     guide_tree_arg   = '--treefile {0}'.format(guide_tree) if guide_tree else ''
     max_diff_arg     = '--max-diff {0}'.format(max_diff)
-    ref_arg          = '--max-diff-aln={0}'.format(clustal_path)
+    # ref_arg          = '--max-diff-aln={0}'.format(clustal_path)
     target_dir_arg   = '--tgtdir={0}'.format(target_dir)
 
     # Run LocARNA, (don't include --write-structure because it's unnecessary since intermediate directory will be deleted?)
     
     # -------------------------------------------------------------------------------
     # Edit: Updated the input parameters to match the Thiel pipeline.
-    cmd = '%s --probabilistic --consistency_transformation --mea-beta=400 --iterations=2 %s %s %s %s --keep-sequence-order %s %s' \
-        % (locarna, acd_arg, guide_tree_arg, ref_arg, max_diff_arg, target_dir_arg, ungap_fasta_path)
+    cmd = '%s --probabilistic --consistency_transformation --mea-beta=400 --iterations=2 %s %s %s --keep-sequence-order %s %s' \
+        % (locarna, acd_arg, guide_tree_arg, max_diff_arg, target_dir_arg, ungap_fasta_path)
+      #  % (locarna, acd_arg, guide_tree_arg, ref_arg, max_diff_arg, target_dir_arg, ungap_fasta_path)
     # -------------------------------------------------------------------------------
 
 

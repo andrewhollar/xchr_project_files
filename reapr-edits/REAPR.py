@@ -132,6 +132,7 @@ def main():
         # -------------------------------------------------------------------------------
         # EDIT: Changed the second to last argument to True, this indicates that the chromosome
         #       names need to be removed from the MAF species text.
+        #       This list now contains tuples of length 2, (not 3) as I have removed the clustal.
         loci_alignment_list = extract_loci.extract_loci(block_dict, initial_table, args.threshold, loci_dir, species, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, True, stdout=False)
         # -------------------------------------------------------------------------------
 
@@ -142,14 +143,18 @@ def main():
             ### Realign loci ###
 
             # Setup alignment file paths 
-            locus_names, ref_clustals, ungap_fastas = zip(*loci_alignment_list)
+            # old: locus_names, ref_clustals, ungap_fastas = zip(*loci_alignment_list)
+            locus_names, ungap_fastas = zip(*loci_alignment_list)
             suffix = 'locarna{0}.{1}'.format('.g' if args.guide_tree else '', delta)
-            target_dirs =  [x + '.%s.d' % suffix for x in ref_clustals]
-            target_files = [x + '.%s'   % suffix for x in ref_clustals]
+            target_dirs =  [x + '.%s.d' % suffix for x in ungap_fastas] #ref_clustals]
+            target_files = [x + '.%s'   % suffix for x in ungap_fastas] #ref_clustals]
 
             # Realign loci
             acd, verbose = True, True
-            target_args = [(commands.mlocarna, a, b, c, d, delta, acd, args.guide_tree, verbose) for a,b,c,d in zip(ref_clustals, ungap_fastas, target_dirs, target_files)]
+            #target_args = [(commands.mlocarna, a, b, c, d, delta, acd, args.guide_tree, verbose) for a,b,c,d in zip(ref_clustals, ungap_fastas, target_dirs, target_files)]
+            target_args = [(commands.mlocarna, a, b, c, delta, acd, args.guide_tree, verbose) for a,b,c in zip(ungap_fastas, target_dirs, target_files)]
+
+            
             print >>errF, 'Start: LocARNA realignment, Delta=%s' % delta, utilities.get_time()
             pool = multiprocessing.Pool(processes=args.processes)
             success = pool.map_async(realign_loci_locarna.run_locarna_pool, target_args).get(99999999)
