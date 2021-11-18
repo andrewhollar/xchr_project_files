@@ -649,14 +649,14 @@ def confirm_matching_sequence(species, contig, start, end, locus_bed_dir, locus_
     bed_filepath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".bed")
     bed_error_outpath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".log")
     
-    bed_entry = "\t".join([contig, str(start), str(end)])
+    bed_entry = "\t".join([contig, str(start), str(end), str(species), 0, sequence_direction])
     open(bed_filepath, "w").write(bed_entry)
     
     bed_error = open(bed_error_outpath, 'w', int(1e6))
     
     extracted_output = os.path.join(locus_bed_dir, locus_idx + "." + species + ".extracted.fa")
     
-    cmd = '%s getfasta -fi %s -fo %s -bed %s' % (BEDTOOLS, species_to_genome_dict[species], extracted_output, bed_filepath)   
+    cmd = '%s getfasta -fi %s -fo %s -s -bed %s' % (BEDTOOLS, species_to_genome_dict[species], extracted_output, bed_filepath)   
     start_time = time.time()
     subprocess.Popen(cmd, shell=True, stdout=bed_error, stderr=bed_error).wait()
     print 'Running time: ' + str(time.time() - start_time) + ' seconds'
