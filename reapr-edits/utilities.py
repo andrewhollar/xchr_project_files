@@ -660,7 +660,12 @@ def confirm_matching_sequence(species, contig, start, end, locus_bed_dir, locus_
         bed_error.close()
 
         extracted_seq = open(extracted_output).read().split('\n')[1].strip()
-        assert len(extracted_seq) == contig_length
+        
+        extracted_seq = complement(extracted_seq)
+        
+        extracted_seq = extracted_seq[start:end]
+        
+        # assert len(extracted_seq) == contig_length
         
     else:
         bed_entry = "\t".join([contig, str(start), str(end)])
@@ -677,7 +682,8 @@ def confirm_matching_sequence(species, contig, start, end, locus_bed_dir, locus_
         bed_error.close()
         
         extracted_seq = open(extracted_output).read().split('\n')[1].strip()
-        assert alignment_seq.lower() == extracted_seq.lower()
+    
+    assert alignment_seq.lower() == extracted_seq.lower()
     
     # if sequence_direction == "-":
         # extracted_seq = complement(extracted_seq)
