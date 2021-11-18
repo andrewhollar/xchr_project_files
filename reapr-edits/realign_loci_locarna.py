@@ -14,8 +14,13 @@ def run_locarna(locarna, clustal_path, ungap_fasta_path, target_dir, target_file
     target_dir_arg   = '--tgtdir={0}'.format(target_dir)
 
     # Run LocARNA, (don't include --write-structure because it's unnecessary since intermediate directory will be deleted?)
-    cmd = '%s %s %s %s %s --keep-sequence-order %s %s' \
+    
+    # -------------------------------------------------------------------------------
+    # Edit: Updated the input parameters to match the Thiel pipeline.
+    cmd = '%s --probabilistic --consistency_transformation --mea-beta=400 --iterations=2 %s %s %s %s --keep-sequence-order %s %s' \
         % (locarna, acd_arg, guide_tree_arg, ref_arg, max_diff_arg, target_dir_arg, ungap_fasta_path)
+    # -------------------------------------------------------------------------------
+
 
     start_time = time.time()
     # subprocess.Popen(cmd, shell=True, stdout=open('/dev/null','w'), stderr=subprocess.STDOUT).wait()
