@@ -659,18 +659,25 @@ def confirm_matching_sequence(species, contig, start, end, locus_bed_dir, locus_
         end = contig_length - 1
 
     if sequence_direction == "-":
-        bed_entry = "\t".join([contig, "0", str(contig_length)])
-        open(bed_filepath, "w").write(bed_entry)
-        bed_error = open(bed_error_outpath, 'w', int(1e6))
+        
+        if not os.path.isfile(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa')):
+            print "writing " + species + "." + contig 
+            bed_entry = "\t".join([contig, "0", str(contig_length), species + "." + str(start), "0", sequence_direction])
+            open(bed_filepath, "w").write(bed_entry)
+            bed_error = open(bed_error_outpath, 'w', int(1e6))
 
-        extracted_output = os.path.join(locus_bed_dir, locus_idx + "." + species + ".extracted.fa")
-        cmd = '%s getfasta -fi %s -fo %s -bed %s' % (BEDTOOLS, species_to_genome_dict[species], extracted_output, bed_filepath)   
-        subprocess.Popen(cmd, shell=True, stdout=bed_error, stderr=bed_error).wait()
-        bed_error.close()
+            extracted_output = os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa')
+            cmd = '%s getfasta -fi %s -fo -s %s -bed %s' % (BEDTOOLS, species_to_genome_dict[species], extracted_output, bed_filepath)   
+            subprocess.Popen(cmd, shell=True, stdout=bed_error, stderr=bed_error).wait()
+            bed_error.close()
 
-        full_contig = open(extracted_output).read().split('\n')[1].strip()
-        full_contig = complement(full_contig)
-        extracted_seq = full_contig[start:end]        
+            full_contig = open(extracted_output).read().split('\n')[1].strip()
+            # full_contig = complement(full_contig)
+        
+            extracted_seq = full_contig[start:end]
+        else:
+            print "Rev-comp file already exists: " + species + "." + contig 
+            extracted_seq = open(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa')).read().split('\n')[1].strip()[start:end]
     else:
         bed_entry = "\t".join([contig, str(start), str(end)])
         open(bed_filepath, "w").write(bed_entry)
@@ -728,6 +735,7 @@ def confirm_matching_sequence(species, contig, start, end, locus_bed_dir, locus_
 
 
 GENOME_DIR = '/home/ahollar/alignments/7way_extracted'
+REV_COMP_CONTIG_DIR = '/home/ahollar/alignmets/7way_revcomp'
 species_to_genome_dict = {"Homo_sapiens": os.path.join(GENOME_DIR, "Homo_sapiens_extracted.fa"), \
                         "Macaca_mulatta": os.path.join(GENOME_DIR, "Macaca_mulatta_extracted.fa"), \
                         "Callithrix_jacchus": os.path.join(GENOME_DIR, "Callithrix_jacchus_extracted.fa"), \

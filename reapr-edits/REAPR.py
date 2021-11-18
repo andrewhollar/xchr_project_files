@@ -102,6 +102,10 @@ def main():
         # EDIT: Added a call to make the output directory to avoid downstream IOErrors
         if not os.path.isdir(out_dir): 
             os.makedirs(out_dir)
+            
+        # EDIT: Added directory to hold the reverse-complemented contigs to avoid doing redundant work.
+        if not os.path.isdir(utilities.REV_COMP_CONTIG_DIR):
+            os.makedirs(utilities.REV_COMP_CONTIG_DIR)
         # -------------------------------------------------------------------------------
 
         # -------------------------------------------------------------------------------
