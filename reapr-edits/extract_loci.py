@@ -185,7 +185,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     
                     print (species_name, contig_name, bed_start, bed_end)
                     
-                    utilities.confirm_matching_sequence(species_name, contig_name, maf_start_pos_list[k], maf_end_pos_list[k], locus_bed_dir, locus_idx, seq_list[k].replace("-", ""), maf_direction_list[k])
+                    utilities.confirm_matching_sequence(species_name, contig_name, maf_start_pos_list[k], maf_end_pos_list[k], locus_bed_dir, locus_idx, seq_list[k].replace("-", "").strip(), maf_direction_list[k])
                     # utilities.get_flanked_sequence(species_name, contig_name, bed_start, bed_end, locus_bed_dir, locus_idx, unflanked_seq)
                     
                     locus_header_list.append(species_name)
