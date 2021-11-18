@@ -735,7 +735,7 @@ def confirm_matching_sequence(species, contig, start, end, locus_bed_dir, locus_
 
 
 GENOME_DIR = '/home/ahollar/alignments/7way_extracted'
-REV_COMP_CONTIG_DIR = '/home/ahollar/alignmets/7way_revcomp'
+REV_COMP_CONTIG_DIR = '/home/ahollar/alignments/7way_revcomp'
 species_to_genome_dict = {"Homo_sapiens": os.path.join(GENOME_DIR, "Homo_sapiens_extracted.fa"), \
                         "Macaca_mulatta": os.path.join(GENOME_DIR, "Macaca_mulatta_extracted.fa"), \
                         "Callithrix_jacchus": os.path.join(GENOME_DIR, "Callithrix_jacchus_extracted.fa"), \
