@@ -643,7 +643,7 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, 
     assert unflanked_seq.lower() in flanked_seq.lower()
 
 
-def confirm_matching_sequence(species, contig, start, end, locus_bed_dir, locus_idx, alignment_seq):
+def confirm_matching_sequence(species, contig, start, end, locus_bed_dir, locus_idx, alignment_seq, sequence_direction):
     from commands import BEDTOOLS
 
     bed_filepath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".bed")
@@ -664,6 +664,9 @@ def confirm_matching_sequence(species, contig, start, end, locus_bed_dir, locus_
     bed_error.close()
     
     extracted_seq = open(extracted_output).read()
+    
+    if sequence_direction == "-":
+        extracted_seq = complement(extracted_seq)
     
     print alignment_seq.lower()
     print extracted_seq.lower()
