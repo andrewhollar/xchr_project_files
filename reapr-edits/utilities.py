@@ -663,7 +663,7 @@ def confirm_matching_sequence(species, contig, start, end, locus_bed_dir, locus_
     
     bed_error.close()
     
-    extracted_seq = open(extracted_output).read().strip()
+    extracted_seq = open(extracted_output).read()[1:].strip()
     
     if sequence_direction == "-":
         extracted_seq = complement(extracted_seq)
