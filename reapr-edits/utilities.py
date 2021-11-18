@@ -647,7 +647,16 @@ def confirm_matching_sequence(species, contig, start, end, locus_bed_dir, locus_
     from commands import BEDTOOLS
     bed_filepath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".bed")
     bed_error_outpath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".log")
-
+    
+    if start - FLANK_VALUE >= 0:
+        start -= FLANK_VALUE
+    else:
+        start = 0
+    
+    if end + FLANK_VALUE < contig_length:
+        end += FLANK_VALUE
+    else:
+        end = contig_length - 1
 
     if sequence_direction == "-":
         bed_entry = "\t".join([contig, "0", str(contig_length)])
@@ -659,14 +668,9 @@ def confirm_matching_sequence(species, contig, start, end, locus_bed_dir, locus_
         subprocess.Popen(cmd, shell=True, stdout=bed_error, stderr=bed_error).wait()
         bed_error.close()
 
-        extracted_seq = open(extracted_output).read().split('\n')[1].strip()
-        
-        extracted_seq = complement(extracted_seq)
-        
-        extracted_seq = extracted_seq[start:end]
-        
-        # assert len(extracted_seq) == contig_length
-        
+        full_contig = open(extracted_output).read().split('\n')[1].strip()
+        full_contig = complement(full_contig)
+        extracted_seq = full_contig[start:end]        
     else:
         bed_entry = "\t".join([contig, str(start), str(end)])
         open(bed_filepath, "w").write(bed_entry)
@@ -683,7 +687,7 @@ def confirm_matching_sequence(species, contig, start, end, locus_bed_dir, locus_
         
         extracted_seq = open(extracted_output).read().split('\n')[1].strip()
     
-    assert alignment_seq.lower() == extracted_seq.lower()
+    assert alignment_seq.lower() in extracted_seq.lower()
     
     # if sequence_direction == "-":
         # extracted_seq = complement(extracted_seq)
@@ -692,10 +696,10 @@ def confirm_matching_sequence(species, contig, start, end, locus_bed_dir, locus_
     # print extracted_seq.lower(), "\n"
     
     
-    if alignment_seq.lower() != extracted_seq.lower():
-        print alignment_seq.lower()
-        print extracted_seq.lower()
-        print species, contig, locus_bed_dir
+    # if alignment_seq.lower() != extracted_seq.lower():
+    #     print alignment_seq.lower()
+    #     print extracted_seq.lower()
+    #     print species, contig, locus_bed_dir
     
     # try: 
     #     assert alignment_seq.lower() == extracted_seq.lower()
@@ -760,6 +764,7 @@ WINDOW_SIZE = 120   # Length of Window
 # -------------------------------------------------------------------------------
 # EDIT: Changed the window-slide value to 20 to match the Thiel publication.
 WINDOW_SLIDE = 20   # Length of slide from window to window
+FLANK_VALUE = 20
 # -------------------------------------------------------------------------------
         
 STABILITY_THRESHOLD = -1  # Upper threshold on mean z score
