@@ -280,9 +280,17 @@ def merge_windows(table_record_list, threshold, alternate_strands, all_species):
         strand_list = [x for x in filtered_list if x[strand_col] == strand]
 
         if len(strand_list) == 0:  continue
+        
+        # -------------------------------------------------------------------------------
+        current_locus_len = 0
+        # -------------------------------------------------------------------------------
+
 
         # Merge windows
         for i, table_record in enumerate(strand_list[:-1]):
+            
+            print table_record
+            
             # Assign this window a locus
             table_record[locus_idx_col] = str(locus_idx)
             
