@@ -8,7 +8,7 @@ SAMPLE_DENOM = 25
 MAX_SAMPLES = 100    #sys.maxsize
 MIN_SPECIES = 7
 # SAMPLE_LENGTH = 15
-random.seed(500)
+#random.seed(500)
 
 # -------------------------------------------------------------------------------
 # EDIT: Added the following function to generate the required files from the input MAF file
