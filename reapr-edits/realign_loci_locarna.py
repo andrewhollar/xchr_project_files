@@ -48,9 +48,9 @@ def run_locarna(locarna, ungap_fasta_path, target_dir, target_file, max_diff, al
     result_path = os.path.join(target_dir, 'results', 'result.aln')
     if os.path.isfile(result_path):
         
-        utilities.fix_clustal_header(result_path)  # Fix clustal header (remove non-standard LocARNA header)
-        shutil.copyfile(result_path, target_file)   # Copy final alignment
-        shutil.rmtree(target_dir)                   # Delete intermediate directory
+        # utilities.fix_clustal_header(result_path)  # Fix clustal header (remove non-standard LocARNA header)
+        # shutil.copyfile(result_path, target_file)   # Copy final alignment
+        # shutil.rmtree(target_dir)                   # Delete intermediate directory
 
         return True
     else:

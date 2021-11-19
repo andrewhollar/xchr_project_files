@@ -163,7 +163,7 @@ def main():
             print target_files
             print >>errF, 'End: LocARNA realignment, Delta=%s' % delta, utilities.get_time()
 
-            # raise IOError("End")
+            raise IOError("End")
 
             ### Run RNAz screen on realigned loci ###
             # -------------------------------------------------------------------------------
