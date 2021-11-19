@@ -261,7 +261,7 @@ def eval_alignment(alignment, no_reference, both_strands, window_size, window_sl
                 shutil.move(os.path.join(tmp_dir, alignment_name + suffix), dest)
             shutil.rmtree(tmp_dir)
 
-        if verbose: print >>sys.stderr, log + '\n'
+        # if verbose: print >>sys.stderr, log + '\n'
     elif pass_idx == 2:
         # Do not need to run RNAzSelectSeqs, or RNAzwindow.
         
@@ -277,7 +277,7 @@ def eval_alignment(alignment, no_reference, both_strands, window_size, window_sl
             print "running rnaz on realigned locus of length %s" % (str(alignment_length))
             log += '\n' + run_RNAz(alignment, rnaz_path, both_strands, structural, RNAz, verbose)
                     
-        if verbose: print >>sys.stderr, log + '\n'
+    if verbose: print >>sys.stderr, log + '\n'
 
     return log
 
