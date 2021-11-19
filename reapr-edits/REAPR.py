@@ -202,7 +202,7 @@ def main():
 
 
         # Combine tables
-        #combine_tables.combine_tables(initial_table, realign_tables, args.delta, loci_dir, True, species, args.alistat, args.compalignp, os.path.join(args.output_folder, 'summary.tab'))
+        combine_tables.combine_tables(initial_table, realign_tables, args.delta, loci_dir, True, species, args.alistat, args.compalignp, os.path.join(args.output_folder, 'summary.tab'))
 
     except KeyboardInterrupt:
         print >>errF, 'Outside except, terminating pool'

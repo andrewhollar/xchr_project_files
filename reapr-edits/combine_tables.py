@@ -39,12 +39,23 @@ def combine_tables(original_table, realign_tables, deltas, loci_dir, guide_tree,
                slice_idx_col,\
                locus_idx_col,\
                species_start_col
+               
+    # original table = 'original_wga.tab'
+    # realign tables =  'locarna.d_%s.tab' where %s = args.delta
+    # loci_dir = /reapr_x/loci
+    # guide_tree = True
+    # species = list of species
+    # output_table = 'summary.tab'
+    
 
     # Read initial table. Skip windows not assigned to a locus for not
     # passing stability threshold
     initial_lines = [x.split() for x in open(original_table).read().split('\n')[1:]
                         if x!='' and x[0]!='#' and x.split()[locus_idx_col]!='NA']
     locus_names = sorted(set(['%s%s%s' % (line[block_col], utilities.block_locus_delim, line[locus_idx_col]) for line in initial_lines]))
+    print locus_names
+    raise IOError("End")
+
 
     # Make dictionary mapping locus name to a list of features:
     # -- min slice index
