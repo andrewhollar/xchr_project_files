@@ -152,7 +152,7 @@ def main():
             target_dirs =  [x + '.%s.d' % suffix for x in ungap_fastas] #ref_clustals]
             # -------------------------------------------------------------------------------
             # EDIT: Changed the path of the target clustal file to be the boundaries predicted by the reliability-profile.pl script
-            target_files = [os.path.join(x + '.%s'   % suffix, 'improved_boundaries.aln') for x in ungap_fastas] #ref_clustals]
+            target_files = [os.path.join(x + '.%s.d'   % suffix, 'improved_boundaries.aln') for x in ungap_fastas] #ref_clustals]
             # -------------------------------------------------------------------------------
 
 
