@@ -230,39 +230,48 @@ def eval_alignment(alignment, no_reference, both_strands, window_size, window_sl
         log += run_rnazSelectSeqs(alignment, filtered_maf_path, rnazSelectSeqs)    
         # -------------------------------------------------------------------------------   
 
-    # Run rnazWindow
-    windows_path = os.path.join(tmp_dir, alignment_name + '.windows')
-    verbose_path = os.path.join(tmp_dir, alignment_name + '.windows.log')
-    # -------------------------------------------------------------------------------
-    # EDIT: Changed the input alignment to be the output from rnazSelectSeqs.
-    if pass_idx == 1:
+        # Run rnazWindow
+        windows_path = os.path.join(tmp_dir, alignment_name + '.windows')
+        verbose_path = os.path.join(tmp_dir, alignment_name + '.windows.log')
+        # -------------------------------------------------------------------------------
+        # EDIT: Changed the input alignment to be the output from rnazSelectSeqs.
+        #if pass_idx == 1:
         log += run_rnazWindow(filtered_maf_path, windows_path, verbose_path, no_reference, rnazWindow, window_size, window_slide, verbose)
-    else:
-        log += run_rnazWindow(alignment, windows_path, verbose_path, no_reference, rnazWindow, window_size, window_slide, verbose)
+    # else:
+    #     log += run_rnazWindow(alignment, windows_path, verbose_path, no_reference, rnazWindow, window_size, window_slide, verbose)
     # -------------------------------------------------------------------------------
 
-    # Write the window to slice index map
-    win_to_slice_path = os.path.join(tmp_dir, alignment_name + '.windows.indices')
-    index_windows(verbose_path, [], num_slices, win_to_slice_path)
+        # Write the window to slice index map
+        win_to_slice_path = os.path.join(tmp_dir, alignment_name + '.windows.indices')
+        index_windows(verbose_path, [], num_slices, win_to_slice_path)
 
     # Run RNAz
-    rnaz_path = os.path.join(tmp_dir, alignment_name + '.rnaz')
-    
-    # -------------------------------------------------------------------------------
-    # EDIT: Only run RNAz if there has been information extracted about the windows.
-    if not os.stat(windows_path).st_size == 0:
-        log += '\n' + run_RNAz(windows_path, rnaz_path, both_strands, structural, RNAz, verbose)
-    # -------------------------------------------------------------------------------
+        rnaz_path = os.path.join(tmp_dir, alignment_name + '.rnaz')
+        
+        # -------------------------------------------------------------------------------
+        # EDIT: Only run RNAz if there has been information extracted about the windows.
+        if not os.stat(windows_path).st_size == 0:
+            log += '\n' + run_RNAz(windows_path, rnaz_path, both_strands, structural, RNAz, verbose)
+        # -------------------------------------------------------------------------------
 
-    if redirect:
-        for suffix in ['.windows', '.windows.log', '.rnaz', '.windows.indices']:
-            dest = os.path.join(out_dir, alignment_name + suffix)
-            if os.path.isfile(dest): os.remove(dest)   # remove before writing
-            shutil.move(os.path.join(tmp_dir, alignment_name + suffix), dest)
-        shutil.rmtree(tmp_dir)
+        if redirect:
+            for suffix in ['.windows', '.windows.log', '.rnaz', '.windows.indices']:
+                dest = os.path.join(out_dir, alignment_name + suffix)
+                if os.path.isfile(dest): os.remove(dest)   # remove before writing
+                shutil.move(os.path.join(tmp_dir, alignment_name + suffix), dest)
+            shutil.rmtree(tmp_dir)
 
-    if verbose: print >>sys.stderr, log + '\n'
-    return log
+        if verbose: print >>sys.stderr, log + '\n'
+        return log
+    elif pass_idx == 2:
+        # Do not need to run RNAzSelectSeqs, or RNAzwindow.
+        
+        # Run RNAz
+        rnaz_path = os.path.join(tmp_dir, alignment_name + '.rnaz')
+        # -------------------------------------------------------------------------------
+        # EDIT: Only run RNAz if there has been information extracted about the windows.
+        # if not os.stat(windows_path).st_size == 0:
+        log += '\n' + run_RNAz(alignment, rnaz_path, both_strands, structural, RNAz, verbose)
 
 
 # This method is the main driver of the first RNAz screen. This will begin the procedure on
