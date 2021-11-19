@@ -279,6 +279,11 @@ def eval_alignment(alignment, no_reference, both_strands, window_size, window_sl
             print "running rnaz on realigned locus of length %s" % (str(alignment_length))
             log += '\n' + run_RNAz(alignment, rnaz_path, both_strands, structural, RNAz, verbose)
                     
+        if alignment_length >= 400:
+            print "rnaz skipped because the improved boundaries of locus excede a width of 400 nt (%s)" % (alignment_length)
+        elif alignment_length <= 49:
+            print "rnaz skipped because the improved boundaries of locus failed to excede a width of 50 nt (%s)" % (alignment_length) 
+
     if verbose: print >>sys.stderr, log + '\n'
 
     return log

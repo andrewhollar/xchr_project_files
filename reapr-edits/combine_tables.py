@@ -120,7 +120,7 @@ def combine_tables(original_table, realign_tables, deltas, loci_dir, guide_tree,
             # -------------------------------------------------------------------------------
             # EDIT: changed 'locus_name' to not include the '.maf' extension
             original = os.path.join(loci_dir, locus_name.replace('.maf', '') + '.clustal')
-            print original
+            # print original
             # -------------------------------------------------------------------------------    
         
             if features[4] == 'NA':

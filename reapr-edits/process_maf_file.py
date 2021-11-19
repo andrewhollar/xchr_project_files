@@ -6,7 +6,7 @@ from Bio import AlignIO
 
 SAMPLE_DENOM = 100
 MAX_SAMPLES = 1000    #sys.maxsize
-MIN_SPECIES = 2
+MIN_SPECIES = 7
 # SAMPLE_LENGTH = 15
 random.seed(500)
 
