@@ -46,6 +46,15 @@ def run_locarna(locarna, ungap_fasta_path, target_dir, target_file, max_diff, al
     # intermediate directory unless final alignment wasn't created,
     # probably due to impossible banding constraints
     result_path = os.path.join(target_dir, 'results', 'result.aln')
+    
+    # -------------------------------------------------------------------------------
+    # EDIT: add run of reliability-profile.pl script to extract the high-confidence portion of the alignment
+    
+    run_reliability_profile_on_locarna_output(target_dir)
+    
+    # -------------------------------------------------------------------------------
+
+    
     if os.path.isfile(result_path):
         
         # utilities.fix_clustal_header(result_path)  # Fix clustal header (remove non-standard LocARNA header)
@@ -56,6 +65,20 @@ def run_locarna(locarna, ungap_fasta_path, target_dir, target_file, max_diff, al
     else:
         if verbose: print >>sys.stderr, 'Error: no alignment could be produced.'
         return False
+
+def run_reliability_profile_on_locarna_output(target_dir):
+    from commands import RELIABILITY_PROFILE
+    
+    cmd = 'perl %s --dont-plot --fit-once-on %s' % (RELIABILITY_PROFILE, target_dir)
+
+    start_time = time.time()
+    # subprocess.Popen(cmd, shell=True, stdout=open('/dev/null','w'), stderr=subprocess.STDOUT).wait()
+    # -------------------------------------------------------------------------------
+    reliability_out_path = os.path.join(target_dir, "reliability.out")
+    reliability_output = open(reliability_out_path, 'w', 1000000)    
+    subprocess.Popen(cmd, shell=True, stdout=reliability_output, stderr=subprocess.STDOUT).wait()
+    reliability_output.close()
+
 
 def run_locarna_pool(x):
     try:
