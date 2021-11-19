@@ -113,10 +113,10 @@ def main():
         rnaz_1_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, commands.rnazSelectSeqs, out_dir, tmp_dir, alignment_format, 1, verbose) for alignment in block_paths] 
         # -------------------------------------------------------------------------------
 
-        print >>errF, 'Start: RNAz screen on WGA', utilities.get_time()
+        print 'Start: RNAz screen on WGA', utilities.get_time()
         pool = multiprocessing.Pool(processes=args.processes)        
         log_list = pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, rnaz_1_args).get(99999999)
-        print >>errF, 'End: RNAz screen on WGA', utilities.get_time()
+        print 'End: RNAz screen on WGA', utilities.get_time()
 
         ### Compile table of RNAz screen results ###
         rnaz_paths = [a + '.rnaz' for a in block_paths]              # RNAz output
@@ -162,13 +162,13 @@ def main():
             target_args = [(commands.mlocarna, a, b, c, delta, acd, args.guide_tree, verbose) for a,b,c in zip(ungap_fastas, target_dirs, target_files)]
 
             
-            print >>errF, 'Start: LocARNA realignment, Delta=%s' % delta, utilities.get_time()
+            print 'Start: LocARNA realignment, Delta=%s' % delta, utilities.get_time()
             pool = multiprocessing.Pool(processes=args.processes)
             success = pool.map_async(realign_loci_locarna.run_locarna_pool, target_args).get(999999999)
             # success = pool.map_async(realign_loci_locarna.run_locarna_pool, target_args).wait()
             target_files = [x for x,y in zip(target_files, success) if y]
             # print target_files
-            print >>errF, 'End: LocARNA realignment, Delta=%s' % delta, utilities.get_time()
+            print 'End: LocARNA realignment, Delta=%s' % delta, utilities.get_time()
 
             # raise IOError("End")
 
@@ -180,10 +180,10 @@ def main():
             # -------------------------------------------------------------------------------
             alignment_format='CLUSTAL'
             rnaz_2_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, commands.rnazSelectSeqs, location, None, alignment_format, 2, verbose) for alignment, location in zip(target_files, target_dirs)]
-            print >>errF, 'Start: RNAz screen on realigned loci, Delta=%s' % delta, utilities.get_time()
+            print 'Start: RNAz screen on realigned loci, Delta=%s' % delta, utilities.get_time()
             pool = multiprocessing.Pool(processes=args.processes)
             pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, rnaz_2_args).get(99999999)
-            print >>errF, 'End: RNAz screen on realigned loci, Delta=%s' % delta, utilities.get_time()
+            print 'End: RNAz screen on realigned loci, Delta=%s' % delta, utilities.get_time()
             
             ### Compile tables of RNAz results ###
             rnaz_paths = [a + '.rnaz' for a in target_files]              # RNAz output
@@ -205,11 +205,11 @@ def main():
         combine_tables.combine_tables(initial_table, realign_tables, args.delta, loci_dir, True, species, args.alistat, args.compalignp, os.path.join(args.output_folder, 'summary.tab'))
 
     except KeyboardInterrupt:
-        print >>errF, 'Outside except, terminating pool'
+        print 'Outside except, terminating pool'
         pool.terminate()
 
     except:
-        print >>errF, traceback.print_exc()
+        print traceback.print_exc()
     finally:
         # # Kill descendant processes, i.e. those with same group id
         # group_processes = subprocess.Popen('pgrep -g %s' % (parent_pid), shell=True, stdout=subprocess.PIPE).communicate()[0].split()

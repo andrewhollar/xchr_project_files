@@ -125,4 +125,4 @@ def run_locarna_pool(x):
     except KeyboardInterrupt:
         pass
     except:
-        print >>sys.stderr, traceback.print_exc()
+        print traceback.print_exc()

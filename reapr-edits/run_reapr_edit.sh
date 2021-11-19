@@ -2,9 +2,9 @@
 OUTDIR=/home/ahollar/reapr_x_full
 
 #This is where the MAF preprocessing is done (Python 3)
-source ~/mafPreprocessingEnv/bin/activate
-python ~/xchr_project_files/reapr-edits/process_maf_file.py ~/alignments/7way_final.maf $OUTDIR
-deactivate
+# source ~/mafPreprocessingEnv/bin/activate
+# python ~/xchr_project_files/reapr-edits/process_maf_file.py ~/alignments/7way_final.maf $OUTDIR
+# deactivate
 
 #This is where REAPR is run (Python 2)
 source ~/reaprEnv/bin/activate
