@@ -658,7 +658,7 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, 
         end = contig_length - 1
 
     if sequence_direction == "-":
-        if not os.path.isfile(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa')):
+        if not os.path.isfile(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa')) and not os.stat(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa')).st_size == 0:
             print "writing " + species + "." + contig 
             bed_entry = "\t".join([contig, "0", str(contig_length), species + "." + str(start), "0", sequence_direction])
             open(bed_filepath, "w").write(bed_entry)
