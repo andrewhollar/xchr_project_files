@@ -291,12 +291,20 @@ def merge_windows(table_record_list, threshold, alternate_strands, all_species):
             
             print table_record
             
+
+            
             # Assign this window a locus
             table_record[locus_idx_col] = str(locus_idx)
             
             # Compute the slice index gap to the next window
             next_record = strand_list[i+1]
             dist = int(next_record[slice_idx_col]) - int(table_record[slice_idx_col])
+            
+            if current_locus_len == 0:
+                current_locus_len = int(table_record[1])
+            else:
+                nt_dist = dist * utilities.WINDOW_SLIDE
+                current_locus_len += nt_dist
             
             # Do not merge current window with the next window if the
             # gap is greater than 3 or if the gap is between 2 and 3,
@@ -306,7 +314,11 @@ def merge_windows(table_record_list, threshold, alternate_strands, all_species):
             # overlap is if |A intersect B| / |A union B| >= 0.5.  Do
             # merge if the gap is less than or equal to 2 slice
             # indices
-            if dist > 3:
+            if dist > 3 or current_locus_len > 400:
+                
+                if current_locus_len > 400:
+                    print 'splitting locus due to length'
+                
                 locus_idx += 1
             elif dist >= 2:
                 species = table_record[species_start_col : species_end_col]
