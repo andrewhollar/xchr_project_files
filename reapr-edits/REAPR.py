@@ -179,7 +179,7 @@ def main():
             no_reference, structural, verbose, both_strands = False, True, True, True
             # -------------------------------------------------------------------------------
             alignment_format='CLUSTAL'
-            rnaz_2_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, commands.rnazSelectSeqs, out_dir, tmp_dir, alignment_format, 2, verbose) for alignment in target_files]
+            rnaz_2_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, commands.rnazSelectSeqs, location, None, alignment_format, 2, verbose) for alignment, location in zip(target_files, target_dirs)]
             print >>errF, 'Start: RNAz screen on realigned loci, Delta=%s' % delta, utilities.get_time()
             pool = multiprocessing.Pool(processes=args.processes)
             pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, rnaz_2_args).get(99999999)
@@ -192,6 +192,8 @@ def main():
             alternate_strands, merge = False, False
             block_names = locus_names
             tabulate_rnaz_results.write_table(realign_table, rnaz_paths, block_names, log_paths, index_paths, alternate_strands, merge, args.threshold, species)
+
+
 
         # Combine tables
         combine_tables.combine_tables(initial_table, realign_tables, args.delta, loci_dir, True, species, args.alistat, args.compalignp, os.path.join(args.output_folder, 'summary.tab'))
