@@ -690,6 +690,9 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, 
         
         extracted_seq = open(extracted_output).read().split('\n')[1].strip()
     
+    print alignment_seq.lower()
+    print extracted_seq.lower()
+    
     assert alignment_seq.lower() in extracted_seq.lower()
     return extracted_seq
     
