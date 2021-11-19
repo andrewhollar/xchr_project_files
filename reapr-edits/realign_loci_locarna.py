@@ -46,12 +46,13 @@ def run_locarna(locarna, ungap_fasta_path, target_dir, target_file, max_diff, al
     # intermediate directory unless final alignment wasn't created,
     # probably due to impossible banding constraints
     result_path = os.path.join(target_dir, 'results', 'result.aln')
+    filtered_path = os.path.join(target_dir, 'improved_boundaries.aln')
     
     # -------------------------------------------------------------------------------
     # EDIT: add run of reliability-profile.pl script to extract the high-confidence portion of the alignment
     
-    run_reliability_profile_on_locarna_output(target_dir)
-    
+    reliability_out_path = run_reliability_profile_on_locarna_output(target_dir)
+    write_improved_boundaries_alignment(reliability_out_path, result_path, filtered_path)
     # -------------------------------------------------------------------------------
 
     
@@ -66,6 +67,36 @@ def run_locarna(locarna, ungap_fasta_path, target_dir, target_file, max_diff, al
         if verbose: print >>sys.stderr, 'Error: no alignment could be produced.'
         return False
 
+def write_improved_boundaries_alignment(reliability_profile_output, result_alignment_path, filtered_result_path):
+    fit_line = open(reliability_profile_output).read().split('\n')[-1].split()
+    boundaries_start = fit_line[1]
+    boundaries_end = fit_line[2]
+    
+    curr_align = open(result_alignment_path).read()
+    assert curr_align != '', 'Alignment is empty'
+    
+    clustal_list = [x.split() for x in curr_align.split('\n') if x!='' and x[:7]!='CLUSTAL']
+    clustal_list = [x for x in clustal_list if len(x) != 0]
+    header_list, seq_list = [], []
+    for x in clustal_list:
+        if x[0] in header_list:
+            seq_list[header_list.index(x[0])].append(x[1])
+        else:
+            header_list.append(x[0])
+            seq_list.append([x[1]])
+    seq_list = [''.join(x) for x in seq_list]
+    seq_lengths = [len(x) for x in seq_list]
+
+    # Ensure equal lengths
+    assert seq_lengths.count(seq_lengths[0]) == len(seq_lengths)
+
+    # seq_length = int(seq_lengths[0])
+
+    # for species, sequence in zip(header_list, seq_list):
+    
+    clustal_string = utilities.generate_clustal_boundaries(header_list, seq_list, boundaries_start, boundaries_end)
+    open(filtered_result_path, 'w').write(clustal_string)
+
 def run_reliability_profile_on_locarna_output(target_dir):
     from commands import RELIABILITY_PROFILE
     
@@ -78,6 +109,10 @@ def run_reliability_profile_on_locarna_output(target_dir):
     reliability_output = open(reliability_out_path, 'w', 1000000)    
     subprocess.Popen(cmd, shell=True, stdout=reliability_output, stderr=subprocess.STDOUT).wait()
     reliability_output.close()
+    
+    return reliability_out_path
+    
+    # extracted_seq = open(extracted_output).read().split('\n')[1].strip()
 
 
 def run_locarna_pool(x):

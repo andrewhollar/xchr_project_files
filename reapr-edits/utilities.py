@@ -693,6 +693,28 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, 
     assert alignment_seq.lower() in extracted_seq.lower()
     return extracted_seq
     
+    
+    
+def generate_clustal_boundaries(header_list, seq_list, start, end):
+    """
+    Returns an alignment in CLUSTAL format as a string.  Also removes
+    any columns with only gaps.
+
+    Input
+    -----------------
+    @header_list   : List of sequence headers
+    @seq_list      : List of gapped sequences
+    """
+    clustal_list = []
+
+    for species, sequence in zip(header_list, seq_list):
+        clustal_list.append(species + "\t" + sequence[start:end])
+        
+    # clustal_list = [x + '\t' + ''.join(y) for x,y in zip(header_list, seq_list)]
+    clustal_string = clustal_standard_header + '\n'.join(clustal_list) + '\n'
+
+    return clustal_string
+    
 # -------------------------------------------------------------------------------
 
 # old Macaca_mulatta: GCF_000772875.2_Mmul_8.0.1_genomic.fna
