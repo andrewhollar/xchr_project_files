@@ -693,12 +693,16 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, 
     # print alignment_seq.lower()
     # print extracted_seq.lower()
     try:
-        assert extracted_seq.lower() in alignment_seq.lower()
+        assert extracted_seq[start + FLANK_VALUE: end - FLANK_VALUE].lower() in alignment_seq.lower()
     except AssertionError:
         print bed_filepath  
         print alignment_seq.lower()
         print extracted_seq.lower()
     
+    
+    # BLOCK 1704 - Homo_sapiens
+    # attagccaggcgtggtagtgcatgcctacaatcccaggtacttgggaggctgaggcaggagaattgcttgaacctgggaggcaggcgagtgaatgagatcatgttgcagtgagctgagatgacgccattgcactccagcctgggcaacaa
+    # catgcctacaatcccaggtacttgggaggctgaggcaggagaattgcttgaacctgggaggcaggcgagtgaatgagatcatgttgcagtgagctgagatgacgccattgcactccagcctgggcaacaagagcaaaactctgtctaaaaaacaataata
     
     
     return extracted_seq
