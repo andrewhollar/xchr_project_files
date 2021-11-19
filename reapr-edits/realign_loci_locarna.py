@@ -106,7 +106,7 @@ def run_reliability_profile_on_locarna_output(target_dir, fit_once_on = True):
     
     cmd = 'perl %s --dont-plot %s %s' % (RELIABILITY_PROFILE, fit_once_on, target_dir)
 
-    start_time = time.time()
+    # start_time = time.time()
     # subprocess.Popen(cmd, shell=True, stdout=open('/dev/null','w'), stderr=subprocess.STDOUT).wait()
     # -------------------------------------------------------------------------------
     reliability_out_path = os.path.join(target_dir, "reliability.out")

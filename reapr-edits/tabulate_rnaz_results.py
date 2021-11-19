@@ -89,7 +89,11 @@ def parse_windows(rnaz_path, log_path, block, index_path, alternate_strands, all
         return []
     # -------------------------------------------------------------------------------
 
-    win_to_slice = [int(x) for x in open(index_path).read().split('\n') if x != '']
+    if index_path is not None:
+        win_to_slice = [int(x) for x in open(index_path).read().split('\n') if x != '']
+    else:
+        win_to_slice = []
+        
     win_idx = 0         # Keep track of the window index
     strand = 'forward'  # Keep track of the window strand
 
@@ -305,7 +309,7 @@ def merge_windows(table_record_list, threshold, alternate_strands, all_species):
             else:
                 nt_dist = dist * utilities.WINDOW_SLIDE
                 current_locus_len += nt_dist
-                print locus_idx, current_locus_len
+                # print locus_idx, current_locus_len
             
             # Do not merge current window with the next window if the
             # gap is greater than 3 or if the gap is between 2 and 3,

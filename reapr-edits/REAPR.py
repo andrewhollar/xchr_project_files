@@ -187,9 +187,15 @@ def main():
             
             ### Compile tables of RNAz results ###
             rnaz_paths = [a + '.rnaz' for a in target_files]              # RNAz output
-            log_paths = [a + '.windows.log' for a in target_files]        # rnazWindow verbose logs
-            index_paths = [a + '.windows.indices' for a in target_files]  # window to slice indices map
-            alternate_strands, merge = False, False
+            
+            # -------------------------------------------------------------------------------
+            # EDIT: There are no windows in the second pass of RNAz
+            # log_paths = [a + '.windows.log' for a in target_files]        # rnazWindow verbose logs
+            log_paths = [None for a in target_files]
+            #index_paths = [a + '.windows.indices' for a in target_files]  # window to slice indices map
+            index_paths = [None for a in target_files]
+            # -------------------------------------------------------------------------------
+            alternate_strands, merge = True, False
             block_names = locus_names
             tabulate_rnaz_results.write_table(realign_table, rnaz_paths, block_names, log_paths, index_paths, alternate_strands, merge, args.threshold, species)
 
