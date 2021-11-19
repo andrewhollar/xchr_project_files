@@ -126,6 +126,9 @@ def main():
         alternate_strands, merge = True, True
         tabulate_rnaz_results.write_table(initial_table, rnaz_paths, block_names, log_paths, index_paths, alternate_strands, merge, args.threshold, species)
 
+        raise IOError("End")
+
+
         ### Extract stable loci ###
         loci_dir = os.path.join(args.output_folder, 'loci')
         

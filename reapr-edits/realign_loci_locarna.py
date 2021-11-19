@@ -98,7 +98,7 @@ def write_improved_boundaries_alignment(reliability_profile_output, result_align
     clustal_string = utilities.generate_clustal_boundaries(header_list, seq_list, boundaries_start, boundaries_end)
     open(filtered_result_path, 'w').write(clustal_string)
 
-def run_reliability_profile_on_locarna_output(target_dir, fit_once_on = False):
+def run_reliability_profile_on_locarna_output(target_dir, fit_once_on = True):
     from commands import RELIABILITY_PROFILE
     
     fit_once_on = '--fit-once-on' if fit_once_on else ''
