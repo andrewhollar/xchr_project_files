@@ -673,7 +673,10 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, 
             extracted_seq = full_contig[start:end]
         else:
             # print "Rev-comp file already exists: " + species + "." + contig 
-            extracted_seq = open(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa')).read().split('\n')[1].strip()[start:end]
+            try:
+                extracted_seq = open(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa')).read().split('\n')[1].strip()[start:end]
+            except IndexError:
+                print str(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa'))
     else:
         bed_entry = "\t".join([contig, str(start), str(end)])
         open(bed_filepath, "w").write(bed_entry)
