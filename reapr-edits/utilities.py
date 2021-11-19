@@ -658,7 +658,7 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, 
         end = contig_length - 1
 
     if sequence_direction == "-":
-        if not os.path.isfile(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa')) and not os.stat(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa')).st_size == 0:
+        if not os.path.isfile(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa')):
             print "writing " + species + "." + contig 
             print bed_error_outpath
             bed_entry = "\t".join([contig, "0", str(contig_length), species + "." + str(start), "0", sequence_direction])
@@ -677,7 +677,6 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, 
             try:
                 extracted_seq = open(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa')).read().split('\n')[1].strip()[start:end]
             except IndexError:
-                
                 print str(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa'))
     else:
         bed_entry = "\t".join([contig, str(start), str(end)])
