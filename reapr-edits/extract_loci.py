@@ -247,7 +247,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
     # -------------------------------------------------------------------------------
     # EDIT: Changed variable name from 'locus_alignment_list' to 'loci_alignment_list' as 
     #       it was misspelled in REAPR v1. 
-    if stdout: print >>sys.stdout, '\n'.join(['\t'.join(x) for x in loci_alignment_list])
+    if stdout: print '\n'.join(['\t'.join(x) for x in loci_alignment_list])
     # -------------------------------------------------------------------------------
 
     return loci_alignment_list

@@ -40,7 +40,7 @@ def run_locarna(locarna, ungap_fasta_path, target_dir, target_file, max_diff, al
     locarna_output.close()
     # -------------------------------------------------------------------------------
     
-    if verbose: print >>sys.stderr, cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds\n'
+    if verbose: print cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds\n'
 
     # Copy final alignment 'results/result.aln' and delete
     # intermediate directory unless final alignment wasn't created,
@@ -64,7 +64,7 @@ def run_locarna(locarna, ungap_fasta_path, target_dir, target_file, max_diff, al
 
         return True
     else:
-        if verbose: print >>sys.stderr, 'Error: no alignment could be produced.'
+        if verbose: print 'Error: no alignment could be produced.'
         return False
 
 def write_improved_boundaries_alignment(reliability_profile_output, result_alignment_path, filtered_result_path):

@@ -21,7 +21,7 @@ def run_compalignp(compalignp, ref_path, test_path):
     try:
         return float(stdout)
     except:
-        print >>sys.stderr, stdout
+        print stdout
         
         # -------------------------------------------------------------------------------
         # EDIT: Commented out the following line, as it appears this was left in erroneously
