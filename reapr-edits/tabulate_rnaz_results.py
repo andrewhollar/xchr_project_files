@@ -320,6 +320,7 @@ def merge_windows(table_record_list, threshold, alternate_strands, all_species):
                     print 'splitting locus due to length'
                 
                 locus_idx += 1
+                current_locus_len = 0
             elif dist >= 2:
                 species = table_record[species_start_col : species_end_col]
                 next_species = next_record[species_start_col : species_end_col]
