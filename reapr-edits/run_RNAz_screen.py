@@ -270,7 +270,11 @@ def eval_alignment(alignment, no_reference, both_strands, window_size, window_sl
         # -------------------------------------------------------------------------------
         # EDIT: Only run RNAz if there has been information extracted about the windows.
         # if not os.stat(windows_path).st_size == 0:
-        log += '\n' + run_RNAz(alignment, rnaz_path, both_strands, structural, RNAz, verbose)
+        
+        print alignment_length
+        
+        if alignment_length < 400:
+            log += '\n' + run_RNAz(alignment, rnaz_path, both_strands, structural, RNAz, verbose)
         
     return log
 
