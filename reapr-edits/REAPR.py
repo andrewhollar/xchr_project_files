@@ -150,7 +150,11 @@ def main():
             locus_names, ungap_fastas = zip(*loci_alignment_list)
             suffix = 'locarna{0}.{1}'.format('.g' if args.guide_tree else '', delta)
             target_dirs =  [x + '.%s.d' % suffix for x in ungap_fastas] #ref_clustals]
+            # -------------------------------------------------------------------------------
+            # EDIT: Changed the path of the target clustal file to be the boundaries predicted by the reliability-profile.pl script
             target_files = [os.path.join(x + '.%s'   % suffix, 'improved_boundaries.aln') for x in ungap_fastas] #ref_clustals]
+            # -------------------------------------------------------------------------------
+
 
             # Realign loci
             acd, verbose = True, True
@@ -166,12 +170,13 @@ def main():
             print target_files
             print >>errF, 'End: LocARNA realignment, Delta=%s' % delta, utilities.get_time()
 
-            raise IOError("End")
+            # raise IOError("End")
 
             ### Run RNAz screen on realigned loci ###
             # -------------------------------------------------------------------------------
-            # EDIT: Changed the value of 'no_reference' to False, because we are using Human as a reference.  
-            no_reference, structural, verbose, both_strands = False, True, True, False
+            # EDIT: Changed the value of 'no_reference' to False, because we are using Human as a reference. 
+            #       Changed the value of 'both_strands' to True. 
+            no_reference, structural, verbose, both_strands = False, True, True, True
             # -------------------------------------------------------------------------------
             alignment_format='CLUSTAL'
             rnaz_2_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, commands.rnazSelectSeqs, None, tmp_dir, alignment_format, 2, verbose) for alignment in target_files]
