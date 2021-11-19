@@ -98,10 +98,12 @@ def write_improved_boundaries_alignment(reliability_profile_output, result_align
     clustal_string = utilities.generate_clustal_boundaries(header_list, seq_list, boundaries_start, boundaries_end)
     open(filtered_result_path, 'w').write(clustal_string)
 
-def run_reliability_profile_on_locarna_output(target_dir):
+def run_reliability_profile_on_locarna_output(target_dir, fit_once_on = False):
     from commands import RELIABILITY_PROFILE
     
-    cmd = 'perl %s --dont-plot --fit-once-on %s' % (RELIABILITY_PROFILE, target_dir)
+    fit_once_on = '--fit-once-on' if fit_once_on else ''
+    
+    cmd = 'perl %s --dont-plot %s %s' % (RELIABILITY_PROFILE, fit_once_on, target_dir)
 
     start_time = time.time()
     # subprocess.Popen(cmd, shell=True, stdout=open('/dev/null','w'), stderr=subprocess.STDOUT).wait()
