@@ -150,7 +150,7 @@ def main():
             locus_names, ungap_fastas = zip(*loci_alignment_list)
             suffix = 'locarna{0}.{1}'.format('.g' if args.guide_tree else '', delta)
             target_dirs =  [x + '.%s.d' % suffix for x in ungap_fastas] #ref_clustals]
-            target_files = [x + '.%s'   % suffix for x in ungap_fastas] #ref_clustals]
+            target_files = [os.path.join(x + '.%s'   % suffix, 'improved_boundaries.aln') for x in ungap_fastas] #ref_clustals]
 
             # Realign loci
             acd, verbose = True, True
