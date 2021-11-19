@@ -70,8 +70,8 @@ def run_locarna(locarna, ungap_fasta_path, target_dir, target_file, max_diff, al
 def write_improved_boundaries_alignment(reliability_profile_output, result_alignment_path, filtered_result_path):
     fit_line = open(reliability_profile_output).read().split('\n')[-2].split()
     print fit_line
-    boundaries_start = fit_line[1]
-    boundaries_end = fit_line[2]
+    boundaries_start = int(fit_line[1])
+    boundaries_end = int(fit_line[2])
     
     curr_align = open(result_alignment_path).read()
     assert curr_align != '', 'Alignment is empty'
