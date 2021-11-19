@@ -35,11 +35,13 @@ def index_windows(log_path, other_removals, num_slices, win_to_slice_path):
         
         for i, line in enumerate(verbose_log):
             if 'discarded' in line:
-                if 'window' not in verbose_log[i - 1]:
-                    discard_idx_list.append(verbose_log[i - 2].split(':')[1].split()[-1])
-                else:
+                if 'window' in verbose_log[i - 1]:
                     discard_idx_list.append(verbose_log[i - 1].split(':')[0].split()[-1])
-        
+                elif 'discarded' in verbose_log[i - 1]:
+                    continue
+                else:
+                    discard_idx_list.append(verbose_log[i - 2].split(':')[1].split()[-1])
+                        
         # example #1
 #         Outside training range: Alignment 1, window 15: Seq 3: base composition out of range.
 #         Removing Seq 3
