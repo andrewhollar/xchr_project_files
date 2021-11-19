@@ -1,5 +1,5 @@
 #!/bin/bash
-OUTDIR=/home/ahollar/reapr_x
+OUTDIR=/home/ahollar/reapr_x_full
 
 #This is where the MAF preprocessing is done (Python 3)
 source ~/mafPreprocessingEnv/bin/activate
@@ -8,5 +8,5 @@ deactivate
 
 #This is where REAPR is run (Python 2)
 source ~/reaprEnv/bin/activate
-python ~/xchr_project_files/reapr-edits/REAPR.py -p 8 -a $OUTDIR/alignment_blocks.txt -s ~/7way.species -g ~/7way.newick -o $OUTDIR -t 0.5
+python ~/xchr_project_files/reapr-edits/REAPR.py -p 30 -a $OUTDIR/alignment_blocks.txt -s ~/7way.species -g ~/7way.newick -o $OUTDIR -t 0.5
 deactivate
