@@ -6,7 +6,7 @@ from Bio import AlignIO
 
 SAMPLE_DENOM = 100
 MAX_SAMPLES = 1000    #sys.maxsize
-MIN_SPECIES = 0
+MIN_SPECIES = 2
 # SAMPLE_LENGTH = 15
 random.seed(500)
 
@@ -30,7 +30,7 @@ def main(path_to_maf, OUT_DIR):
     alignment_block_idx = 0
     sample_size = 0
     for msa in AlignIO.parse(path_to_maf, "maf"):
-        if random.randint(1, SAMPLE_DENOM) == 1 and sample_size <= MAX_SAMPLES and len(msa) >= MIN_SPECIES and alignment_block_idx == 13454:
+        if random.randint(1, SAMPLE_DENOM) == 1 and sample_size <= MAX_SAMPLES and len(msa) >= MIN_SPECIES:
             # This should contain two pieces of information:
             #   1. the name of the alignment block
             #   2. the location of the new alignment block file (this should be in the 'alignments/' sub-directory)
