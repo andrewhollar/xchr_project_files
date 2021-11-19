@@ -134,7 +134,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             start_slice_idx = min([window[2] for window in locus_group])
             end_slice_idx = max([window[2] for window in locus_group])
             
-            # These are the indices of the start and end of the sequence included within the
+            # These are the indices of the start and end of the sequence included within the locus
             start_column = start_slice_idx * win_slide
             end_column = end_slice_idx * win_slide + win_size
             
@@ -175,8 +175,8 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     # print trailing_sequence
                     # trailing_sequence = trailing_sequence.replace("-", '')
 
-                    bed_start = alignment_block_genomic_coordinates[species_name][0] + len(leading_sequence)
-                    bed_end = alignment_block_genomic_coordinates[species_name][1] - len(trailing_sequence)
+                    bed_start = alignment_block_genomic_coordinates[species_name][0] + len(leading_sequence) - utilities.FLANK_VALUE
+                    bed_end = alignment_block_genomic_coordinates[species_name][1] - len(trailing_sequence) + utilities.FLANK_VALUE
                     
                     # unflanked_lengths.append(len(seq_list[k][start_column : end_column]))
                     # bed_lengths.append(bed_end - bed_start)
@@ -184,8 +184,12 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     # unflanked_seq = seq_list[k][start_column : end_column].replace("-", "")
                     
                     # print (species_name, contig_name, bed_start, bed_end)
-                    maf_start_pos = maf_start_pos_list[k]
-                    maf_end_pos = maf_start_pos_list[k] + maf_entry_length_list[k]
+                    
+                    
+                    # This isn't what I want. Instead I need to get the start/end positions of the stable locus.
+                    # maf_start_pos = maf_start_pos_list[k]
+                    # maf_end_pos = maf_start_pos_list[k] + maf_entry_length_list[k]
+                    #locus_start_pos
                     
                     # if maf_direction_list[k] == "-":
                     #     maf_start_pos = maf_contig_lengths_list[k] - maf_start_pos_list[k]
@@ -194,7 +198,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     #utilities.confirm_matching_sequence(species_name, contig_name, maf_start_pos, maf_end_pos, locus_bed_dir, locus_idx, seq_list[k].replace("-", "").strip(), maf_direction_list[k], maf_contig_lengths_list[k])
                     # utilities.get_flanked_sequence(species_name, contig_name, bed_start, bed_end, locus_bed_dir, locus_idx, unflanked_seq)
                     
-                    flanked_sequence = utilities.get_flanked_sequence(species_name, contig_name, maf_start_pos, maf_end_pos, locus_bed_dir, locus_idx, seq_list[k].replace("-", "").strip(), maf_direction_list[k], maf_contig_lengths_list[k])
+                    flanked_sequence = utilities.get_flanked_sequence(species_name, contig_name, bed_start, bed_end, locus_bed_dir, locus_idx, seq_list[k].replace("-", "").strip(), maf_direction_list[k], maf_contig_lengths_list[k])
                     
                     locus_header_list.append(species_name)
                     #locus_seq_list.append(seq_list[k][start_column : end_column])
