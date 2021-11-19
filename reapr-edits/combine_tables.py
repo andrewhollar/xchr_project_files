@@ -54,7 +54,7 @@ def combine_tables(original_table, realign_tables, deltas, loci_dir, guide_tree,
                         if x!='' and x[0]!='#' and x.split()[locus_idx_col]!='NA']
     locus_names = sorted(set(['%s%s%s' % (line[block_col], utilities.block_locus_delim, line[locus_idx_col]) for line in initial_lines]))
     print locus_names
-    raise IOError("End")
+    # raise IOError("End")
 
 
     # Make dictionary mapping locus name to a list of features:
@@ -75,6 +75,8 @@ def combine_tables(original_table, realign_tables, deltas, loci_dir, guide_tree,
                           ['NA']+\
                           [0 for a in range(len(species))])\
                       for x in locus_names])
+
+    print loci_dict
 
     # Dictionary : delta --> list of lines from realignment table.
     # Also, update RNAz score after realignment
