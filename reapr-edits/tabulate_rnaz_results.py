@@ -289,7 +289,7 @@ def merge_windows(table_record_list, threshold, alternate_strands, all_species):
         # Merge windows
         for i, table_record in enumerate(strand_list[:-1]):
             
-            print table_record
+            # print table_record
             
 
             
@@ -305,6 +305,7 @@ def merge_windows(table_record_list, threshold, alternate_strands, all_species):
             else:
                 nt_dist = dist * utilities.WINDOW_SLIDE
                 current_locus_len += nt_dist
+                print locus_idx, current_locus_len
             
             # Do not merge current window with the next window if the
             # gap is greater than 3 or if the gap is between 2 and 3,
