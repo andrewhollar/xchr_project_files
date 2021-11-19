@@ -167,7 +167,7 @@ def main():
             success = pool.map_async(realign_loci_locarna.run_locarna_pool, target_args).get(999999999)
             # success = pool.map_async(realign_loci_locarna.run_locarna_pool, target_args).wait()
             target_files = [x for x,y in zip(target_files, success) if y]
-            print target_files
+            # print target_files
             print >>errF, 'End: LocARNA realignment, Delta=%s' % delta, utilities.get_time()
 
             # raise IOError("End")
@@ -179,7 +179,7 @@ def main():
             no_reference, structural, verbose, both_strands = False, True, True, True
             # -------------------------------------------------------------------------------
             alignment_format='CLUSTAL'
-            rnaz_2_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, commands.rnazSelectSeqs, None, tmp_dir, alignment_format, 2, verbose) for alignment in target_files]
+            rnaz_2_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, commands.rnazSelectSeqs, out_dir, tmp_dir, alignment_format, 2, verbose) for alignment in target_files]
             print >>errF, 'Start: RNAz screen on realigned loci, Delta=%s' % delta, utilities.get_time()
             pool = multiprocessing.Pool(processes=args.processes)
             pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, rnaz_2_args).get(99999999)
