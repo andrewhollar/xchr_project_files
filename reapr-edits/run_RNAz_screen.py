@@ -82,13 +82,18 @@ def index_windows(log_path, other_removals, num_slices, win_to_slice_path):
 #       the reference species.
 def run_rnazSelectSeqs(alignment_path, rnazSelectSeqs_output_path, rnazSelectSeqs_command):
 
+    log = []
+
     cmd = '%s --max-id=99 %s' % (rnazSelectSeqs_command, alignment_path)
     
     rnazSelectSeqs_output = open(rnazSelectSeqs_output_path, 'w', int(1e6)) 
     
     start_time = time.time()
     subprocess.Popen(cmd, shell=True, stdout=rnazSelectSeqs_output, stderr=subprocess.PIPE).wait()
-    log = cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds\n'
+    #log = cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds\n'
+    log.append(cmd)
+    log.append('Running time: ' + str(time.time() - start_time) + ' seconds')
+
 
     rnazSelectSeqs_output.close()
 
@@ -229,7 +234,7 @@ def eval_alignment(alignment, no_reference, both_strands, window_size, window_sl
         # -------------------------------------------------------------------------------
         # EDIT: Run rnazSelectSeqs
         filtered_maf_path = os.path.join(tmp_dir, alignment_name[:-4] + '.filtered.maf')
-        log.append(run_rnazSelectSeqs(alignment, filtered_maf_path, rnazSelectSeqs))
+        log.extend(run_rnazSelectSeqs(alignment, filtered_maf_path, rnazSelectSeqs))
         # -------------------------------------------------------------------------------   
 
         # Run rnazWindow
