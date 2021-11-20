@@ -123,13 +123,16 @@ def main():
         r = pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, rnaz_1_args, callback=RNAZ_OUT_LINES.extend) #.get(99999999)
         r.wait()
         
-        print RNAZ_OUT_LINES
+        #print RNAZ_OUT_LINES
         
-        RNAZ_OUT_LINES = RNAZ_OUT_LINES[0]
+        #RNAZ_OUT_LINES = RNAZ_OUT_LINES[0]
         
-        print RNAZ_OUT_LINES
+        #print RNAZ_OUT_LINES
         
-        REAPR_OUT_LINES.extend(RNAZ_OUT_LINES)
+        for rnaz_entry in RNAZ_OUT_LINES:
+            REAPR_OUT_LINES.extend(rnaz_entry)
+        
+        #REAPR_OUT_LINES.extend(RNAZ_OUT_LINES)
                 
         #print 'End: RNAz screen on WGA', utilities.get_time()
         REAPR_OUT_LINES.append('End: RNAz screen on WGA %s' % (utilities.get_time()))
