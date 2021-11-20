@@ -158,7 +158,7 @@ def main():
         loci_alignment_list = extract_loci.extract_loci(block_dict, initial_table, args.threshold, loci_dir, species, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, True, stdout=False)
         # -------------------------------------------------------------------------------
 
-        realign_tables = [os.path.join(args.output_folder, 'locarna.d_%s.tab' % d) for d in args.delta]
+        realign_tables = [os.path.join(args.output_folder, 'locarna.d_%s.tab' % str(d)) for d in args.delta]
 
         for delta, realign_table in zip(args.delta, realign_tables):
 
@@ -180,7 +180,7 @@ def main():
             #target_args = [(commands.mlocarna, a, b, c, d, delta, acd, args.guide_tree, verbose) for a,b,c,d in zip(ref_clustals, ungap_fastas, target_dirs, target_files)]
             locarna_target_args = [(commands.mlocarna, a, b, c, delta, acd, args.guide_tree, verbose) for a,b,c in zip(ungap_fastas, target_dirs, target_files)]
 
-            REAPR_OUT_LINES.append('Start: LocARNA realignment, Delta=%s, %s' % (delta, utilities.get_time()))
+            REAPR_OUT_LINES.append('Start: LocARNA realignment, Delta=%s, %s' % (str(delta), utilities.get_time()))
             #print 'Start: LocARNA realignment, Delta=%s' % delta, utilities.get_time()
             if args.processes == -1:
                 pool = multiprocessing.Pool(processes=(multiprocessing.cpu_count() - 2))
@@ -201,7 +201,7 @@ def main():
             # success = pool.map_async(realign_loci_locarna.run_locarna_pool, target_args).wait()
             target_files = [x for x,y in zip(target_files, locarna_success) if y]
             # print target_files
-            REAPR_OUT_LINES.append('End: LocARNA realignment, Delta=%s, %s' % (delta, utilities.get_time()))
+            REAPR_OUT_LINES.append('End: LocARNA realignment, Delta=%s, %s' % (str(delta), utilities.get_time()))
 
             # PRINT THE OUTPUT TO OUT.log
             line = REAPR_OUT_LINES.pop(0)
@@ -228,7 +228,7 @@ def main():
             alignment_format='CLUSTAL'
             rnaz_2_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, commands.rnazSelectSeqs, location, None, alignment_format, 2, verbose) for alignment, location in zip(target_files, target_dirs)]
             #print 'Start: RNAz screen on realigned loci, Delta=%s' % delta, utilities.get_time()
-            REAPR_OUT_LINES.append('Start: RNAz screen on realigned loci, Delta=%s' % (delta, utilities.get_time()))
+            REAPR_OUT_LINES.append('Start: RNAz screen on realigned loci, Delta=%s' % (str(delta), utilities.get_time()))
             
             RNAZ_OUT_LINES = []
             if args.processes == -1:
@@ -242,7 +242,7 @@ def main():
             for rnaz_entry in RNAZ_OUT_LINES:
                 REAPR_OUT_LINES.extend(rnaz_entry)
             
-            REAPR_OUT_LINES.append('End: RNAz screen on realigned loci, Delta=%s' % (delta, utilities.get_time()))
+            REAPR_OUT_LINES.append('End: RNAz screen on realigned loci, Delta=%s' % (str(delta), utilities.get_time()))
             
             # PRINT THE OUTPUT TO OUT.log
             line = REAPR_OUT_LINES.pop(0)
