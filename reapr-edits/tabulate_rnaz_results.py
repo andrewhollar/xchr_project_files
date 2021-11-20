@@ -321,8 +321,8 @@ def merge_windows(table_record_list, threshold, alternate_strands, all_species):
             # indices
             if dist > 3 or current_locus_len > 400:
                 
-                if current_locus_len > 400:
-                    print 'splitting locus due to length'
+                #if current_locus_len > 400:
+                #    print 'splitting locus due to length'
                 
                 locus_idx += 1
                 current_locus_len = 0

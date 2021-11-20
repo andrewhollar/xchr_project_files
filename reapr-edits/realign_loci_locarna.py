@@ -5,6 +5,8 @@ import utilities
 def run_locarna(locarna, ungap_fasta_path, target_dir, target_file, max_diff, alifold_consensus_dp, guide_tree, verbose=False):
 
     """Run LocARNA.  Returns True if successful, or False otherwise"""
+    
+    log = []
 
     if not os.path.isdir(target_dir): os.makedirs(target_dir)
 
@@ -40,7 +42,10 @@ def run_locarna(locarna, ungap_fasta_path, target_dir, target_file, max_diff, al
     locarna_output.close()
     # -------------------------------------------------------------------------------
     
-    if verbose: print cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds\n'
+    #if verbose: print cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds\n'
+    log.append(cmd)
+    time_str = 'Running time: ' + str(time.time() - start_time) + ' seconds'
+    log.append(time_str)
 
     # Copy final alignment 'results/result.aln' and delete
     # intermediate directory unless final alignment wasn't created,
@@ -51,7 +56,8 @@ def run_locarna(locarna, ungap_fasta_path, target_dir, target_file, max_diff, al
     # -------------------------------------------------------------------------------
     # EDIT: add run of reliability-profile.pl script to extract the high-confidence portion of the alignment
     
-    reliability_out_path = run_reliability_profile_on_locarna_output(target_dir)
+    reliability_out_path, reliability_log = run_reliability_profile_on_locarna_output(target_dir)
+    log.extend(reliability_log)
     write_improved_boundaries_alignment(reliability_out_path, result_path, filtered_path)
     # -------------------------------------------------------------------------------
 
@@ -62,10 +68,11 @@ def run_locarna(locarna, ungap_fasta_path, target_dir, target_file, max_diff, al
         # shutil.copyfile(result_path, target_file)   # Copy final alignment
         # shutil.rmtree(target_dir)                   # Delete intermediate directory
 
-        return True
+        return True, log
     else:
-        if verbose: print 'Error: no alignment could be produced.'
-        return False
+        # if verbose: print 'Error: no alignment could be produced.'
+        log.append('Error: no alignment could be produced.')
+        return False, log
 
 def write_improved_boundaries_alignment(reliability_profile_output, result_alignment_path, filtered_result_path):
     fit_line = open(reliability_profile_output).read().split('\n')[-2].split()
@@ -102,11 +109,13 @@ def write_improved_boundaries_alignment(reliability_profile_output, result_align
 def run_reliability_profile_on_locarna_output(target_dir, fit_once_on = True):
     from commands import RELIABILITY_PROFILE
     
+    log = []
+    
     fit_once_on = '--fit-once-on' if fit_once_on else ''
     
     cmd = 'perl %s --dont-plot %s %s' % (RELIABILITY_PROFILE, fit_once_on, target_dir)
 
-    # start_time = time.time()
+    start_time = time.time()
     # subprocess.Popen(cmd, shell=True, stdout=open('/dev/null','w'), stderr=subprocess.STDOUT).wait()
     # -------------------------------------------------------------------------------
     reliability_out_path = os.path.join(target_dir, "reliability.out")
@@ -114,7 +123,11 @@ def run_reliability_profile_on_locarna_output(target_dir, fit_once_on = True):
     subprocess.Popen(cmd, shell=True, stdout=reliability_output, stderr=subprocess.STDOUT).wait()
     reliability_output.close()
     
-    return reliability_out_path
+    log.append(cmd)
+    time_str = 'Running time: ' + str(time.time() - start_time) + ' seconds'
+    log.append(time_str)
+    
+    return reliability_out_path, log
     
     # extracted_seq = open(extracted_output).read().split('\n')[1].strip()
 

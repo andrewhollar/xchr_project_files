@@ -113,7 +113,6 @@ def main():
         #print 'Start: RNAz screen on WGA', utilities.get_time()
         REAPR_OUT_LINES.append('Start: RNAz screen on WGA %s' % (utilities.get_time()))
         
-        
         RNAZ_OUT_LINES = []
         
         if args.processes == -1:
@@ -123,17 +122,9 @@ def main():
         r = pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, rnaz_1_args, callback=RNAZ_OUT_LINES.extend) #.get(99999999)
         r.wait()
         
-        #print RNAZ_OUT_LINES
-        
-        #RNAZ_OUT_LINES = RNAZ_OUT_LINES[0]
-        
-        #print RNAZ_OUT_LINES
-        
         for rnaz_entry in RNAZ_OUT_LINES:
             REAPR_OUT_LINES.extend(rnaz_entry)
         
-        #REAPR_OUT_LINES.extend(RNAZ_OUT_LINES)
-                
         #print 'End: RNAz screen on WGA', utilities.get_time()
         REAPR_OUT_LINES.append('End: RNAz screen on WGA %s' % (utilities.get_time()))
 
@@ -145,8 +136,6 @@ def main():
                 line = REAPR_OUT_LINES.pop(0)
         except IndexError:
             pass
-
-        raise IOError("END")
 
         ### Compile table of RNAz screen results ###
         rnaz_paths = [a + '.rnaz' for a in block_paths]              # RNAz output
@@ -189,16 +178,43 @@ def main():
             # Realign loci
             acd, verbose = True, True
             #target_args = [(commands.mlocarna, a, b, c, d, delta, acd, args.guide_tree, verbose) for a,b,c,d in zip(ref_clustals, ungap_fastas, target_dirs, target_files)]
-            target_args = [(commands.mlocarna, a, b, c, delta, acd, args.guide_tree, verbose) for a,b,c in zip(ungap_fastas, target_dirs, target_files)]
+            locarna_target_args = [(commands.mlocarna, a, b, c, delta, acd, args.guide_tree, verbose) for a,b,c in zip(ungap_fastas, target_dirs, target_files)]
 
+            REAPR_OUT_LINES.append('Start: LocARNA realignment, Delta=%s, %s' % (delta, utilities.get_time()))
+            #print 'Start: LocARNA realignment, Delta=%s' % delta, utilities.get_time()
+            if args.processes == -1:
+                pool = multiprocessing.Pool(processes=(multiprocessing.cpu_count() - 2))
+            else:
+                pool = multiprocessing.Pool(processes=args.processes)     
             
-            print 'Start: LocARNA realignment, Delta=%s' % delta, utilities.get_time()
-            pool = multiprocessing.Pool(processes=args.processes)
-            success = pool.map_async(realign_loci_locarna.run_locarna_pool, target_args).get(999999999)
+            LOCARNA_OUT_LINES = []        
+            r = pool.map_async(realign_loci_locarna.run_locarna_pool, locarna_target_args, callback=LOCARNA_OUT_LINES.extend)
+            r.wait()
+            
+            print LOCARNA_OUT_LINES
+            
+            for locarna_entry in LOCARNA_OUT_LINES:
+                REAPR_OUT_LINES.extend(locarna_entry)
+            
             # success = pool.map_async(realign_loci_locarna.run_locarna_pool, target_args).wait()
-            target_files = [x for x,y in zip(target_files, success) if y]
+            target_files = [x for x,y in zip(target_files, r) if y]
+            print target_files
             # print target_files
-            print 'End: LocARNA realignment, Delta=%s' % delta, utilities.get_time()
+            REAPR_OUT_LINES.append('End: LocARNA realignment, Delta=%s, %s' % (delta, utilities.get_time()))
+
+            # PRINT THE OUTPUT TO OUT.log
+            line = REAPR_OUT_LINES.pop(0)
+            try:
+                while line:
+                    print line + '\n'
+                    line = REAPR_OUT_LINES.pop(0)
+            except IndexError:
+                pass
+
+
+            raise IOError("END")
+
+            #print 'End: LocARNA realignment, Delta=%s' % delta, utilities.get_time()
 
             # raise IOError("End")
 

@@ -174,7 +174,6 @@ def run_RNAz(windows_path, rnaz_path, both_strands, structural_model, rnaz_comma
     log.append(cmd)
     time_str = 'Running time: ' + str(time.time() - start_time) + ' seconds'
     log.append(time_str)
-    
     rnaz_output.close()
 
     return log
