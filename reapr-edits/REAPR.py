@@ -130,11 +130,12 @@ def main():
 
         # PRINT THE OUTPUT TO OUT.log
         line = REAPR_OUT_LINES.pop(0)
-        while line:
-            print line + '\n'
-            line = REAPR_OUT_LINES.pop(0)
-
-
+        try:
+            while line:
+                print line + '\n'
+                line = REAPR_OUT_LINES.pop(0)
+        except IndexError:
+            pass
 
         raise IOError("END")
 
