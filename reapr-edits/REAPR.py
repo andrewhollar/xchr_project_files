@@ -27,6 +27,9 @@ import random
 
 
 def main():
+    
+    REAPR_OUT_LINES = []
+    
     parser = argparse.ArgumentParser(description='Realign a WGA and predict structural ncRNAs.')
     parser.add_argument('-a', '--alignments', required=True, help='Space-separated list of WGA alignment block files.') #EDIT: changed the required option to FALSE
     parser.add_argument('-s', '--species', required=True, help='Space-separated list of species in WGA.  Species names must be the same as those listed in the alignment block files.')
@@ -46,8 +49,8 @@ def main():
 
     args = parser.parse_args()
 
-    outF, errF = sys.stdout, sys.stderr
-    parent_pid = os.getpid()
+    # outF, errF = sys.stdout, sys.stderr
+    # parent_pid = os.getpid()
 
     # Setup temporary directory
     if args.ram_disk is None: tmp_dir = None
@@ -56,12 +59,6 @@ def main():
         tmp_dir = os.path.join(args.ram_disk, 'REAPR.'+utilities.get_random_string(8))
         os.makedirs(tmp_dir)
     
-    # -------------------------------------------------------------------------------
-    # EDIT: Added the following call to process_maf_file() to automate some of the input steps present in REAPR v1.
-    # OUT_DIR = args.output_folder
-    # process_maf_file(args.maf_file, OUT_DIR)
-    # -------------------------------------------------------------------------------   
-
     try:
         # Check if the MAF alignment block-index file exists.
         utilities.file_exists(args.alignments)
@@ -113,10 +110,29 @@ def main():
         rnaz_1_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, commands.rnazSelectSeqs, out_dir, tmp_dir, alignment_format, 1, verbose) for alignment in block_paths] 
         # -------------------------------------------------------------------------------
 
-        print 'Start: RNAz screen on WGA', utilities.get_time()
-        pool = multiprocessing.Pool(processes=args.processes)        
-        log_list = pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, rnaz_1_args).get(99999999)
-        print 'End: RNAz screen on WGA', utilities.get_time()
+        #print 'Start: RNAz screen on WGA', utilities.get_time()
+        REAPR_OUT_LINES.append('Start: RNAz screen on WGA %s' % (utilities.get_time()))
+        
+        
+        RNAZ_OUT_LINES = []
+        
+        if args.processes == -1:
+            pool = multiprocessing.Pool(process=(multiprocessing.cpu_count() - 2))
+        else:
+            pool = multiprocessing.Pool(processes=args.processes)        
+        r = pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, rnaz_1_args, callback=RNAZ_OUT_LINES.extend) #.get(99999999)
+        r.wait()
+        
+        print RNAZ_OUT_LINES
+        
+        #print 'End: RNAz screen on WGA', utilities.get_time()
+        REAPR_OUT_LINES.append('End: RNAz screen on WGA %s' % (utilities.get_time()))
+
+
+
+
+
+        raise IOError("END")
 
         ### Compile table of RNAz screen results ###
         rnaz_paths = [a + '.rnaz' for a in block_paths]              # RNAz output

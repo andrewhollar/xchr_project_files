@@ -89,11 +89,7 @@ def run_rnazSelectSeqs(alignment_path, rnazSelectSeqs_output_path, rnazSelectSeq
     start_time = time.time()
     subprocess.Popen(cmd, shell=True, stdout=rnazSelectSeqs_output, stderr=subprocess.PIPE).wait()
     log = cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds\n'
-    
-    
-        # log = cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds'
 
-    
     rnazSelectSeqs_output.close()
 
     return log
@@ -104,6 +100,8 @@ def run_rnazWindow(align_path, windows_path, verbose_path, no_reference, rnazWin
     Runs rnazWindow.pl on the alignment in <align_path> and outputs
     sliced windows to <windows_path
     """
+
+    log = []
 
     no_reference = '--no-reference' if no_reference else ''
     # -------------------------------------------------------------------------------
@@ -126,7 +124,9 @@ def run_rnazWindow(align_path, windows_path, verbose_path, no_reference, rnazWin
     subprocess.Popen(cmd, shell=True, stdout=window_output, stderr=verbose_log).wait()
 
     # Print running time
-    log = '\n' + cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds'
+    #log = '\n' + cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds'
+    log.append(cmd)
+    log.append('Running time: ' + str(time.time() - start_time) + ' seconds')
 
     verbose_log.close()
     window_output.close()
@@ -139,7 +139,7 @@ def run_RNAz(windows_path, rnaz_path, both_strands, structural_model, rnaz_comma
     to <rnaz_path>.
     """
 
-    log = ''
+    log = [] #''
 
     both_strands = '--both-strands' if both_strands else ''
     structural_model = '-l' if structural_model else ''
@@ -162,7 +162,10 @@ def run_RNAz(windows_path, rnaz_path, both_strands, structural_model, rnaz_comma
     if stderr!='': log += 'RNAz stderr:\n' + stderr  # RNAz's stderr
 
     # Print running time
-    log += '\n' + cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds'
+    #log += '\n' + cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds'
+    log.append(cmd)
+    log.append('Running time: ' + str(time.time() - start_time) + ' seconds')
+
     
     rnaz_output.close()
 
@@ -212,7 +215,7 @@ def eval_alignment(alignment, no_reference, both_strands, window_size, window_sl
         os.mkdir(tmp_dir)
 
     # Initialize the log variable to hold the output from rnazWindow and RNAz procedures.
-    log = ''
+    log = [] #''
 
     alignment_name = os.path.basename(alignment)
 
@@ -222,14 +225,11 @@ def eval_alignment(alignment, no_reference, both_strands, window_size, window_sl
     # Number of sliding windows spanning the block
     num_slices = int(math.ceil((alignment_length - (window_size - window_slide)) / float(window_slide)))
 
-    # print alignment_name
-    # print num_slices
-
     if pass_idx == 1:
         # -------------------------------------------------------------------------------
         # EDIT: Run rnazSelectSeqs
         filtered_maf_path = os.path.join(tmp_dir, alignment_name[:-4] + '.filtered.maf')
-        log += run_rnazSelectSeqs(alignment, filtered_maf_path, rnazSelectSeqs)    
+        log.append(run_rnazSelectSeqs(alignment, filtered_maf_path, rnazSelectSeqs))
         # -------------------------------------------------------------------------------   
 
         # Run rnazWindow
@@ -238,7 +238,7 @@ def eval_alignment(alignment, no_reference, both_strands, window_size, window_sl
         # -------------------------------------------------------------------------------
         # EDIT: Changed the input alignment to be the output from rnazSelectSeqs.
         #if pass_idx == 1:
-        log += run_rnazWindow(filtered_maf_path, windows_path, verbose_path, no_reference, rnazWindow, window_size, window_slide, verbose)
+        log.extend(run_rnazWindow(filtered_maf_path, windows_path, verbose_path, no_reference, rnazWindow, window_size, window_slide, verbose))
         # else:
         #     log += run_rnazWindow(alignment, windows_path, verbose_path, no_reference, rnazWindow, window_size, window_slide, verbose)
         # -------------------------------------------------------------------------------
@@ -253,7 +253,8 @@ def eval_alignment(alignment, no_reference, both_strands, window_size, window_sl
         # -------------------------------------------------------------------------------
         # EDIT: Only run RNAz if there has been information extracted about the windows.
         if not os.stat(windows_path).st_size == 0:
-            log += '\n' + run_RNAz(windows_path, rnaz_path, both_strands, structural, RNAz, verbose)
+            log.extend(run_RNAz(windows_path, rnaz_path, both_strands, structural, RNAz, verbose))
+            #log += '\n' + run_RNAz(windows_path, rnaz_path, both_strands, structural, RNAz, verbose)
         # -------------------------------------------------------------------------------
 
         if redirect:
@@ -276,15 +277,15 @@ def eval_alignment(alignment, no_reference, both_strands, window_size, window_sl
         # print alignment_length
         
         if alignment_length < 400 and alignment_length > 49:
-            print "running rnaz on realigned locus of length %s" % (str(alignment_length))
-            log += '\n' + run_RNAz(alignment, rnaz_path, both_strands, structural, RNAz, verbose)
+            log.append("running rnaz on realigned locus of length %s" % (str(alignment_length)))
+            log.extend(run_RNAz(alignment, rnaz_path, both_strands, structural, RNAz, verbose))
                     
         if alignment_length >= 400:
-            print "rnaz skipped because the improved boundaries of locus excede a width of 400 nt (%s)" % (alignment_length)
+            log.append("rnaz skipped because the improved boundaries of locus excede a width of 400 nt (%s)" % (alignment_length))
         elif alignment_length <= 49:
-            print "rnaz skipped because the improved boundaries of locus failed to excede a width of 50 nt (%s)" % (alignment_length) 
+            log.append("rnaz skipped because the improved boundaries of locus failed to excede a width of 50 nt (%s)" % (alignment_length))
 
-    if verbose: print log + '\n'
+    #if verbose: print log + '\n'
 
     return log
 
