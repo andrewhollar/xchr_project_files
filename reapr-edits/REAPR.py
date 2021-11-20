@@ -117,7 +117,7 @@ def main():
         RNAZ_OUT_LINES = []
         
         if args.processes == -1:
-            pool = multiprocessing.Pool(process=(multiprocessing.cpu_count() - 2))
+            pool = multiprocessing.Pool(processes=(multiprocessing.cpu_count() - 2))
         else:
             pool = multiprocessing.Pool(processes=args.processes)        
         r = pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, rnaz_1_args, callback=RNAZ_OUT_LINES.extend) #.get(99999999)
