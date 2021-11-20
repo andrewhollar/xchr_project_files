@@ -1,7 +1,7 @@
 import time, subprocess, os, glob, math, pprint, random, shutil, bisect, sys, traceback, string
 
 def get_time():
-    return '\nTime:\n' + time.strftime("%a, %d %b %Y %H:%M:%S", time.gmtime()) + '\nEpoch time: ' + str(time.time()) + '\n'
+    return '\nTime:' + time.strftime("%a, %d %b %Y %H:%M:%S", time.gmtime()) #+ '\nEpoch time: ' + str(time.time()) + '\n'
 
 def fasta_to_clustal(fasta_paths, clustal_paths):
     """
