@@ -228,7 +228,7 @@ def main():
             alignment_format='CLUSTAL'
             rnaz_2_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, commands.rnazSelectSeqs, location, None, alignment_format, 2, verbose) for alignment, location in zip(target_files, target_dirs)]
             #print 'Start: RNAz screen on realigned loci, Delta=%s' % delta, utilities.get_time()
-            REAPR_OUT_LINES.append('Start: RNAz screen on realigned loci, Delta=%s' % (str(delta), utilities.get_time()))
+            REAPR_OUT_LINES.append('Start: RNAz screen on realigned loci, Delta=%s, %s' % (str(delta), utilities.get_time()))
             
             RNAZ_OUT_LINES = []
             if args.processes == -1:
@@ -242,7 +242,7 @@ def main():
             for rnaz_entry in RNAZ_OUT_LINES:
                 REAPR_OUT_LINES.extend(rnaz_entry)
             
-            REAPR_OUT_LINES.append('End: RNAz screen on realigned loci, Delta=%s' % (str(delta), utilities.get_time()))
+            REAPR_OUT_LINES.append('End: RNAz screen on realigned loci, Delta=%s, %s' % (str(delta), utilities.get_time()))
             
             # PRINT THE OUTPUT TO OUT.log
             line = REAPR_OUT_LINES.pop(0)
