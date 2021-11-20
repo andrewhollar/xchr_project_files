@@ -92,7 +92,9 @@ def run_rnazSelectSeqs(alignment_path, rnazSelectSeqs_output_path, rnazSelectSeq
     subprocess.Popen(cmd, shell=True, stdout=rnazSelectSeqs_output, stderr=subprocess.PIPE).wait()
     #log = cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds\n'
     log.append(cmd)
-    log.append('Running time: ' + str(time.time() - start_time) + ' seconds')
+    
+    time_str = 'Running time: ' + str(time.time() - start_time) + ' seconds'
+    log.append(time_str)
 
 
     rnazSelectSeqs_output.close()
@@ -131,8 +133,9 @@ def run_rnazWindow(align_path, windows_path, verbose_path, no_reference, rnazWin
     # Print running time
     #log = '\n' + cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds'
     log.append(cmd)
-    log.append('Running time: ' + str(time.time() - start_time) + ' seconds')
-
+    time_str = 'Running time: ' + str(time.time() - start_time) + ' seconds'
+    log.append(time_str)
+    
     verbose_log.close()
     window_output.close()
 
@@ -169,8 +172,8 @@ def run_RNAz(windows_path, rnaz_path, both_strands, structural_model, rnaz_comma
     # Print running time
     #log += '\n' + cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds'
     log.append(cmd)
-    log.append('Running time: ' + str(time.time() - start_time) + ' seconds')
-
+    time_str = 'Running time: ' + str(time.time() - start_time) + ' seconds'
+    log.append(time_str)
     
     rnaz_output.close()
 
