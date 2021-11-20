@@ -187,17 +187,21 @@ def main():
             else:
                 pool = multiprocessing.Pool(processes=args.processes)     
             
-            LOCARNA_OUT_LINES = []        
+            LOCARNA_OUT_LINES = []     
+            locarna_success = []   
             r = pool.map_async(realign_loci_locarna.run_locarna_pool, locarna_target_args, callback=LOCARNA_OUT_LINES.extend)
             r.wait()
             
-            print LOCARNA_OUT_LINES
+            # print LOCARNA_OUT_LINES
             
             for locarna_entry in LOCARNA_OUT_LINES:
-                REAPR_OUT_LINES.extend(locarna_entry)
+                REAPR_OUT_LINES.extend(locarna_entry[1])
+                locarna_success.append(locarna_entry[0])
             
+            print locarna_success
+                
             # success = pool.map_async(realign_loci_locarna.run_locarna_pool, target_args).wait()
-            target_files = [x for x,y in zip(target_files, r) if y]
+            target_files = [x for x,y in zip(target_files, locarna_success) if y]
             print target_files
             # print target_files
             REAPR_OUT_LINES.append('End: LocARNA realignment, Delta=%s, %s' % (delta, utilities.get_time()))
