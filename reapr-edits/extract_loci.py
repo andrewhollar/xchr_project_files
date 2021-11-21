@@ -185,7 +185,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                         num_end += (maf_contig_lengths_list[k] - flanked_maf_end_pos)
                         flanked_maf_end_pos = maf_contig_lengths_list[k]
                 
-                    flanked_sequence = utilities.get_flanked_sequence(species_name, contig_name, flanked_maf_start_pos, flanked_maf_end_pos, locus_bed_dir, locus_idx, seq_list[k].strip(), maf_direction_list[k], maf_contig_lengths_list[k])
+                    flanked_sequence = utilities.get_flanked_sequence(species_name, contig_name, flanked_maf_start_pos, flanked_maf_end_pos, locus_bed_dir, locus_idx, seq_list[k].strip(), maf_direction_list[k], maf_contig_lengths_list[k]).lower()
                     assert seq_list[k].replace('-', '').lower() in flanked_sequence.lower()
                     
                     maf_start_column = start_slice_idx * win_slide
@@ -204,9 +204,9 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     
                     print species_name, contig_name, maf_start_column, maf_end_column 
                     
-                    unflanked_region = seq_list[k][maf_start_column:maf_end_column].replace("-", "")
-                    leading_region = seq_list[k][:maf_start_column].replace("-", "")
-                    trailing_region = seq_list[k][maf_end_column:].replace("-", "")
+                    unflanked_region = seq_list[k][maf_start_column:maf_end_column].replace("-", "").lower()
+                    leading_region = seq_list[k][:maf_start_column].replace("-", "").lower()
+                    trailing_region = seq_list[k][maf_end_column:].replace("-", "").lower()
                     print len(leading_region), len(trailing_region)
                     
                     #flanked_start_col = 
