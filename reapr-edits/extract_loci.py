@@ -205,8 +205,8 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     #print species_name, contig_name, maf_start_column, maf_end_column 
                     
                     unflanked_region = seq_list[k][maf_start_column:maf_end_column].replace("-", "").lower()
-                    leading_region = seq_list[k][:maf_start_column].replace("-", "").lower()
-                    trailing_region = seq_list[k][maf_end_column:].replace("-", "").lower()
+                    # leading_region = seq_list[k][:maf_start_column].replace("-", "").lower()
+                    # trailing_region = seq_list[k][maf_end_column:].replace("-", "").lower()
                     #print len(leading_region), len(trailing_region)
                     
                     #flanked_start_col = 

@@ -126,7 +126,7 @@ def main():
         loci_alignment_list = extract_loci.extract_loci(block_dict, initial_table, args.threshold, loci_dir, species, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, True, stdout=False)
         # -------------------------------------------------------------------------------
 
-        raise IOError("END")
+        # raise IOError("END")
 
         realign_tables = [os.path.join(args.output_folder, 'locarna.d_%s.tab' % str(d)) for d in args.delta]
 

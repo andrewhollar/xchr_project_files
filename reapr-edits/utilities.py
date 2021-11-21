@@ -646,26 +646,6 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, 
     from commands import BEDTOOLS
     bed_filepath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".bed")
     bed_error_outpath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".log")
-    
-    # print bed_filepath, bed_error_outpacath
-    
-    # start_flank = 0
-    # end_flank = 0
-    
-    # if start - FLANK_VALUE >= 0:
-    #     start -= FLANK_VALUE
-    #     start_flank = FLANK_VALUE
-    # else:
-    #     start_flank = start
-    #     start = 0
-        
-    
-    # if end + FLANK_VALUE < contig_length:
-    #     end += FLANK_VALUE
-    #     end_flank = FLANK_VALUE
-    # else:
-    #     end_flank = contig_length - end
-    #     end = contig_length - 1
 
     if sequence_direction == "-":
         if not os.path.isfile(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa')):
@@ -681,32 +661,13 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, 
             bed_error.close()
 
             full_contig = open(extracted_output).read().split('\n')[1].strip()  
-            
-            # header_lines = []
-            # header_lines.append(">" + contig)
-            # header_lines.append(full_contig)
-            
-            # with open(extracted_output, "w") as fix_header:
-            #     fix_header.writelines(header_lines)
                   
             extracted_seq = full_contig[start:end]
         else:
-            # print "Rev-comp file already exists: " + species + "." + contig 
             try:
                 extracted_seq = open(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa')).read().split('\n')[1].strip()[start:end]
             except IndexError:
                 print str(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa'))
-            # bed_entry = "\t".join([contig, str(start), str(end)])
-            # open(bed_filepath, "w").write(bed_entry)
-            # bed_error = open(bed_error_outpath, 'w', int(1e6))
-            # extracted_output = os.path.join(locus_bed_dir, locus_idx + "." + species + ".extracted.fa")
-            
-            # cmd = '%s getfasta -fi %s -fo %s -bed %s' % (BEDTOOLS, os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa'), extracted_output, bed_filepath)   
-            # subprocess.Popen(cmd, shell=True, stdout=bed_error, stderr=bed_error).wait()
-            # # print 'Running time: ' + str(time.time() - start_time) + ' seconds'
-            
-            # bed_error.close()
-            # extracted_seq = open(extracted_output).read().split('\n')[1].strip()
 
     else:
         bed_entry = "\t".join([contig, str(start), str(end)])
@@ -716,35 +677,11 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, 
         extracted_output = os.path.join(locus_bed_dir, locus_idx + "." + species + ".extracted.fa")
         
         cmd = '%s getfasta -fi %s -fo %s -bed %s' % (BEDTOOLS, species_to_genome_dict[species], extracted_output, bed_filepath)   
-        # start_time = time.time()
-        subprocess.Popen(cmd, shell=True, stdout=bed_error, stderr=bed_error).wait()
-        # print 'Running time: ' + str(time.time() - start_time) + ' seconds'
-        
+        subprocess.Popen(cmd, shell=True, stdout=bed_error, stderr=bed_error).wait()        
         bed_error.close()
-        
         extracted_seq = open(extracted_output).read().split('\n')[1].strip()
         
-    
-    # print alignment_seq.lower()
-    # # print extracted_seq.lower()
-    # try:
-    #     assert extracted_seq[FLANK_VALUE:-FLANK_VALUE].lower() in alignment_seq.lower()
-    #     #assert extracted_seq[start + start_flank: end - (end_flank + 1)].lower() in alignment_seq.lower()
-    # except AssertionError:
-    #     print bed_filepath  
-    #     print alignment_seq.lower()
-    #     print extracted_seq[FLANK_VALUE:-FLANK_VALUE].lower()
-    #     print extracted_seq.lower()
-    
-    
-    # BLOCK 1704 - Homo_sapiens
-    # attagccaggcgtggtagtgcatgcctacaatcccaggtacttgggaggctgaggcaggagaattgcttgaacctgggaggcaggcgagtgaatgagatcatgttgcagtgagctgagatgacgccattgcactccagcctgggcaacaa
-    # catgcctacaatcccaggtacttgggaggctgaggcaggagaattgcttgaacctgggaggcaggcgagtgaatgagatcatgttgcagtgagctgagatgacgccattgcactccagcctgggcaacaagagcaaaactctgtctaaaaaacaataata
-    
-    
     return extracted_seq
-    
-    
     
 def generate_clustal_boundaries(header_list, seq_list, start, end):
     """
