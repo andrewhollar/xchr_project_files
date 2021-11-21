@@ -142,6 +142,7 @@ def main():
         block_group_list = utilities.bin_list(all_win_recs, key = lambda x: x[0])
 
 
+        loci_alignment_list = []
         EXTRACT_LOCI_OUT_LINES = []
 
         pool = multiprocessing.Pool(processes=(NUM_PROCESSES + 2 / 2))
@@ -149,11 +150,15 @@ def main():
         r = pool.map_async(extract_loci.extract_loci_multiprocessing, extract_loci_args, callback=EXTRACT_LOCI_OUT_LINES.extend)
         r.wait()
         
-        print EXTRACT_LOCI_OUT_LINES
+        for extract_locus_process_out in EXTRACT_LOCI_OUT_LINES:
+            for locus in extract_locus_process_out:
+                loci_alignment_list.append(locus)
+        
+        # print EXTRACT_LOCI_OUT_LINES
         
         # -------------------------------------------------------------------------------
 
-        raise IOError("END")
+        # raise IOError("END")
 
         realign_tables = [os.path.join(args.output_folder, 'locarna.d_%s.tab' % str(d)) for d in args.delta]
 
