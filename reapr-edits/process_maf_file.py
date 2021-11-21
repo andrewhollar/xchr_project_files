@@ -10,6 +10,8 @@ MIN_SPECIES = 2
 # SAMPLE_LENGTH = 15
 #random.seed(500)
 
+BLOCK_IDX_TARGETS = [370, 533, 534, 12365, 14985, 15634]
+
 # -------------------------------------------------------------------------------
 # EDIT: Added the following function to generate the required files from the input MAF file
 def main(path_to_maf, OUT_DIR):
@@ -30,7 +32,7 @@ def main(path_to_maf, OUT_DIR):
     alignment_block_idx = 0
     sample_size = 0
     for msa in AlignIO.parse(path_to_maf, "maf"):
-        if random.randint(1, SAMPLE_DENOM) == 1 and sample_size <= MAX_SAMPLES and len(msa) >= MIN_SPECIES:
+        if random.randint(1, SAMPLE_DENOM) == 1 and sample_size <= MAX_SAMPLES and len(msa) >= MIN_SPECIES and alignment_block_idx in BLOCK_IDX_TARGETS:
             # This should contain two pieces of information:
             #   1. the name of the alignment block
             #   2. the location of the new alignment block file (this should be in the 'alignments/' sub-directory)

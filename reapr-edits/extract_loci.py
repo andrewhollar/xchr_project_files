@@ -194,6 +194,9 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     locus_start_pos = maf_start_pos + start_column
                     locus_end_pos = maf_start_pos + end_column
                     
+                    print (species_name, contig_name, locus_start_pos, locus_end_pos)
+                    # print (locus_start_pos, locus_end_pos)
+                    
                     #locus_start_pos
                     
                     # if maf_direction_list[k] == "-":
