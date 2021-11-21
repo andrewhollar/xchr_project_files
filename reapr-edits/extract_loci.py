@@ -187,6 +187,8 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     
                     if end_slice_idx - start_slice_idx > 0:
                         assert len(seq_list[k]) > 120
+                    else:
+                        print len(seq_list[k])
                     
                     
                     #maf_end_column = 
