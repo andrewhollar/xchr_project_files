@@ -209,7 +209,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     trailing_region = seq_list[k][maf_end_column:].replace("-", "")
                     print len(leading_region), len(trailing_region)
                     
-                    flanked_start_col = 
+                    #flanked_start_col = 
 
                     
                     
