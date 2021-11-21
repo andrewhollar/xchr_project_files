@@ -203,7 +203,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     
                     
                     locus_start_pos = maf_start_pos + locus_start_offset
-                    locus_end_pos = maf_start_pos + locus_length
+                    locus_end_pos = locus_start_pos + locus_length
                     
                     flanked_start_pos = locus_start_pos - utilities.FLANK_VALUE
                     if flanked_start_pos < 0:
