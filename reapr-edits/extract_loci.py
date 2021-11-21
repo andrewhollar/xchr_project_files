@@ -144,10 +144,6 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             #num_slices_in_original_maf = int(math.ceil((alignment_length - (win_size - win_slide)) / float(win_slide)))
             # -------------------------------------------------------------------------------
             # BED information
-            
-
-
-
             # -------------------------------------------------------------------------------
             # EDIT: add 20nt flanking regions to loci that have those regions in the initial alignment block.
             # if start_slice_idx != 0 and (num_slices_in_original_maf - end_slice_idx) > 0:  
@@ -166,6 +162,8 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                                         
                     # BED information
                     contig_name = contig_list[k]
+                
+                    #maf_start_column = start_slice_idx * win_slide
                 
                     #leading_sequence = seq_list[k][:start_column].replace("-", '')
                     # print leading_sequence
@@ -192,10 +190,18 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     # else:
                         
                     locus_start_offset = start_slice_idx * win_slide
-                    if end_slice_idx == start_slice_idx and end_slice_idx == 0:
-                        locus_length = maf_entry_length_list[k]
+                    
+                    
+                    
+                    if end_slice_idx - start_slice_idx == 0:
+                        locus_length = maf_entry_length_list[k] - locus_start_offset
                     else:
-                        locus_length = (end_slice_idx * win_slide + win_size) - locus_start_offset                        
+                        locus_length = (end_slice_idx * win_slide + win_size) - locus_start_offset
+                    
+                    #if end_slice_idx == start_slice_idx and end_slice_idx == 0:
+                    #    locus_length = maf_entry_length_list[k]
+                    #else:
+                    #    locus_length = (end_slice_idx * win_slide + win_size) - locus_start_offset                        
                         
                     # This isn't what I want. Instead I need to get the start/end positions of the stable locus.
                     maf_start_pos = maf_start_pos_list[k]
@@ -227,7 +233,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     #utilities.confirm_matching_sequence(species_name, contig_name, maf_start_pos, maf_end_pos, locus_bed_dir, locus_idx, seq_list[k].replace("-", "").strip(), maf_direction_list[k], maf_contig_lengths_list[k])
                     # utilities.get_flanked_sequence(species_name, contig_name, bed_start, bed_end, locus_bed_dir, locus_idx, unflanked_seq)
                     
-                    flanked_sequence = utilities.get_flanked_sequence(species_name, contig_name, flanked_start_pos, flanked_end_pos, locus_bed_dir, locus_idx, seq_list[k].replace("-", "").strip(), maf_direction_list[k], maf_contig_lengths_list[k])
+                    flanked_sequence = utilities.get_flanked_sequence(species_name, contig_name, flanked_start_pos, flanked_end_pos, locus_bed_dir, locus_idx, seq_list[k].strip(), maf_direction_list[k], maf_contig_lengths_list[k])
                     
                     locus_header_list.append(species_name)
                     #locus_seq_list.append(seq_list[k][start_column : end_column])
