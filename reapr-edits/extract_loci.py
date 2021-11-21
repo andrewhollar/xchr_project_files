@@ -200,9 +200,9 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                         else:
                             #print species_name, contig_name, len(seq_list[k]), start_slice_idx, end_slice_idx
                             maf_end_column = end_slice_idx * win_slide + win_size
-                            
-                            
-                            print maf_end_column, len(seq_list[k])
+                            if maf_end_column <= len(seq_list[k]):
+                                maf_end_column = len(seq_list[k])    
+                            #print maf_end_column, len(seq_list[k])
                             
                             assert maf_end_column <= len(seq_list[k])
                     
