@@ -647,23 +647,23 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, 
     bed_filepath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".bed")
     bed_error_outpath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".log")
     
-    start_flank = 0
-    end_flank = 0
+    # start_flank = 0
+    # end_flank = 0
     
-    if start - FLANK_VALUE >= 0:
-        start -= FLANK_VALUE
-        start_flank = FLANK_VALUE
-    else:
-        start_flank = start
-        start = 0
+    # if start - FLANK_VALUE >= 0:
+    #     start -= FLANK_VALUE
+    #     start_flank = FLANK_VALUE
+    # else:
+    #     start_flank = start
+    #     start = 0
         
     
-    if end + FLANK_VALUE < contig_length:
-        end += FLANK_VALUE
-        end_flank = FLANK_VALUE
-    else:
-        end_flank = contig_length - end
-        end = contig_length - 1
+    # if end + FLANK_VALUE < contig_length:
+    #     end += FLANK_VALUE
+    #     end_flank = FLANK_VALUE
+    # else:
+    #     end_flank = contig_length - end
+    #     end = contig_length - 1
 
     if sequence_direction == "-":
         if not os.path.isfile(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa')):
@@ -701,15 +701,17 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, 
         bed_error.close()
         
         extracted_seq = open(extracted_output).read().split('\n')[1].strip()
+        
     
     # print alignment_seq.lower()
     # print extracted_seq.lower()
     try:
-        assert extracted_seq[start + start_flank: end - (end_flank + 1)].lower() in alignment_seq.lower()
+        assert extracted_seq[FLANK_VALUE:-FLANK_VALUE].lower() in alignment_seq.lower()
+        #assert extracted_seq[start + start_flank: end - (end_flank + 1)].lower() in alignment_seq.lower()
     except AssertionError:
         print bed_filepath  
         print alignment_seq.lower()
-        print extracted_seq[start + start_flank: end - end_flank].lower() 
+        print extracted_seq[FLANK_VALUE:-FLANK_VALUE].lower()
         print extracted_seq.lower()
     
     
