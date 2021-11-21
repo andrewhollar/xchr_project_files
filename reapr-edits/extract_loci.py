@@ -1,23 +1,166 @@
 import os, glob, math, sys, subprocess, time, threading, random, argparse, traceback
 import utilities
+from utilities\
+    import WINDOW_SIZE, WINDOW_SLIDE, num_seq_col,\
+            strand_col,\
+            mean_z_score_col,\
+            p_score_col,\
+            block_col,\
+            slice_idx_col,\
+            locus_idx_col,\
+            species_start_col
 
+   
+def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
 
-
-#def write_bed_file():
+    # Get the name of the alignment block (including the .maf extension) 
+    # Ex: 6way_block_00000085.maf
+    block = block_group[0][0]
     
+
+    # if encode_multiz:
+    # Get MAF alignments of syntenic blocks
+    # -------------------------------------------------------------------------------
+    # EDIT: Removed additional '.maf' from filepath as it is not needed.
+    maf_list = [x for x in open(block_path).read().split('\n') if len(x)>0 and x[0]=='s']
+    # -------------------------------------------------------------------------------
+    seq_list = [x.split()[6] for x in maf_list]
+
+    # Remove the chromosome names from the MAF headers
+    # This is needed for concordance with the species guide tree for LocARNA
+    header_list = [x.split()[1].split('.')[0] for x in maf_list]
+
+    # -------------------------------------------------------------------------------
+    # Edit: Added another list to get the contigs of the sequences included in the alignment block
+    contig_list = [x.split()[1].split('.')[1] for x in maf_list]
+    contig_list = []
+    for entry in maf_list:
+        contig_list.append(".".join(entry.split()[1].split('.')[1:]))
+    # -------------------------------------------------------------------------------
+
+    maf_start_pos_list = [int(x.split()[2]) for x in maf_list]
+    maf_entry_length_list = [int(x.split()[3])  for x in maf_list]
+    maf_direction_list = [x.split()[4] for x in maf_list]
+    maf_contig_lengths_list = [int(x.split()[5]) for x in maf_list]
+
+    # Make directory for syntenic block's loci
+    # -------------------------------------------------------------------------------
+    # EDIT: changed the location of the locus output directory, this removes the .maf from the filepath
+    locus_dir = os.path.join(loci_dir, block.split('.')[0])
+    # -------------------------------------------------------------------------------
+    if not os.path.isdir(locus_dir): os.makedirs(locus_dir)
+
+    
+    # Iterate over loci
+    # This separates the windows by the previously assigned locus index.
+    locus_group_list = utilities.bin_list(block_group, key = lambda x: x[3])
+    for locus_group in locus_group_list:
+        
+        locus_idx = str(locus_group[0][3])
+
+        # -------------------------------------------------------------------------------
+        # EDIT: added subdirectory to hold the BED files pertaining to this locus
+        locus_bed_dir = os.path.join(locus_dir, locus_idx + "_BED_FILES")
+        if not os.path.isdir(locus_bed_dir): os.makedirs(locus_bed_dir)
+        # -----------------------------------------------------------------------------
+        # Take the union of the species present in this locus's window
+        species_present = [False for x in all_species]
+        for window in locus_group:
+            species_present = [bool(int(x)) or y for x,y in zip(window[4], species_present)]
+
+        # Extract the locus's sequences and fasta headers 
+        locus_header_list = []
+        locus_seq_list = []
+        
+        # These are the indices of the start and end of the windows within the locus.
+        start_slice_idx = min([window[2] for window in locus_group])
+        end_slice_idx = max([window[2] for window in locus_group])
+
+        for k, species_name in enumerate(header_list):
+            if species_present[all_species.index(species_name)]:
+                #New method for obtaining the flanking regions:
+                #1. Get the start and end positions of the aligned sequence in the MAF file
+                #       - These will be genomic coordinates
+                #2. Use BedTools/other method to flank this entire region.
+                #       - This will guarantee that whatever the locus region is within the MAF file
+                #       - will be flanked
+                #3. Determine the start column of locus within MAF alignment block
+                #4. Determine the end column of locus within MAF alignment block
+                #5. Extract flanked sequence.                    
+                # BED information
+                
+                contig_name = contig_list[k]
+                num_start = utilities.FLANK_VALUE
+                num_end = utilities.FLANK_VALUE
+                
+                flanked_maf_start_pos = maf_start_pos_list[k] - utilities.FLANK_VALUE
+                if flanked_maf_start_pos < 0:
+                    num_start += flanked_maf_start_pos
+                    flanked_maf_start_pos = 0
+                flanked_maf_end_pos = maf_start_pos_list[k] + maf_entry_length_list[k] + utilities.FLANK_VALUE
+                if flanked_maf_end_pos > maf_contig_lengths_list[k]:
+                    num_end += (maf_contig_lengths_list[k] - flanked_maf_end_pos)
+                    flanked_maf_end_pos = maf_contig_lengths_list[k]
+            
+                flanked_sequence = utilities.get_flanked_sequence(species_name, contig_name, flanked_maf_start_pos, flanked_maf_end_pos, locus_bed_dir, locus_idx, seq_list[k].strip(), maf_direction_list[k], maf_contig_lengths_list[k]).lower()
+                assert seq_list[k].replace('-', '').lower() in flanked_sequence.lower()
+                
+                maf_start_column = start_slice_idx * WINDOW_SLIDE
+                
+                if end_slice_idx - start_slice_idx > 0:
+                    assert len(seq_list[k]) > 120
+                    maf_end_column = end_slice_idx * WINDOW_SLIDE + WINDOW_SIZE
+                else:
+                    if len(seq_list[k]) < 120:
+                        assert start_slice_idx == 0
+                        maf_end_column = len(seq_list[k])
+                    else:
+                        #print species_name, contig_name, len(seq_list[k]), start_slice_idx, end_slice_idx
+                        maf_end_column = end_slice_idx * WINDOW_SLIDE + WINDOW_SIZE
+                        if maf_end_column > len(seq_list[k]):
+                            maf_end_column = len(seq_list[k])    
+                        #print maf_end_column, len(seq_list[k])
+                        
+                        assert maf_end_column <= len(seq_list[k])
+                
+                #print species_name, contig_name, maf_start_column, maf_end_column 
+                
+                unflanked_region = seq_list[k][maf_start_column:maf_end_column].replace("-", "").lower()
+
+                #extract_from_flank_start = len(leading_region) + num
+                start_offset = flanked_sequence.find(unflanked_region)
+                assert start_offset - num_start >= 0
+                
+                extracted_seq = flanked_sequence[(start_offset - num_start) : start_offset + len(unflanked_region) + num_end]
+
+                locus_header_list.append(species_name)
+                #locus_seq_list.append(seq_list[k][start_column : end_column])
+                locus_seq_list.append(extracted_seq)
+
+
+        # Check to take the complement strand
+        if locus_group[0][1] == 'reverse':
+            locus_seq_list = [utilities.complement(x) for x in locus_seq_list]
+
+        # Ungapped Fasta format
+        ungap_fasta_path = os.path.join(locus_dir, locus_idx + '.ungap')            
+        ungap_fasta_string = '\n'.join(['>' + x + '\n' + y.replace('-', '') for x,y in zip(locus_header_list, locus_seq_list)]) + '\n'
+        open(ungap_fasta_path, 'w').write(ungap_fasta_string)
+
+        locus_name = '%s%s%s' % (block, utilities.block_locus_delim, locus_idx)
+        # old : loci_alignment_list.append([locus_name, clustal_path, ungap_fasta_path])
+        # loci_alignment_list.append([locus_name, ungap_fasta_path])
+    
+    # -------------------------------------------------------------------------------
+    # EDIT: Changed variable name from 'locus_alignment_list' to 'loci_alignment_list' as 
+    #       it was misspelled in REAPR v1. 
+    # if stdout: print '\n'.join(['\t'.join(x) for x in loci_alignment_list])
+    # -------------------------------------------------------------------------------
+
+    return [locus_name, ungap_fasta_path]
 
 
 def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win_size, win_slide, encode_multiz, stdout=True):
-
-    from utilities\
-        import num_seq_col,\
-               strand_col,\
-               mean_z_score_col,\
-               p_score_col,\
-               block_col,\
-               slice_idx_col,\
-               locus_idx_col,\
-               species_start_col
 
     species_end_col = species_start_col + len(all_species)
 
@@ -56,46 +199,45 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
         # block_filepath = block_group[0][0].split('.')[0]
         # -------------------------------------------------------------------------------
     
-        if encode_multiz:
-            # Get MAF alignments of syntenic blocks
-            # -------------------------------------------------------------------------------
-            # EDIT: Removed additional '.maf' from filepath as it is not needed.
-            maf_list = [x for x in open(block_path).read().split('\n') if len(x)>0 and x[0]=='s']
-            # -------------------------------------------------------------------------------
-            seq_list = [x.split()[6] for x in maf_list]
-            # print seq_list
+        # if encode_multiz:
+        # Get MAF alignments of syntenic blocks
+        # -------------------------------------------------------------------------------
+        # EDIT: Removed additional '.maf' from filepath as it is not needed.
+        maf_list = [x for x in open(block_path).read().split('\n') if len(x)>0 and x[0]=='s']
+        # -------------------------------------------------------------------------------
+        seq_list = [x.split()[6] for x in maf_list]
+        # print seq_list
 
-            # Remove the chromosome names from the MAF headers
-            # This is needed for concordance with the species guide tree for LocARNA
-            header_list = [x.split()[1].split('.')[0] for x in maf_list]
-            # print header_list
+        # Remove the chromosome names from the MAF headers
+        # This is needed for concordance with the species guide tree for LocARNA
+        header_list = [x.split()[1].split('.')[0] for x in maf_list]
+        # print header_list
 
-            # -------------------------------------------------------------------------------
-            # Edit: Added another list to get the contigs of the sequences included in the alignment block
-            contig_list = [x.split()[1].split('.')[1] for x in maf_list]
-            contig_list = []
-            for entry in maf_list:
-                contig_list.append(".".join(entry.split()[1].split('.')[1:]))
-                # entry_name = ".".join(entry_name[1:])
-            # print contig_list
-            # -------------------------------------------------------------------------------
+        # -------------------------------------------------------------------------------
+        # Edit: Added another list to get the contigs of the sequences included in the alignment block
+        contig_list = [x.split()[1].split('.')[1] for x in maf_list]
+        contig_list = []
+        for entry in maf_list:
+            contig_list.append(".".join(entry.split()[1].split('.')[1:]))
+            # entry_name = ".".join(entry_name[1:])
+        # print contig_list
+        # -------------------------------------------------------------------------------
 
-            maf_start_pos_list = [int(x.split()[2]) for x in maf_list]
-            maf_entry_length_list = [int(x.split()[3])  for x in maf_list]
-            maf_direction_list = [x.split()[4] for x in maf_list]
-            maf_contig_lengths_list = [int(x.split()[5]) for x in maf_list]
+        maf_start_pos_list = [int(x.split()[2]) for x in maf_list]
+        maf_entry_length_list = [int(x.split()[3])  for x in maf_list]
+        maf_direction_list = [x.split()[4] for x in maf_list]
+        maf_contig_lengths_list = [int(x.split()[5]) for x in maf_list]
 
-
-        else:
-            # Parse MAF alignment
-            maf_list = [[a.split('\t') for a in x.split('\n') if a!='' and a[0]=='s'] for x in open(block_path).read().split('a score') if x!='']
-            assert len(maf_list) == 1
-            maf_list = maf_list[0]
+        # else:
+        #     # Parse MAF alignment
+        #     maf_list = [[a.split('\t') for a in x.split('\n') if a!='' and a[0]=='s'] for x in open(block_path).read().split('a score') if x!='']
+        #     assert len(maf_list) == 1
+        #     maf_list = maf_list[0]
             
-            seq_list = [a[6] for a in maf_list]
-            header_list = [a[1] for a in maf_list]
+        #     seq_list = [a[6] for a in maf_list]
+        #     header_list = [a[1] for a in maf_list]
 
-        alignment_block_genomic_coordinates = utilities.get_alignment_block_sequence_lengths(maf_list)
+        #alignment_block_genomic_coordinates = utilities.get_alignment_block_sequence_lengths(maf_list)
         # print alignment_block_genomic_coordinates
         
         # Make directory for syntenic block's loci
@@ -341,3 +483,14 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
     # -------------------------------------------------------------------------------
 
     return loci_alignment_list
+
+
+# This method is the main driver of the first RNAz screen. This will begin the procedure on
+# each of the alignment blocks of the MAF MSA.
+def extract_loci_multiprocessing(x):
+    try:
+        return extract_locus(*x)
+    except KeyboardInterrupt:
+        pass
+    except:
+        print traceback.print_exc()

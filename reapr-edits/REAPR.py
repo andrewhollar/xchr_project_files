@@ -123,7 +123,35 @@ def main():
         # EDIT: Changed the second to last argument to True, this indicates that the chromosome
         #       names need to be removed from the MAF species text.
         #       This list now contains tuples of length 2, (not 3) as I have removed the clustal.
-        loci_alignment_list = extract_loci.extract_loci(block_dict, initial_table, args.threshold, loci_dir, species, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, True, stdout=False)
+        #loci_alignment_list = extract_loci.extract_loci(block_dict, initial_table, args.threshold, loci_dir, species, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, True, stdout=False)
+        
+        from utilities\
+            import num_seq_col,\
+               strand_col,\
+               mean_z_score_col,\
+               p_score_col,\
+               block_col,\
+               slice_idx_col,\
+               locus_idx_col,\
+               species_start_col
+        
+        species_end_col = species_start_col + len(species)
+
+        all_win_recs = open(initial_table).read().split('\n')[1:] # Read out header
+        all_win_recs = (x.split('\t') for x in all_win_recs if x !='')
+        all_win_recs = [(x[block_col], x[strand_col], int(x[slice_idx_col]), int(x[locus_idx_col]), x[species_start_col: species_end_col]) for x in all_win_recs if x[locus_idx_col] != 'NA']   
+        block_group_list = utilities.bin_list(all_win_recs, key = lambda x: x[0])
+
+
+        EXTRACT_LOCI_OUT_LINES = []
+
+        pool = multiprocessing.Pool(processes=(NUM_PROCESSES + 2 / 2))
+        extract_loci_args = [(block_group, block_dict[block_group[0][0]], loci_dir, species, False) for block_group in block_group_list]
+        r = pool.map_async(extract_loci.extract_loci_multiprocessing, extract_loci_args, callback=EXTRACT_LOCI_OUT_LINES.extend)
+        r.wait()
+        
+        print EXTRACT_LOCI_OUT_LINES
+        
         # -------------------------------------------------------------------------------
 
         # raise IOError("END")
