@@ -135,8 +135,8 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             end_slice_idx = max([window[2] for window in locus_group])
             
             # These are the indices of the start and end of the sequence included within the locus
-            start_column = start_slice_idx * win_slide
-            end_column = end_slice_idx * win_slide + win_size
+            #start_column = start_slice_idx * win_slide
+            #end_column = end_slice_idx * win_slide + win_size
             
             # -------------------------------------------------------------------------------
             # Number of sliding windows spanning the unfiltered block
@@ -167,11 +167,11 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     # BED information
                     contig_name = contig_list[k]
                 
-                    leading_sequence = seq_list[k][:start_column].replace("-", '')
+                    #leading_sequence = seq_list[k][:start_column].replace("-", '')
                     # print leading_sequence
                     # leading_sequence = leading_sequence.replace("-", '')
                     
-                    trailing_sequence = seq_list[k][end_column + 1:].replace("-", '')
+                    #trailing_sequence = seq_list[k][end_column + 1:].replace("-", '')
                     # print trailing_sequence
                     # trailing_sequence = trailing_sequence.replace("-", '')
 
@@ -185,16 +185,30 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     
                     # print (species_name, contig_name, bed_start, bed_end)
                     
-                    
+                    # If the locus is just a single window, then I have to check how long the sequence is in the maf
+                    # The previous indices assumed that the window was at least 120nt (the window size)
+                    # if start_slice_idx == end_slice_idx:
+                    #     continue
+                    # else:
+                        
+                    locus_start_offset = start_slice_idx * win_slide
+                    if end_slice_idx == start_slice_idx and end_slice_idx == 0:
+                        locus_length = maf_entry_length_list[k]
+                    else:
+                        locus_length = (end_slice_idx * win_slide + win_size) - locus_start_offset                        
+                        
                     # This isn't what I want. Instead I need to get the start/end positions of the stable locus.
                     maf_start_pos = maf_start_pos_list[k]
                     maf_end_pos = maf_start_pos_list[k] + maf_entry_length_list[k]
                     
                     
-                    locus_start_pos = maf_start_pos + start_column
-                    locus_end_pos = maf_start_pos + end_column
+                    locus_start_pos = maf_start_pos + locus_start_offset
+                    locus_end_pos = maf_start_pos + locus_length
                     
-                    print (species_name, contig_name, locus_start_pos, locus_end_pos)
+                    # locus_start_pos = maf_start_pos + start_column
+                    # locus_end_pos = maf_start_pos + end_column
+                    
+                    print (species_name, contig_name, maf_start_pos, maf_end_pos, locus_start_pos, locus_end_pos)
                     # print (locus_start_pos, locus_end_pos)
                     
                     #locus_start_pos
