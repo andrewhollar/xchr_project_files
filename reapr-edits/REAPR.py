@@ -153,7 +153,7 @@ def main():
         
         # -------------------------------------------------------------------------------
 
-        # raise IOError("END")
+        raise IOError("END")
 
         realign_tables = [os.path.join(args.output_folder, 'locarna.d_%s.tab' % str(d)) for d in args.delta]
 
