@@ -104,18 +104,17 @@ def main():
         rnaz_1_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, commands.rnazSelectSeqs, out_dir, tmp_dir, alignment_format, 1, verbose) for alignment in block_paths] 
         # -------------------------------------------------------------------------------
 
-        REAPR_OUT_LINES.append('Start: RNAz screen on WGA %s' % (utilities.get_time()))
-        RNAZ_OUT_LINES = []
+        # REAPR_OUT_LINES.append('Start: RNAz screen on WGA %s' % (utilities.get_time()))
+        # RNAZ_OUT_LINES = []
         
-        pool = multiprocessing.Pool(processes=NUM_PROCESSES)        
-        r = pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, rnaz_1_args, callback=RNAZ_OUT_LINES.extend) #.get(99999999)
-        r.wait()
-        for rnaz_entry in RNAZ_OUT_LINES:
-            REAPR_OUT_LINES.extend(rnaz_entry)        
-        REAPR_OUT_LINES.append('End: RNAz screen on WGA %s' % (utilities.get_time()))
+        # pool = multiprocessing.Pool(processes=NUM_PROCESSES)        
+        # r = pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, rnaz_1_args, callback=RNAZ_OUT_LINES.extend) #.get(99999999)
+        # r.wait()
+        # for rnaz_entry in RNAZ_OUT_LINES:
+        #     REAPR_OUT_LINES.extend(rnaz_entry)        
+        # REAPR_OUT_LINES.append('End: RNAz screen on WGA %s' % (utilities.get_time()))
 
-        write_REAPR_output(REAPR_OUT_LINES)
-        # print REAPR_OUT_LINES
+        # write_REAPR_output(REAPR_OUT_LINES)
 
         ### Compile table of RNAz screen results ###
         rnaz_paths = [a + '.rnaz' for a in block_paths]              # RNAz output
@@ -141,11 +140,10 @@ def main():
         all_win_recs = [(x[block_col], x[strand_col], int(x[slice_idx_col]), int(x[locus_idx_col]), x[species_start_col: species_end_col]) for x in all_win_recs if x[locus_idx_col] != 'NA']   
         block_group_list = utilities.bin_list(all_win_recs, key = lambda x: x[0])
 
-
         loci_alignment_list = []
         EXTRACT_LOCI_OUT_LINES = []
 
-        pool = multiprocessing.Pool(processes=(NUM_PROCESSES + 2 / 2))
+        pool = multiprocessing.Pool(processes=NUM_PROCESSES)
         extract_loci_args = [(block_group, block_dict[block_group[0][0]], loci_dir, species, False) for block_group in block_group_list]
         r = pool.map_async(extract_loci.extract_loci_multiprocessing, extract_loci_args, callback=EXTRACT_LOCI_OUT_LINES.extend)
         r.wait()
@@ -153,9 +151,7 @@ def main():
         for extract_locus_process_out in EXTRACT_LOCI_OUT_LINES:
             for locus in extract_locus_process_out:
                 loci_alignment_list.append(locus)
-        
-        # print EXTRACT_LOCI_OUT_LINES
-        
+                
         # -------------------------------------------------------------------------------
 
         # raise IOError("END")
@@ -175,7 +171,6 @@ def main():
             # EDIT: Changed the path of the target clustal file to be the boundaries predicted by the reliability-profile.pl script
             target_files = [os.path.join(x + '.%s.d'   % suffix, 'improved_boundaries.aln') for x in ungap_fastas] #ref_clustals]
             # -------------------------------------------------------------------------------
-
 
             # Realign loci
             acd, verbose = True, True
@@ -198,16 +193,6 @@ def main():
 
             write_REAPR_output(REAPR_OUT_LINES)
 
-            # # PRINT THE OUTPUT TO OUT.log
-            # line = REAPR_OUT_LINES.pop(0)
-            # try:
-            #     while line:
-            #         print line + '\n'
-            #         line = REAPR_OUT_LINES.pop(0)
-            # except IndexError:
-            #     pass
-
-
             ### Run RNAz screen on realigned loci ###
             # -------------------------------------------------------------------------------
             # EDIT: Changed the value of 'no_reference' to False, because we are using Human as a reference. 
@@ -227,15 +212,6 @@ def main():
                 REAPR_OUT_LINES.extend(rnaz_entry)
             
             REAPR_OUT_LINES.append('End: RNAz screen on realigned loci, Delta=%s, %s' % (str(delta), utilities.get_time()))
-            
-            # # PRINT THE OUTPUT TO OUT.log
-            # line = REAPR_OUT_LINES.pop(0)
-            # try:
-            #     while line:
-            #         print line + '\n'
-            #         line = REAPR_OUT_LINES.pop(0)
-            # except IndexError:
-            #     pass
             write_REAPR_output(REAPR_OUT_LINES)
 
             
