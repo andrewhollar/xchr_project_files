@@ -202,23 +202,23 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                             maf_end_column = end_slice_idx * win_slide + win_size
                             assert maf_end_column <= len(seq_list[k])
                     
-                    print species_name, contig_name, maf_start_column, maf_end_column 
+                    #print species_name, contig_name, maf_start_column, maf_end_column 
                     
                     unflanked_region = seq_list[k][maf_start_column:maf_end_column].replace("-", "").lower()
                     leading_region = seq_list[k][:maf_start_column].replace("-", "").lower()
                     trailing_region = seq_list[k][maf_end_column:].replace("-", "").lower()
-                    print len(leading_region), len(trailing_region)
+                    #print len(leading_region), len(trailing_region)
                     
                     #flanked_start_col = 
                     
                     #extract_from_flank_start = len(leading_region) + num
                     start_offset = flanked_sequence.find(unflanked_region)
-                    print start_offset, num_start
+                    #print start_offset, num_start
                     assert start_offset - num_start >= 0
                     
                     extracted_seq = flanked_sequence[(start_offset - num_start) : start_offset + len(unflanked_region) + num_end]
 
-                    print extracted_seq
+                    #print extracted_seq
                     
                     #maf_end_column = 
                 
@@ -293,7 +293,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     
                     locus_header_list.append(species_name)
                     #locus_seq_list.append(seq_list[k][start_column : end_column])
-                    locus_seq_list.append(flanked_sequence)
+                    locus_seq_list.append(extracted_seq)
                     
             # print unflanked_lengths
             # print bed_lengths
