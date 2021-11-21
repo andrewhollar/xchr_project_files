@@ -213,6 +213,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     
                     #extract_from_flank_start = len(leading_region) + num
                     start_offset = flanked_sequence.find(unflanked_region)
+                    print start_offset, num_start
                     assert start_offset - num_start >= 0
                     
                     extracted_seq = flanked_sequence[(start_offset - num_start) : start_offset + len(unflanked_region) + num_end]
