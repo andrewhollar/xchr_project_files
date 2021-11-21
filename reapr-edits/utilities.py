@@ -647,6 +647,8 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, 
     bed_filepath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".bed")
     bed_error_outpath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".log")
     
+    print bed_filepath, bed_error_outpath
+    
     # start_flank = 0
     # end_flank = 0
     
