@@ -171,6 +171,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     #4. Determine the end column of locus within MAF alignment block
                     #5. Extract flanked sequence.                    
                     # BED information
+                    
                     contig_name = contig_list[k]
                     flanked_maf_start_pos = maf_start_pos_list[k] - utilities.FLANK_VALUE
                     if flanked_maf_start_pos < 0:
@@ -180,14 +181,15 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                         flanked_maf_end_pos = maf_contig_lengths_list[k]
                 
                     flanked_sequence = utilities.get_flanked_sequence(species_name, contig_name, flanked_maf_start_pos, flanked_maf_end_pos, locus_bed_dir, locus_idx, seq_list[k].strip(), maf_direction_list[k], maf_contig_lengths_list[k])
-
-                    print seq_list[k].replace('-', '').lower()
-                    print flanked_sequence.lower()
-                    
                     assert seq_list[k].replace('-', '').lower() in flanked_sequence.lower()
                     
-                
-                    #maf_start_column = start_slice_idx * win_slide
+                    maf_start_column = start_slice_idx * win_slide
+                    
+                    if end_slice_idx - start_slice_idx > 0:
+                        assert len(seq_list[k]) > 120
+                    
+                    
+                    #maf_end_column = 
                 
                     #leading_sequence = seq_list[k][:start_column].replace("-", '')
                     # print leading_sequence
