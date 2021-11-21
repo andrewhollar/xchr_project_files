@@ -682,31 +682,31 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, 
 
             full_contig = open(extracted_output).read().split('\n')[1].strip()  
             
-            header_lines = []
-            header_lines.append(">" + contig)
-            header_lines.append(full_contig)
+            # header_lines = []
+            # header_lines.append(">" + contig)
+            # header_lines.append(full_contig)
             
-            with open(extracted_output, "w") as fix_header:
-                fix_header.writelines(header_lines)
+            # with open(extracted_output, "w") as fix_header:
+            #     fix_header.writelines(header_lines)
                   
             extracted_seq = full_contig[start:end]
         else:
             # print "Rev-comp file already exists: " + species + "." + contig 
-            # try:
-            #     extracted_seq = open(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa')).read().split('\n')[1].strip()[start:end]
-            # except IndexError:
-            #     print str(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa'))
-            bed_entry = "\t".join([contig, str(start), str(end)])
-            open(bed_filepath, "w").write(bed_entry)
-            bed_error = open(bed_error_outpath, 'w', int(1e6))
-            extracted_output = os.path.join(locus_bed_dir, locus_idx + "." + species + ".extracted.fa")
+            try:
+                extracted_seq = open(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa')).read().split('\n')[1].strip()[start:end]
+            except IndexError:
+                print str(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa'))
+            # bed_entry = "\t".join([contig, str(start), str(end)])
+            # open(bed_filepath, "w").write(bed_entry)
+            # bed_error = open(bed_error_outpath, 'w', int(1e6))
+            # extracted_output = os.path.join(locus_bed_dir, locus_idx + "." + species + ".extracted.fa")
             
-            cmd = '%s getfasta -fi %s -fo %s -bed %s' % (BEDTOOLS, os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa'), extracted_output, bed_filepath)   
-            subprocess.Popen(cmd, shell=True, stdout=bed_error, stderr=bed_error).wait()
-            # print 'Running time: ' + str(time.time() - start_time) + ' seconds'
+            # cmd = '%s getfasta -fi %s -fo %s -bed %s' % (BEDTOOLS, os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa'), extracted_output, bed_filepath)   
+            # subprocess.Popen(cmd, shell=True, stdout=bed_error, stderr=bed_error).wait()
+            # # print 'Running time: ' + str(time.time() - start_time) + ' seconds'
             
-            bed_error.close()
-            extracted_seq = open(extracted_output).read().split('\n')[1].strip()
+            # bed_error.close()
+            # extracted_seq = open(extracted_output).read().split('\n')[1].strip()
 
     else:
         bed_entry = "\t".join([contig, str(start), str(end)])
