@@ -705,7 +705,7 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, 
     # print alignment_seq.lower()
     # print extracted_seq.lower()
     try:
-        assert extracted_seq[start + start_flank: end - end_flank].lower() in alignment_seq.lower()
+        assert extracted_seq[start + start_flank: end - (end_flank + 1)].lower() in alignment_seq.lower()
     except AssertionError:
         print bed_filepath  
         print alignment_seq.lower()
