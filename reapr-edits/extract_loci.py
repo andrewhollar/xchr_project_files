@@ -13,6 +13,9 @@ from utilities\
    
 def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
 
+    locus_alignment_list = []
+
+
     # Get the name of the alignment block (including the .maf extension) 
     # Ex: 6way_block_00000085.maf
     block = block_group[0][0]
@@ -148,6 +151,8 @@ def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
         open(ungap_fasta_path, 'w').write(ungap_fasta_string)
 
         locus_name = '%s%s%s' % (block, utilities.block_locus_delim, locus_idx)
+        
+        locus_alignment_list.append((locus_name, ungap_fasta_path))
         # old : loci_alignment_list.append([locus_name, clustal_path, ungap_fasta_path])
         # loci_alignment_list.append([locus_name, ungap_fasta_path])
     
@@ -157,7 +162,7 @@ def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
     # if stdout: print '\n'.join(['\t'.join(x) for x in loci_alignment_list])
     # -------------------------------------------------------------------------------
 
-    return [locus_name, ungap_fasta_path]
+    return locus_alignment_list
 
 
 def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win_size, win_slide, encode_multiz, stdout=True):
