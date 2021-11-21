@@ -8,30 +8,23 @@ import combine_tables
 import commands
 import utilities
 import random
-# -------------------------------------------------------------------------------
-# EDIT: Added the import of the AlignIO module from biopython
-# BioPython requires python 3.6+ (i.e. not compatible with REAPR v1, which is based on python 2.7)
-# from Bio import AlignIO
-# -------------------------------------------------------------------------------
 
 
-
-# -------------------------------------------------------------------------------
-# EDIT: Added the following parameters in order to limit the number of alignment blocks.
-#       This is now moved to the file: process_maf_file.py.
-# SAMPLE_DENOM = 100
-# MAX_SAMPLES = 1     #sys.maxsize
-# SAMPLE_LENGTH = 15
-# random.seed(35)
-# -------------------------------------------------------------------------------
-
+def write_REAPR_output(reapr_out):
+    # PRINT THE OUTPUT TO OUT.log
+    line = reapr_out.pop(0)
+    try:
+        while line:
+            print line + '\n'
+            line = reapr_out.pop(0)
+    except IndexError:
+        return
 
 def main():
-    
     REAPR_OUT_LINES = []
     
     parser = argparse.ArgumentParser(description='Realign a WGA and predict structural ncRNAs.')
-    parser.add_argument('-a', '--alignments', required=True, help='Space-separated list of WGA alignment block files.') #EDIT: changed the required option to FALSE
+    parser.add_argument('-a', '--alignments', required=True, help='Space-separated list of WGA alignment block files.')
     parser.add_argument('-s', '--species', required=True, help='Space-separated list of species in WGA.  Species names must be the same as those listed in the alignment block files.')
     parser.add_argument('-g', '--guide-tree', required=True, help='Species guide tree (in Newick format, without branch lengths) for progressive alignment by LocARNA.')
     parser.add_argument('-o', '--output-folder', default=os.getcwd(), help='Directory to write output files.  (Default: present working directory)')
@@ -41,16 +34,7 @@ def main():
     parser.add_argument('-r', '--ram-disk', help='Location of RAM Disk to write temporary files.  Minimizes random access on disk storage.  This is highly recommended as REAPR will write many small files. (Note: this is typically /dev/shm in Ubuntu, and other Linux systems)')
     parser.add_argument('--alistat', action='store_true', help='Compute sequence identities of alignments using alistat')
     parser.add_argument('--compalignp', action='store_true', help='Compute change between original alignment and realignment using compalignp')
-   
-    # -------------------------------------------------------------------------------
-    # EDIT: Added the following argument to replace the --alignments option from REAPR v1.
-    # parser.add_argument('-m', '--maf-file', required=True, help='The input alignment MAF file.')
-    # -------------------------------------------------------------------------------
-
     args = parser.parse_args()
-
-    # outF, errF = sys.stdout, sys.stderr
-    # parent_pid = os.getpid()
 
     # Setup temporary directory
     if args.ram_disk is None: tmp_dir = None
@@ -59,6 +43,10 @@ def main():
         tmp_dir = os.path.join(args.ram_disk, 'REAPR.'+utilities.get_random_string(8))
         os.makedirs(tmp_dir)
     
+    NUM_PROCESSES = args.processes
+    if NUM_PROCESSES == -1:
+        NUM_PROCESSES = multiprocessing.cpu_count() - 2
+    
     try:
         # Check if the MAF alignment block-index file exists.
         utilities.file_exists(args.alignments)
@@ -66,7 +54,6 @@ def main():
         # Load the MAF alignment block information into a list. Each entry in this list is a list containing two values:
         #       1: Name of the alignment block
         #       2: Filepath of the alignment block
-        #       Ex: ['6way_block_00000085.maf', '/home/ahollar/reapr_x/alignments/6way_block_00000085.maf']
         blocks = [x.split('\t') for x in open(args.alignments).read().split('\n') if x!='']
         block_dict = dict(blocks)
         block_names, block_paths = zip(*blocks)
@@ -94,7 +81,6 @@ def main():
         #       will go into the 'alignments/' directory within the args.output_folder.
         out_dir = os.path.join(args.output_folder, 'alignments')
         # -------------------------------------------------------------------------------
-        
         # -------------------------------------------------------------------------------
         # EDIT: Added a call to make the output directory to avoid downstream IOErrors
         if not os.path.isdir(out_dir): 
@@ -104,38 +90,23 @@ def main():
         if not os.path.isdir(utilities.REV_COMP_CONTIG_DIR):
             os.makedirs(utilities.REV_COMP_CONTIG_DIR)
         # -------------------------------------------------------------------------------
-
         # -------------------------------------------------------------------------------
         # EDIT: Added the rnazSelectSeqs.pl as an argument.
         rnaz_1_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, commands.rnazSelectSeqs, out_dir, tmp_dir, alignment_format, 1, verbose) for alignment in block_paths] 
         # -------------------------------------------------------------------------------
 
-        #print 'Start: RNAz screen on WGA', utilities.get_time()
-        REAPR_OUT_LINES.append('Start: RNAz screen on WGA %s' % (utilities.get_time()))
+        # REAPR_OUT_LINES.append('Start: RNAz screen on WGA %s' % (utilities.get_time()))
+        # RNAZ_OUT_LINES = []
         
-        RNAZ_OUT_LINES = []
-        
-        if args.processes == -1:
-            pool = multiprocessing.Pool(processes=(multiprocessing.cpu_count() - 2))
-        else:
-            pool = multiprocessing.Pool(processes=args.processes)        
-        r = pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, rnaz_1_args, callback=RNAZ_OUT_LINES.extend) #.get(99999999)
-        r.wait()
-        
-        for rnaz_entry in RNAZ_OUT_LINES:
-            REAPR_OUT_LINES.extend(rnaz_entry)
-        
-        #print 'End: RNAz screen on WGA', utilities.get_time()
-        REAPR_OUT_LINES.append('End: RNAz screen on WGA %s' % (utilities.get_time()))
+        # pool = multiprocessing.Pool(processes=NUM_PROCESSES)        
+        # r = pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, rnaz_1_args, callback=RNAZ_OUT_LINES.extend) #.get(99999999)
+        # r.wait()
+        # for rnaz_entry in RNAZ_OUT_LINES:
+        #     REAPR_OUT_LINES.extend(rnaz_entry)        
+        # REAPR_OUT_LINES.append('End: RNAz screen on WGA %s' % (utilities.get_time()))
 
-        # PRINT THE OUTPUT TO OUT.log
-        line = REAPR_OUT_LINES.pop(0)
-        try:
-            while line:
-                print line + '\n'
-                line = REAPR_OUT_LINES.pop(0)
-        except IndexError:
-            pass
+        # write_REAPR_output(REAPR_OUT_LINES)
+        # print REAPR_OUT_LINES
 
         ### Compile table of RNAz screen results ###
         rnaz_paths = [a + '.rnaz' for a in block_paths]              # RNAz output
@@ -144,9 +115,6 @@ def main():
         initial_table = os.path.join(args.output_folder, 'original_wga.tab')
         alternate_strands, merge = True, True
         tabulate_rnaz_results.write_table(initial_table, rnaz_paths, block_names, log_paths, index_paths, alternate_strands, merge, args.threshold, species)
-
-        # raise IOError("End")
-
 
         ### Extract stable loci ###
         loci_dir = os.path.join(args.output_folder, 'loci')
@@ -177,15 +145,10 @@ def main():
 
             # Realign loci
             acd, verbose = True, True
-            #target_args = [(commands.mlocarna, a, b, c, d, delta, acd, args.guide_tree, verbose) for a,b,c,d in zip(ref_clustals, ungap_fastas, target_dirs, target_files)]
             locarna_target_args = [(commands.mlocarna, a, b, c, delta, acd, args.guide_tree, verbose) for a,b,c in zip(ungap_fastas, target_dirs, target_files)]
 
             REAPR_OUT_LINES.append('Start: LocARNA realignment, Delta=%s, %s' % (str(delta), utilities.get_time()))
-            #print 'Start: LocARNA realignment, Delta=%s' % delta, utilities.get_time()
-            if args.processes == -1:
-                pool = multiprocessing.Pool(processes=(multiprocessing.cpu_count() - 2))
-            else:
-                pool = multiprocessing.Pool(processes=args.processes)     
+            pool = multiprocessing.Pool(processes=NUM_PROCESSES)     
             
             LOCARNA_OUT_LINES = []     
             locarna_success = []   
@@ -195,29 +158,21 @@ def main():
             for locarna_entry in LOCARNA_OUT_LINES:
                 REAPR_OUT_LINES.extend(locarna_entry[1])
                 locarna_success.append(locarna_entry[0])
-            
-            # print locarna_success
-                
-            # success = pool.map_async(realign_loci_locarna.run_locarna_pool, target_args).wait()
+                            
             target_files = [x for x,y in zip(target_files, locarna_success) if y]
-            # print target_files
             REAPR_OUT_LINES.append('End: LocARNA realignment, Delta=%s, %s' % (str(delta), utilities.get_time()))
 
-            # PRINT THE OUTPUT TO OUT.log
-            line = REAPR_OUT_LINES.pop(0)
-            try:
-                while line:
-                    print line + '\n'
-                    line = REAPR_OUT_LINES.pop(0)
-            except IndexError:
-                pass
+            write_REAPR_output(REAPR_OUT_LINES)
 
+            # # PRINT THE OUTPUT TO OUT.log
+            # line = REAPR_OUT_LINES.pop(0)
+            # try:
+            #     while line:
+            #         print line + '\n'
+            #         line = REAPR_OUT_LINES.pop(0)
+            # except IndexError:
+            #     pass
 
-            # raise IOError("END")
-
-            #print 'End: LocARNA realignment, Delta=%s' % delta, utilities.get_time()
-
-            # raise IOError("End")
 
             ### Run RNAz screen on realigned loci ###
             # -------------------------------------------------------------------------------
@@ -227,31 +182,28 @@ def main():
             # -------------------------------------------------------------------------------
             alignment_format='CLUSTAL'
             rnaz_2_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, commands.rnazSelectSeqs, location, None, alignment_format, 2, verbose) for alignment, location in zip(target_files, target_dirs)]
-            #print 'Start: RNAz screen on realigned loci, Delta=%s' % delta, utilities.get_time()
             REAPR_OUT_LINES.append('Start: RNAz screen on realigned loci, Delta=%s, %s' % (str(delta), utilities.get_time()))
             
             RNAZ_OUT_LINES = []
-            if args.processes == -1:
-                pool = multiprocessing.Pool(processes=(multiprocessing.cpu_count() - 2))
-            else:
-                pool = multiprocessing.Pool(processes=args.processes)     
+            pool = multiprocessing.Pool(processes=NUM_PROCESSES)     
             r = pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, rnaz_2_args, callback = RNAZ_OUT_LINES.extend)
             r.wait()
-            #print 'End: RNAz screen on realigned loci, Delta=%s' % delta, utilities.get_time()
             
             for rnaz_entry in RNAZ_OUT_LINES:
                 REAPR_OUT_LINES.extend(rnaz_entry)
             
             REAPR_OUT_LINES.append('End: RNAz screen on realigned loci, Delta=%s, %s' % (str(delta), utilities.get_time()))
             
-            # PRINT THE OUTPUT TO OUT.log
-            line = REAPR_OUT_LINES.pop(0)
-            try:
-                while line:
-                    print line + '\n'
-                    line = REAPR_OUT_LINES.pop(0)
-            except IndexError:
-                pass
+            # # PRINT THE OUTPUT TO OUT.log
+            # line = REAPR_OUT_LINES.pop(0)
+            # try:
+            #     while line:
+            #         print line + '\n'
+            #         line = REAPR_OUT_LINES.pop(0)
+            # except IndexError:
+            #     pass
+            write_REAPR_output(REAPR_OUT_LINES)
+
             
             ### Compile tables of RNAz results ###
             rnaz_paths = [a + '.rnaz' for a in target_files]              # RNAz output
@@ -266,7 +218,6 @@ def main():
             alternate_strands, merge = True, False
             block_names = locus_names
             tabulate_rnaz_results.write_table(realign_table, rnaz_paths, block_names, log_paths, index_paths, alternate_strands, merge, args.threshold, species)
-
 
         # Combine tables
         combine_tables.combine_tables(initial_table, realign_tables, args.delta, loci_dir, True, species, args.alistat, args.compalignp, os.path.join(args.output_folder, 'summary.tab'))
