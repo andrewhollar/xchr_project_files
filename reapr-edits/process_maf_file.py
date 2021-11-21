@@ -8,7 +8,7 @@ SAMPLE_DENOM = 1000
 MAX_SAMPLES = 1000#sys.maxsize
 MIN_SPECIES = 2
 # SAMPLE_LENGTH = 15
-#random.seed(500)
+random.seed(500)
 
 #BLOCK_IDX_TARGETS = [370, 533, 534, 12365, 14985, 15634]
 
