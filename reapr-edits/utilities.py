@@ -680,7 +680,15 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, 
             subprocess.Popen(cmd, shell=True, stdout=bed_error, stderr=bed_error).wait()
             bed_error.close()
 
-            full_contig = open(extracted_output).read().split('\n')[1].strip()        
+            full_contig = open(extracted_output).read().split('\n')[1].strip()  
+            
+            header_lines = []
+            header_lines.append(">" + contig)
+            header_lines.append(full_contig)
+            
+            with open(extracted_output, "w") as fix_header:
+                fix_header.writelines(header_lines)
+                  
             extracted_seq = full_contig[start:end]
         else:
             # print "Rev-comp file already exists: " + species + "." + contig 
