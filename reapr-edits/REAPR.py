@@ -8,6 +8,15 @@ import combine_tables
 import commands
 import utilities
 import random
+from utilities\
+    import num_seq_col,\
+        strand_col,\
+        mean_z_score_col,\
+        p_score_col,\
+        block_col,\
+        slice_idx_col,\
+        locus_idx_col,\
+        species_start_col
 
 
 def write_REAPR_output(reapr_out):
@@ -95,17 +104,17 @@ def main():
         rnaz_1_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, commands.rnazSelectSeqs, out_dir, tmp_dir, alignment_format, 1, verbose) for alignment in block_paths] 
         # -------------------------------------------------------------------------------
 
-        # REAPR_OUT_LINES.append('Start: RNAz screen on WGA %s' % (utilities.get_time()))
-        # RNAZ_OUT_LINES = []
+        REAPR_OUT_LINES.append('Start: RNAz screen on WGA %s' % (utilities.get_time()))
+        RNAZ_OUT_LINES = []
         
-        # pool = multiprocessing.Pool(processes=NUM_PROCESSES)        
-        # r = pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, rnaz_1_args, callback=RNAZ_OUT_LINES.extend) #.get(99999999)
-        # r.wait()
-        # for rnaz_entry in RNAZ_OUT_LINES:
-        #     REAPR_OUT_LINES.extend(rnaz_entry)        
-        # REAPR_OUT_LINES.append('End: RNAz screen on WGA %s' % (utilities.get_time()))
+        pool = multiprocessing.Pool(processes=NUM_PROCESSES)        
+        r = pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, rnaz_1_args, callback=RNAZ_OUT_LINES.extend) #.get(99999999)
+        r.wait()
+        for rnaz_entry in RNAZ_OUT_LINES:
+            REAPR_OUT_LINES.extend(rnaz_entry)        
+        REAPR_OUT_LINES.append('End: RNAz screen on WGA %s' % (utilities.get_time()))
 
-        # write_REAPR_output(REAPR_OUT_LINES)
+        write_REAPR_output(REAPR_OUT_LINES)
         # print REAPR_OUT_LINES
 
         ### Compile table of RNAz screen results ###
@@ -124,16 +133,6 @@ def main():
         #       names need to be removed from the MAF species text.
         #       This list now contains tuples of length 2, (not 3) as I have removed the clustal.
         #loci_alignment_list = extract_loci.extract_loci(block_dict, initial_table, args.threshold, loci_dir, species, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, True, stdout=False)
-        
-        from utilities\
-            import num_seq_col,\
-               strand_col,\
-               mean_z_score_col,\
-               p_score_col,\
-               block_col,\
-               slice_idx_col,\
-               locus_idx_col,\
-               species_start_col
         
         species_end_col = species_start_col + len(species)
 
