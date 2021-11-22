@@ -141,10 +141,18 @@ def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
                 #print species_name, contig_name, maf_start_column, maf_end_column 
                 
                 unflanked_region = seq_list[k][maf_start_column:maf_end_column].replace("-", "").lower()
+                # extracted_seq = flanked_sequence[(start_offset - num_start) : start_offset + len(unflanked_region) + num_end]
+
 
                 #extract_from_flank_start = len(leading_region) + num
                 start_offset = flanked_sequence.find(unflanked_region)
-                assert start_offset - num_start >= 0
+                try:
+                    assert start_offset - num_start >= 0
+                except AssertionError:
+                    print seq_list[k]
+                    print unflanked_region
+                    print flanked_sequence
+
                 
                 extracted_seq = flanked_sequence[(start_offset - num_start) : start_offset + len(unflanked_region) + num_end]
 
