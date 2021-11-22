@@ -105,15 +105,15 @@ def main():
         rnaz_1_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, commands.rnazSelectSeqs, out_dir, tmp_dir, alignment_format, 1, verbose) for alignment in block_paths] 
         # -------------------------------------------------------------------------------
 
-        # REAPR_OUT_LINES.append('Start: RNAz screen on WGA %s' % (utilities.get_time()))
-        # RNAZ_OUT_LINES = []
+        REAPR_OUT_LINES.append('Start: RNAz screen on WGA %s' % (utilities.get_time()))
+        RNAZ_OUT_LINES = []
         
-        # pool = multiprocessing.Pool(processes=NUM_PROCESSES)        
-        # r = pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, rnaz_1_args, callback=RNAZ_OUT_LINES.extend) #.get(99999999)
-        # r.wait()
-        # for rnaz_entry in RNAZ_OUT_LINES:
-        #     REAPR_OUT_LINES.extend(rnaz_entry)        
-        # REAPR_OUT_LINES.append('End: RNAz screen on WGA %s' % (utilities.get_time()))
+        pool = multiprocessing.Pool(processes=NUM_PROCESSES)        
+        r = pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, rnaz_1_args, callback=RNAZ_OUT_LINES.extend) #.get(99999999)
+        r.wait()
+        for rnaz_entry in RNAZ_OUT_LINES:
+            REAPR_OUT_LINES.extend(rnaz_entry)        
+        REAPR_OUT_LINES.append('End: RNAz screen on WGA %s' % (utilities.get_time()))
 
         # write_REAPR_output(REAPR_OUT_LINES)
 

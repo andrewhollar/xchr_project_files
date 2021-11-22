@@ -12,7 +12,6 @@ from utilities\
 
    
 def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
-
     locus_alignment_list = []
     OUTLINE = ""
 
@@ -20,7 +19,6 @@ def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
     # Ex: 6way_block_00000085.maf
     block = block_group[0][0]
     
-
     # if encode_multiz:
     # Get MAF alignments of syntenic blocks
     # -------------------------------------------------------------------------------
@@ -53,16 +51,11 @@ def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
     # -------------------------------------------------------------------------------
     if not os.path.isdir(locus_dir): os.makedirs(locus_dir)
 
-    
     # Iterate over loci
     # This separates the windows by the previously assigned locus index.
     locus_group_list = utilities.bin_list(block_group, key = lambda x: x[3])
-    for locus_group in locus_group_list:
-        
-        
-        
+    for locus_group in locus_group_list:    
         locus_idx = str(locus_group[0][3])
-
         # -------------------------------------------------------------------------------
         # EDIT: added subdirectory to hold the BED files pertaining to this locus
         locus_bed_dir = os.path.join(locus_dir, locus_idx + "_BED_FILES")
@@ -118,12 +111,7 @@ def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
                     flanked_maf_end_pos = maf_contig_lengths_list[k]
             
                 flanked_sequence = utilities.get_flanked_sequence(species_name, contig_name, flanked_maf_start_pos, flanked_maf_end_pos, locus_bed_dir, locus_idx, seq_list[k].strip(), maf_direction_list[k], maf_contig_lengths_list[k]).lower()
-                
-                # try:
                 assert seq_list[k].replace('-', '').lower() in flanked_sequence.lower()
-                # except AssertionError:
-                #     print seq_list[k].replace('-', '').lower() 
-                #     print flanked_sequence.lower()
                 
                 maf_start_column = start_slice_idx * WINDOW_SLIDE
                 
@@ -135,19 +123,13 @@ def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
                         assert start_slice_idx == 0
                         maf_end_column = len(seq_list[k])
                     else:
-                        #print species_name, contig_name, len(seq_list[k]), start_slice_idx, end_slice_idx
                         maf_end_column = end_slice_idx * WINDOW_SLIDE + WINDOW_SIZE
                         if maf_end_column > len(seq_list[k]):
                             maf_end_column = len(seq_list[k])    
-                        #print maf_end_column, len(seq_list[k])
                         
                         assert maf_end_column <= len(seq_list[k])
-                
-                #print species_name, contig_name, maf_start_column, maf_end_column 
-                
+                                
                 unflanked_region = seq_list[k][maf_start_column:maf_end_column].replace("-", "").lower()
-                # extracted_seq = flanked_sequence[(start_offset - num_start) : start_offset + len(unflanked_region) + num_end]
-
 
                 #extract_from_flank_start = len(leading_region) + num
                 start_offset = flanked_sequence.find(unflanked_region)
@@ -161,32 +143,18 @@ def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
 
                 
                 extracted_seq = flanked_sequence[(start_offset - num_start) : start_offset + len(unflanked_region) + num_end]
-
                 locus_header_list.append(species_name)
-                #locus_seq_list.append(seq_list[k][start_column : end_column])
                 locus_seq_list.append(extracted_seq)
-
 
         # Check to take the complement strand
         if locus_group[0][1] == 'reverse':
             locus_seq_list = [utilities.complement(x) for x in locus_seq_list]
 
         # Ungapped Fasta format
-        # ungap_fasta_path = os.path.join(locus_dir, locus_idx + '.ungap')            
         ungap_fasta_string = '\n'.join(['>' + x + '\n' + y.replace('-', '') for x,y in zip(locus_header_list, locus_seq_list)]) + '\n'
         open(ungap_fasta_path, 'w').write(ungap_fasta_string)
-
-        # locus_name = '%s%s%s' % (block, utilities.block_locus_delim, locus_idx)
         
         locus_alignment_list.append((locus_name, ungap_fasta_path,OUTLINE))
-        # old : loci_alignment_list.append([locus_name, clustal_path, ungap_fasta_path])
-        # loci_alignment_list.append([locus_name, ungap_fasta_path])
-    
-    # -------------------------------------------------------------------------------
-    # EDIT: Changed variable name from 'locus_alignment_list' to 'loci_alignment_list' as 
-    #       it was misspelled in REAPR v1. 
-    # if stdout: print '\n'.join(['\t'.join(x) for x in loci_alignment_list])
-    # -------------------------------------------------------------------------------
 
     return locus_alignment_list
 

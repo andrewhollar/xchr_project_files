@@ -257,7 +257,7 @@ def merge_windows(table_record_list, threshold, alternate_strands, all_species):
     # Filter for windows that are below the MFE z-score threshold
     # EDIT: Change the column used for filtering. Instead of using the mean_z_score_column, use the p_score_col
     # filtered_list = [x for x in table_record_list if float(x[mean_z_score_col]) <= threshold]
-    filtered_list = [x for x in table_record_list if float(x[p_score_col]) >= threshold]
+    filtered_list = [x for x in table_record_list if float(x[mean_z_score_col]) <= threshold]
     # -------------------------------------------------------------------------------
 
     # Merge only same strands of windows
@@ -304,13 +304,17 @@ def merge_windows(table_record_list, threshold, alternate_strands, all_species):
                 
                 locus_idx += 1
                 current_locus_len = 0
-            elif dist >= 2:
+            # ------------------------------------------------------------------------------
+            # EDIT: changed to less-than-or-equal to catch the other cases. 
+            elif dist <= 2:  
+            # -------------------------------------------------------------------------------
                 species = table_record[species_start_col : species_end_col]
                 next_species = next_record[species_start_col : species_end_col]
                 inter_size = sum([1 for x,y in zip(species , next_species) if int(x)==1 and int(y)==1])
                 union_size = sum([1 for x,y in zip(species , next_species) if int(x)==1 or int(y)==1])
                 if (float(inter_size) / union_size) < 0.5:
                     locus_idx += 1
+                    current_locus_len = 0
                     boundary_unmerged_list.append(table_record)
                     boundary_unmerged_list.append(next_record)
                     boundary_unmerged_list.append(['inter: %i, union: %i, inter/union = %f\n\n' % (inter_size, union_size, float(inter_size)/union_size)])
