@@ -119,11 +119,11 @@ def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
             
                 flanked_sequence = utilities.get_flanked_sequence(species_name, contig_name, flanked_maf_start_pos, flanked_maf_end_pos, locus_bed_dir, locus_idx, seq_list[k].strip(), maf_direction_list[k], maf_contig_lengths_list[k]).lower()
                 
-                try:
-                    assert seq_list[k].replace('-', '').lower() in flanked_sequence.lower()
-                except AssertionError:
-                    print seq_list[k].replace('-', '').lower() 
-                    print flanked_sequence.lower()
+                # try:
+                assert seq_list[k].replace('-', '').lower() in flanked_sequence.lower()
+                # except AssertionError:
+                #     print seq_list[k].replace('-', '').lower() 
+                #     print flanked_sequence.lower()
                 
                 maf_start_column = start_slice_idx * WINDOW_SLIDE
                 
@@ -154,9 +154,10 @@ def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
                 try:
                     assert start_offset - num_start >= 0
                 except AssertionError:
-                    print seq_list[k]
-                    print unflanked_region
-                    print flanked_sequence
+                    print locus_dir, locus_idx, species_name
+                    print "maf_entry: ", seq_list[k]
+                    print "unflanked: ", unflanked_region
+                    print "  flanked: ", flanked_sequence
 
                 
                 extracted_seq = flanked_sequence[(start_offset - num_start) : start_offset + len(unflanked_region) + num_end]
@@ -466,7 +467,6 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
     # -------------------------------------------------------------------------------
 
     return loci_alignment_list
-
 
 # This method is the main driver of the first RNAz screen. This will begin the procedure on
 # each of the alignment blocks of the MAF MSA.
