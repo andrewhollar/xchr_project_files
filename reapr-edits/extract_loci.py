@@ -68,11 +68,11 @@ def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
         locus_bed_dir = os.path.join(locus_dir, locus_idx + "_BED_FILES")
         if not os.path.isdir(locus_bed_dir): os.makedirs(locus_bed_dir)
         
-        ungap_fasta_path = os.path.join(locus_dir, locus_idx + '.ungap')            
+        ungap_fasta_path = os.path.join(locus_dir, locus_idx + '.ungap')      
+        locus_name = '%s%s%s' % (block, utilities.block_locus_delim, locus_idx)          
         if os.path.isfile(ungap_fasta_path):
             if not os.stat(ungap_fasta_path).st_size == 0:
-                locus_name = '%s%s%s' % (block, utilities.block_locus_delim, locus_idx)    
-                locus_alignment_list.append((locus_name, ungap_fasta_path,OUTLINE))
+                locus_alignment_list.append((locus_name, ungap_fasta_path, OUTLINE))
                 continue
         
         OUTLINE = "Extracting and flanking locus: %s" % (str(locus_bed_dir))
