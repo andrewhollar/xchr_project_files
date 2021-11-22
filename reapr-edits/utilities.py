@@ -618,7 +618,10 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, 
     extracted_seq = ""
 
     if sequence_direction == "-":
-        if not os.path.isfile(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa')):
+        
+        rev_comp_contig_path = os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa')
+        
+        if not os.path.isfile(rev_comp_contig_path):
             print "writing " + species + "." + contig 
             print bed_error_outpath
             bed_entry = "\t".join([contig, "0", str(contig_length), species + "." + str(start), "0", sequence_direction])
@@ -634,11 +637,25 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, 
                   
             extracted_seq = full_contig[start:end]
         else:
-            try:
+            if os.stat(rev_comp_contig_path).st_size == 0:
+                print "writing " + species + "." + contig 
+                print bed_error_outpath
+                bed_entry = "\t".join([contig, "0", str(contig_length), species + "." + str(start), "0", sequence_direction])
+                open(bed_filepath, "w").write(bed_entry)
+                bed_error = open(bed_error_outpath, 'w', int(1e6))
+
+                extracted_output = os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa')
+                cmd = '%s getfasta -fi %s -fo %s -s -bed %s' % (BEDTOOLS, species_to_genome_dict[species], extracted_output, bed_filepath)   
+                subprocess.Popen(cmd, shell=True, stdout=bed_error, stderr=bed_error).wait()
+                bed_error.close()
+
+                full_contig = open(extracted_output).read().split('\n')[1].strip()  
+                    
+                extracted_seq = full_contig[start:end]
+                
+            else:
                 extracted_seq = open(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa')).read().split('\n')[1].strip()[start:end]
-            except IndexError:
-                print "INDEX ERROR"
-                print str(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa'))
+
 
     else:
         bed_entry = "\t".join([contig, str(start), str(end)])

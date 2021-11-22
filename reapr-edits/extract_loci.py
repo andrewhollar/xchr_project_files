@@ -118,7 +118,12 @@ def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
                     flanked_maf_end_pos = maf_contig_lengths_list[k]
             
                 flanked_sequence = utilities.get_flanked_sequence(species_name, contig_name, flanked_maf_start_pos, flanked_maf_end_pos, locus_bed_dir, locus_idx, seq_list[k].strip(), maf_direction_list[k], maf_contig_lengths_list[k]).lower()
-                assert seq_list[k].replace('-', '').lower() in flanked_sequence.lower()
+                
+                try:
+                    assert seq_list[k].replace('-', '').lower() in flanked_sequence.lower()
+                except AssertionError:
+                    print seq_list[k].replace('-', '').lower() 
+                    print flanked_sequence.lower()
                 
                 maf_start_column = start_slice_idx * WINDOW_SLIDE
                 
