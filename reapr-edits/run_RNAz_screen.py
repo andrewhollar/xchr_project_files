@@ -50,9 +50,6 @@ def index_windows(log_path, other_removals, num_slices, win_to_slice_path):
         # example #2
         # Alignment 1, window 45: Removing seq 2: too many gaps.
         # Alignment 1 discarded: Too few sequences left.
-        
-        
-        
         # -------------------------------------------------------------------------------        
         
         try:
@@ -280,9 +277,7 @@ def eval_alignment(alignment, no_reference, both_strands, window_size, window_sl
         # -------------------------------------------------------------------------------
         # EDIT: Only run RNAz if there has been information extracted about the windows.
         # if not os.stat(windows_path).st_size == 0:
-        
-        # print alignment_length
-        
+                
         if alignment_length < 400 and alignment_length > 49:
             log.append("running rnaz on realigned locus of length %s" % (str(alignment_length)))
             log.extend(run_RNAz(alignment, rnaz_path, both_strands, structural, RNAz, verbose))

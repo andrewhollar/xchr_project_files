@@ -161,13 +161,7 @@ def parse_windows(rnaz_path, log_path, block, index_path, alternate_strands, all
         variance_z_score = 0
         for i in range(lines.index(end_border) + 2, len(lines) - 2, 3):
             assert lines[i][0] == '>' # Make sure that lines[i] is the start of a sequence's data
-            species = lines[i][1:].split()[0] # Extract the species name
-            
-            # -------------------------------------------------------------------------------
-            # if "6way_block_00000740" in block:
-            #     print species
-            # -------------------------------------------------------------------------------
-            
+            species = lines[i][1:].split()[0] # Extract the species name            
             if species == 'consensus': continue # Skip the consensus sequence
 
             # -------------------------------------------------------------------------------
@@ -175,10 +169,7 @@ def parse_windows(rnaz_path, log_path, block, index_path, alternate_strands, all
             # Hack for the Encode Multiz alignment in order to remove the chromosome name from the species identifier in the RNAz output
             if encode_multiz: species = species.split('.')[0]
             # -------------------------------------------------------------------------------
-        
-            # if '2R_19576798_19582822.maf.rnaz' in rnaz_path and SVM_RNA_prob == '0.667406':
-            #     print >>sys.stderr, species, species_present, all_species
-
+    
             species_present[species] = 1
             MFE_clause = ' '.join(lines[i+2].split(' ')[1:]) 
             MFE_clause = MFE_clause.split(',')
@@ -187,11 +178,6 @@ def parse_windows(rnaz_path, log_path, block, index_path, alternate_strands, all
             variance_single_seq_mfe += (mfe - float(mean_single_seq_mfe))**2
             variance_z_score += (z_score - float(mean_z_score))**2
             
-        # -------------------------------------------------------------------------------
-        # if "6way_block_00000740" in block:
-        #     print species_present    
-        # -------------------------------------------------------------------------------
-        
         variance_single_seq_mfe = round(variance_single_seq_mfe /  float(sequences), 2)
         variance_z_score = round(variance_z_score / float(sequences), 2)
         assert sum(species_present.values()) == int(sequences)
@@ -292,11 +278,7 @@ def merge_windows(table_record_list, threshold, alternate_strands, all_species):
 
         # Merge windows
         for i, table_record in enumerate(strand_list[:-1]):
-            
-            # print table_record
-            
 
-            
             # Assign this window a locus
             table_record[locus_idx_col] = str(locus_idx)
             
@@ -309,7 +291,6 @@ def merge_windows(table_record_list, threshold, alternate_strands, all_species):
             else:
                 nt_dist = dist * utilities.WINDOW_SLIDE
                 current_locus_len += nt_dist
-                # print locus_idx, current_locus_len
             
             # Do not merge current window with the next window if the
             # gap is greater than 3 or if the gap is between 2 and 3,
@@ -320,9 +301,6 @@ def merge_windows(table_record_list, threshold, alternate_strands, all_species):
             # merge if the gap is less than or equal to 2 slice
             # indices
             if dist > 3 or current_locus_len > 400:
-                
-                #if current_locus_len > 400:
-                #    print 'splitting locus due to length'
                 
                 locus_idx += 1
                 current_locus_len = 0

@@ -231,12 +231,10 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
         maf_list = [x for x in open(block_path).read().split('\n') if len(x)>0 and x[0]=='s']
         # -------------------------------------------------------------------------------
         seq_list = [x.split()[6] for x in maf_list]
-        # print seq_list
 
         # Remove the chromosome names from the MAF headers
         # This is needed for concordance with the species guide tree for LocARNA
         header_list = [x.split()[1].split('.')[0] for x in maf_list]
-        # print header_list
 
         # -------------------------------------------------------------------------------
         # Edit: Added another list to get the contigs of the sequences included in the alignment block
@@ -245,7 +243,6 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
         for entry in maf_list:
             contig_list.append(".".join(entry.split()[1].split('.')[1:]))
             # entry_name = ".".join(entry_name[1:])
-        # print contig_list
         # -------------------------------------------------------------------------------
 
         maf_start_pos_list = [int(x.split()[2]) for x in maf_list]
@@ -263,7 +260,6 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
         #     header_list = [a[1] for a in maf_list]
 
         #alignment_block_genomic_coordinates = utilities.get_alignment_block_sequence_lengths(maf_list)
-        # print alignment_block_genomic_coordinates
         
         # Make directory for syntenic block's loci
         # -------------------------------------------------------------------------------
@@ -311,18 +307,6 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             #num_slices_in_original_maf = int(math.ceil((alignment_length - (win_size - win_slide)) / float(win_slide)))
             # -------------------------------------------------------------------------------
             # BED information
-            # -------------------------------------------------------------------------------
-            # EDIT: add 20nt flanking regions to loci that have those regions in the initial alignment block.
-            # if start_slice_idx != 0 and (num_slices_in_original_maf - end_slice_idx) > 0:  
-            #     #print "adding 20nt to both ends of this locus"
-            #     start_column -= win_slide
-            #     end_column += win_slide
-            # # -------------------------------------------------------------------------------
-            # else:
-            #     print "Need to retrieve nucleotides from the Genome FASTA files. %s" % (block)
-
-            # unflanked_lengths = []
-            # bed_lengths = []
 
             for k, species_name in enumerate(header_list):
                 if species_present[all_species.index(species_name)]:
@@ -365,41 +349,24 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                             assert start_slice_idx == 0
                             maf_end_column = len(seq_list[k])
                         else:
-                            #print species_name, contig_name, len(seq_list[k]), start_slice_idx, end_slice_idx
                             maf_end_column = end_slice_idx * win_slide + win_size
                             if maf_end_column > len(seq_list[k]):
                                 maf_end_column = len(seq_list[k])    
-                            #print maf_end_column, len(seq_list[k])
                             
                             assert maf_end_column <= len(seq_list[k])
                     
-                    #print species_name, contig_name, maf_start_column, maf_end_column 
                     
                     unflanked_region = seq_list[k][maf_start_column:maf_end_column].replace("-", "").lower()
-                    # leading_region = seq_list[k][:maf_start_column].replace("-", "").lower()
-                    # trailing_region = seq_list[k][maf_end_column:].replace("-", "").lower()
-                    #print len(leading_region), len(trailing_region)
-                    
-                    #flanked_start_col = 
-                    
+
+                                        
                     #extract_from_flank_start = len(leading_region) + num
                     start_offset = flanked_sequence.find(unflanked_region)
-                    #print start_offset, num_start
                     assert start_offset - num_start >= 0
                     
                     extracted_seq = flanked_sequence[(start_offset - num_start) : start_offset + len(unflanked_region) + num_end]
 
-                    #print extracted_seq
                     
                     #maf_end_column = 
-                
-                    #leading_sequence = seq_list[k][:start_column].replace("-", '')
-                    # print leading_sequence
-                    # leading_sequence = leading_sequence.replace("-", '')
-                    
-                    #trailing_sequence = seq_list[k][end_column + 1:].replace("-", '')
-                    # print trailing_sequence
-                    # trailing_sequence = trailing_sequence.replace("-", '')
 
                     # bed_start = alignment_block_genomic_coordinates[species_name][0] + len(leading_sequence)
                     # bed_end = alignment_block_genomic_coordinates[species_name][1] - len(trailing_sequence)
@@ -408,9 +375,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     # bed_lengths.append(bed_end - bed_start)
                     
                     # unflanked_seq = seq_list[k][start_column : end_column].replace("-", "")
-                    
-                    # print (species_name, contig_name, bed_start, bed_end)
-                    
+                                        
                     # If the locus is just a single window, then I have to check how long the sequence is in the maf
                     # The previous indices assumed that the window was at least 120nt (the window size)
                     # if start_slice_idx == end_slice_idx:
@@ -449,9 +414,6 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     # locus_start_pos = maf_start_pos + start_column
                     # locus_end_pos = maf_start_pos + end_column
                     
-                    # print (species_name, contig_name, maf_start_pos, maf_end_pos, locus_start_pos, locus_end_pos, flanked_start_pos, flanked_end_pos)
-                    # print (locus_start_pos, locus_end_pos)
-                    
                     #locus_start_pos
                     
                     # if maf_direction_list[k] == "-":
@@ -466,9 +428,6 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
                     #locus_seq_list.append(seq_list[k][start_column : end_column])
                     locus_seq_list.append(extracted_seq)
                     
-            # print unflanked_lengths
-            # print bed_lengths
-
             # Check to take the complement strand
             if locus_group[0][1] == 'reverse':
                 locus_seq_list = [utilities.complement(x) for x in locus_seq_list]
@@ -478,12 +437,6 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
             # There should not be any gaps at this point
             # locus_seq_list = utilities.remove_redundant_gaps(locus_seq_list)
             # -------------------------------------------------------------------------------
-
-            # if "6way_block_00000740" in block:
-            #     print species_present
-            #     print maf_list
-                #print locus_seq_list
-
 
             ### Write locus ###
 
@@ -504,7 +457,7 @@ def extract_loci(block_dict, table_path, stab_thresh, loci_dir, all_species, win
     # -------------------------------------------------------------------------------
     # EDIT: Changed variable name from 'locus_alignment_list' to 'loci_alignment_list' as 
     #       it was misspelled in REAPR v1. 
-    if stdout: print '\n'.join(['\t'.join(x) for x in loci_alignment_list])
+    # if stdout: print '\n'.join(['\t'.join(x) for x in loci_alignment_list])
     # -------------------------------------------------------------------------------
 
     return loci_alignment_list

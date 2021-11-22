@@ -610,42 +610,12 @@ def get_alignment_block_sequence_lengths(maf_sequence_lines):
     return species_genomic_coordinates
 
 # EDIT: Added method to retrieve the flanked sequence of nucleotides.
-# def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, unflanked_seq):
-#     from commands import BEDTOOLS
-#     # print species_to_genome_dict['Homo_sapiens']
-    
-#     bed_filepath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".bed")
-#     bed_error_outpath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".log")
-    
-#     # if species == "Homo_sapiens" and contig == "chrX":
-#     #     contig = human_molecule_to_contig_dict[contig]
-        
-#     # if species == "Canis_lupus_familiaris" and contig == "chrX":
-#     #     contig = dog_molecule_to_contig_dict[contig]
-    
-#     bed_entry = "\t".join([contig, str(start), str(end)])
-#     open(bed_filepath, "w").write(bed_entry)
-    
-#     bed_error = open(bed_error_outpath, 'w', int(1e6))
-    
-#     flanked_output = os.path.join(locus_bed_dir, locus_idx + "." + species + ".flanked.fa")
-    
-#     cmd = '%s getfasta -fi %s -fo %s -bed %s' % (BEDTOOLS, species_to_genome_dict[species], flanked_output, bed_filepath)
-#     start_time = time.time()
-#     subprocess.Popen(cmd, shell=True, stdout=bed_error, stderr=bed_error).wait()
-#     print 'Running time: ' + str(time.time() - start_time) + ' seconds'
-    
-#     bed_error.close()
-    
-#     flanked_seq = open(flanked_output).read()
-#     print (" " * 20) + unflanked_seq.lower()
-#     print flanked_seq.lower()
-#     assert unflanked_seq.lower() in flanked_seq.lower()
-
 def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, alignment_seq, sequence_direction, contig_length):
     from commands import BEDTOOLS
     bed_filepath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".bed")
     bed_error_outpath = os.path.join(locus_bed_dir, locus_idx + "." + species + ".log")
+
+    extracted_seq = ""
 
     if sequence_direction == "-":
         if not os.path.isfile(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa')):
@@ -667,6 +637,7 @@ def get_flanked_sequence(species, contig, start, end, locus_bed_dir, locus_idx, 
             try:
                 extracted_seq = open(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa')).read().split('\n')[1].strip()[start:end]
             except IndexError:
+                print "INDEX ERROR"
                 print str(os.path.join(REV_COMP_CONTIG_DIR, species + "." + contig + '.rev.fa'))
 
     else:
