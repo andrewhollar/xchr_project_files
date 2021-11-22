@@ -14,7 +14,7 @@ from utilities\
 def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
 
     locus_alignment_list = []
-
+    OUTLINE = ""
 
     # Get the name of the alignment block (including the .maf extension) 
     # Ex: 6way_block_00000085.maf
@@ -68,12 +68,14 @@ def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
         locus_bed_dir = os.path.join(locus_dir, locus_idx + "_BED_FILES")
         if not os.path.isdir(locus_bed_dir): os.makedirs(locus_bed_dir)
         
-        
-        if os.path.isfile(os.path.join(loci_dir, locus_idx + ".ungap")):
-            if not os.stat(os.path.join(loci_dir, locus_idx + ".ungap")).st_size == 0:
+        ungap_fasta_path = os.path.join(locus_dir, locus_idx + '.ungap')            
+        if os.path.isfile(ungap_fasta_path):
+            if not os.stat(ungap_fasta_path).st_size == 0:
+                locus_name = '%s%s%s' % (block, utilities.block_locus_delim, locus_idx)    
+                locus_alignment_list.append((locus_name, ungap_fasta_path,OUTLINE))
                 continue
         
-        print "Extracting and flanking locus: %s" % (str(locus_bed_dir))
+        OUTLINE = "Extracting and flanking locus: %s" % (str(locus_bed_dir))
         
         # -----------------------------------------------------------------------------
         # Take the union of the species present in this locus's window
@@ -156,13 +158,13 @@ def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
             locus_seq_list = [utilities.complement(x) for x in locus_seq_list]
 
         # Ungapped Fasta format
-        ungap_fasta_path = os.path.join(locus_dir, locus_idx + '.ungap')            
+        # ungap_fasta_path = os.path.join(locus_dir, locus_idx + '.ungap')            
         ungap_fasta_string = '\n'.join(['>' + x + '\n' + y.replace('-', '') for x,y in zip(locus_header_list, locus_seq_list)]) + '\n'
         open(ungap_fasta_path, 'w').write(ungap_fasta_string)
 
-        locus_name = '%s%s%s' % (block, utilities.block_locus_delim, locus_idx)
+        # locus_name = '%s%s%s' % (block, utilities.block_locus_delim, locus_idx)
         
-        locus_alignment_list.append((locus_name, ungap_fasta_path))
+        locus_alignment_list.append((locus_name, ungap_fasta_path,OUTLINE))
         # old : loci_alignment_list.append([locus_name, clustal_path, ungap_fasta_path])
         # loci_alignment_list.append([locus_name, ungap_fasta_path])
     

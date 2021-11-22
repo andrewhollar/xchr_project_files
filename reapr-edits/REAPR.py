@@ -24,7 +24,8 @@ def write_REAPR_output(reapr_out):
     line = reapr_out.pop(0)
     try:
         while line:
-            print line + '\n'
+            if not line == "":
+                print line + '\n'
             line = reapr_out.pop(0)
     except IndexError:
         return
@@ -150,8 +151,11 @@ def main():
         
         for extract_locus_process_out in EXTRACT_LOCI_OUT_LINES:
             for locus in extract_locus_process_out:
-                loci_alignment_list.append(locus)
+                locus_info = (locus[0], locus[1])
+                REAPR_OUT_LINES.append(locus[2])
+                loci_alignment_list.append(locus_info)
                 
+        write_REAPR_output(REAPR_OUT_LINES)
         # -------------------------------------------------------------------------------
 
         # raise IOError("END")
