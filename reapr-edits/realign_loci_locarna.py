@@ -75,7 +75,13 @@ def run_locarna(locarna, ungap_fasta_path, target_dir, target_file, max_diff, al
         return False, log
 
 def write_improved_boundaries_alignment(reliability_profile_output, result_alignment_path, filtered_result_path):
-    fit_line = open(reliability_profile_output).read().split('\n')[-2].split()
+    reliability_profile_output = open(reliability_profile_output).read().split('\n')
+    fit_line = ""
+    for line in reliability_profile_output:
+        if "FIT" in line:
+            fit_line = line
+    
+    print fit_line
     
     try:
         assert "FIT" in fit_line
@@ -86,9 +92,18 @@ def write_improved_boundaries_alignment(reliability_profile_output, result_align
         print fit_line
         print open(reliability_profile_output).read().split('\n')
         raise AssertionError("End")
+    
+    
+    fit_line_tokens = fit_line.split()
+    assert fit_line_tokens[0] == "FIT"
+    fit_line_tokens = fit_line_tokens[1:]
+    
+    fit_line_indices = [int(x) for x in fit_line_tokens]
+    boundaries_start = min(fit_line_indices)
+    boundaries_end = max(fit_line_indices)
 
-    boundaries_start = int(fit_line[1])
-    boundaries_end = int(fit_line[2])
+    # boundaries_start = int(fit_line[1])
+    # boundaries_end = int(fit_line[2])
     
     curr_align = open(result_alignment_path).read()
     assert curr_align != '', 'Alignment is empty'
@@ -115,7 +130,7 @@ def write_improved_boundaries_alignment(reliability_profile_output, result_align
     clustal_string = utilities.generate_clustal_boundaries(header_list, seq_list, boundaries_start, boundaries_end)
     open(filtered_result_path, 'w').write(clustal_string)
 
-def run_reliability_profile_on_locarna_output(target_dir, fit_once_on = True):
+def run_reliability_profile_on_locarna_output(target_dir, fit_once_on = False):
     from commands import RELIABILITY_PROFILE
     
     log = []
