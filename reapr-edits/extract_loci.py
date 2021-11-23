@@ -19,11 +19,16 @@ def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
     # Ex: 6way_block_00000085.maf
     block = block_group[0][0]
     
+    filtered_maf_path = os.path.join(os.path.dirname(block_path), str(os.path.basename(block_path)).replace(".maf", ".filtered.maf"))
+    print filtered_maf_path
+    
     # if encode_multiz:
     # Get MAF alignments of syntenic blocks
     # -------------------------------------------------------------------------------
     # EDIT: Removed additional '.maf' from filepath as it is not needed.
-    maf_list = [x for x in open(block_path).read().split('\n') if len(x)>0 and x[0]=='s']
+    # maf_list = [x for x in open(block_path).read().split('\n') if len(x)>0 and x[0]=='s']
+    maf_list = [x for x in open(filtered_maf_path).read().split('\n') if len(x)>0 and x[0]=='s']
+
     # -------------------------------------------------------------------------------
     seq_list = [x.split()[6] for x in maf_list]
 
@@ -136,6 +141,7 @@ def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
                 try:
                     assert start_offset - num_start >= 0
                 except AssertionError:
+                    print maf_start_column, maf_end_column
                     print locus_dir, locus_idx, species_name
                     print "maf_entry: ", seq_list[k]
                     print "unflanked: ", unflanked_region
