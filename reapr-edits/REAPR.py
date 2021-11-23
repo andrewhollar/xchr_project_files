@@ -103,17 +103,17 @@ def main():
         # -------------------------------------------------------------------------------
         # EDIT: Added the rnazSelectSeqs.pl as an argument.
         rnaz_1_args = [(alignment, no_reference, both_strands, utilities.WINDOW_SIZE, utilities.WINDOW_SLIDE, structural, commands.RNAz, commands.rnazWindow, commands.rnazSelectSeqs, out_dir, tmp_dir, alignment_format, 1, verbose) for alignment in block_paths] 
-        # -------------------------------------------------------------------------------
+        # # -------------------------------------------------------------------------------
 
-        REAPR_OUT_LINES.append('Start: RNAz screen on WGA %s' % (utilities.get_time()))
-        RNAZ_OUT_LINES = []
+        # REAPR_OUT_LINES.append('Start: RNAz screen on WGA %s' % (utilities.get_time()))
+        # RNAZ_OUT_LINES = []
         
-        pool = multiprocessing.Pool(processes=NUM_PROCESSES)        
-        r = pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, rnaz_1_args, callback=RNAZ_OUT_LINES.extend) #.get(99999999)
-        r.wait()
-        for rnaz_entry in RNAZ_OUT_LINES:
-            REAPR_OUT_LINES.extend(rnaz_entry)        
-        REAPR_OUT_LINES.append('End: RNAz screen on WGA %s' % (utilities.get_time()))
+        # pool = multiprocessing.Pool(processes=NUM_PROCESSES)        
+        # r = pool.map_async(run_RNAz_screen.eval_alignment_multiprocessing, rnaz_1_args, callback=RNAZ_OUT_LINES.extend) #.get(99999999)
+        # r.wait()
+        # for rnaz_entry in RNAZ_OUT_LINES:
+        #     REAPR_OUT_LINES.extend(rnaz_entry)        
+        # REAPR_OUT_LINES.append('End: RNAz screen on WGA %s' % (utilities.get_time()))
 
         # write_REAPR_output(REAPR_OUT_LINES)
 
@@ -127,6 +127,10 @@ def main():
 
         ### Extract stable loci ###
         loci_dir = os.path.join(args.output_folder, 'loci')
+        
+        if os.path.isdir(loci_dir): 
+            shutil.rmtree(loci_dir)
+            os.makedirs(loci_dir)
         
         # -------------------------------------------------------------------------------
         # EDIT: Changed the second to last argument to True, this indicates that the chromosome
@@ -158,7 +162,6 @@ def main():
         write_REAPR_output(REAPR_OUT_LINES)
         # -------------------------------------------------------------------------------
 
-        # raise IOError("END")
 
         realign_tables = [os.path.join(args.output_folder, 'locarna.d_%s.tab' % str(d)) for d in args.delta]
 
@@ -185,8 +188,8 @@ def main():
             
             LOCARNA_OUT_LINES = []     
             locarna_success = []   
-            r = pool.map_async(realign_loci_locarna.run_locarna_pool, locarna_target_args, callback=LOCARNA_OUT_LINES.extend)
-            r.wait()
+            r = pool.map_async(realign_loci_locarna.run_locarna_pool, locarna_target_args, callback=LOCARNA_OUT_LINES.extend).get(99999999)
+            # r.wait()
                         
             for locarna_entry in LOCARNA_OUT_LINES:
                 REAPR_OUT_LINES.extend(locarna_entry[1])

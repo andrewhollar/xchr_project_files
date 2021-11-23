@@ -20,7 +20,7 @@ def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
     block = block_group[0][0]
     
     filtered_maf_path = os.path.join(os.path.dirname(block_path), str(os.path.basename(block_path)).replace(".maf", ".filtered.maf"))
-    print filtered_maf_path
+    # print filtered_maf_path
     
     # if encode_multiz:
     # Get MAF alignments of syntenic blocks

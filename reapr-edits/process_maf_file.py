@@ -5,12 +5,12 @@ import shutil
 from Bio import AlignIO
 
 SAMPLE_DENOM = 1
-MAX_SAMPLES = 10
+MAX_SAMPLES = sys.maxsize
 MIN_SPECIES = 2
 # SAMPLE_LENGTH = 15
 random.seed(300)
 
-BLOCK_IDX_TARGETS = [355129, 376397, 427845]
+#BLOCK_IDX_TARGETS = [370, 533, 534, 12365, 14985, 15634]
 
 # -------------------------------------------------------------------------------
 # EDIT: Added the following function to generate the required files from the input MAF file
@@ -22,6 +22,7 @@ def main(path_to_maf, OUT_DIR):
         shutil.rmtree(OUT_DIR)
         os.makedirs(OUT_DIR)
 
+    
     alignments_out_dir = os.path.join(OUT_DIR, "alignments/")
 
     if not os.path.exists(alignments_out_dir):
@@ -31,7 +32,7 @@ def main(path_to_maf, OUT_DIR):
     alignment_block_idx = 0
     sample_size = 0
     for msa in AlignIO.parse(path_to_maf, "maf"):
-        if random.randint(1, SAMPLE_DENOM) == 1 and sample_size <= MAX_SAMPLES and len(msa) >= MIN_SPECIES and alignment_block_idx in BLOCK_IDX_TARGETS:
+        if random.randint(1, SAMPLE_DENOM) == 1 and sample_size <= MAX_SAMPLES and len(msa) >= MIN_SPECIES: # and alignment_block_idx in BLOCK_IDX_TARGETS:
             # This should contain two pieces of information:
             #   1. the name of the alignment block
             #   2. the location of the new alignment block file (this should be in the 'alignments/' sub-directory)
