@@ -56,9 +56,9 @@ def run_locarna(locarna, ungap_fasta_path, target_dir, target_file, max_diff, al
     # -------------------------------------------------------------------------------
     # EDIT: add run of reliability-profile.pl script to extract the high-confidence portion of the alignment
     
-    reliability_fit_once_out_path, reliability_out_path, reliability_log = run_reliability_profile_on_locarna_output(target_dir)
+    reliability_fit_once_out_path, reliability_log = run_reliability_profile_on_locarna_output(target_dir)
     log.extend(reliability_log)
-    write_improved_boundaries_alignment(reliability_fit_once_out_path, reliability_out_path, result_path, filtered_path)
+    write_improved_boundaries_alignment(reliability_fit_once_out_path, result_path, filtered_path)
     # -------------------------------------------------------------------------------
 
     
@@ -74,38 +74,27 @@ def run_locarna(locarna, ungap_fasta_path, target_dir, target_file, max_diff, al
         log.append('Error: no alignment could be produced.')
         return False, log
 
-def write_improved_boundaries_alignment(reliability_profile_output1, reliability_profile_output2, result_alignment_path, filtered_result_path):
-    reliability_profile_fit_once_output = open(reliability_profile_output1).read().split('\n')
-    print reliability_profile_fit_once_output
-    reliability_profile_output = open(reliability_profile_output2).read().split('\n')
-    print reliability_profile_output
-    fit_line1 = ""
-    fit_line2 = ""
+def write_improved_boundaries_alignment(reliability_profile_output, result_alignment_path, filtered_result_path):
+    reliability_profile_fit_once_output = open(reliability_profile_output).read().split('\n')
+    fit_line = ""
     for line in reliability_profile_fit_once_output:
         if "FIT" in line:
-            fit_line1 = line
-            
-    for line in reliability_profile_output:
-        if "FIT" in line:
-            fit_line2 = line
-            
-            
+            fit_line = line            
     
-    print fit_line1, fit_line2
+    #print fit_line1, fit_line2
     
     try:
-        assert "FIT" in fit_line1
+        assert "FIT" in fit_line
     except AssertionError:
         print reliability_profile_output
         print result_alignment_path
         print filtered_result_path
-        print fit_line1
-        print fit_line2
+        print fit_line
         print open(reliability_profile_output).read().split('\n')
         raise AssertionError("End")
     
     
-    fit_line_tokens = fit_line1.split()
+    fit_line_tokens = fit_line.split()
     assert fit_line_tokens[0] == "FIT"
     fit_line_tokens = fit_line_tokens[1:]
     
@@ -161,19 +150,19 @@ def run_reliability_profile_on_locarna_output(target_dir, fit_once_on = True):
     time_str = 'Running time: ' + str(time.time() - start_time) + ' seconds'
     log.append(time_str)
     
-    fit_once_on = ''
-    cmd = 'perl %s --dont-plot %s %s' % (RELIABILITY_PROFILE, fit_once_on, target_dir)
-    start_time = time.time()
-    reliability_out_path = os.path.join(target_dir, "reliability.out")
-    reliability_output = open(reliability_out_path, 'w', 1000000)    
-    subprocess.Popen(cmd, shell=True, stdout=reliability_output, stderr=subprocess.STDOUT).wait()
-    reliability_output.close()
+    # fit_once_on = ''
+    # cmd = 'perl %s --dont-plot %s %s' % (RELIABILITY_PROFILE, fit_once_on, target_dir)
+    # start_time = time.time()
+    # reliability_out_path = os.path.join(target_dir, "reliability.out")
+    # reliability_output = open(reliability_out_path, 'w', 1000000)    
+    # subprocess.Popen(cmd, shell=True, stdout=reliability_output, stderr=subprocess.STDOUT).wait()
+    # reliability_output.close()
     
-    log.append(cmd)
-    time_str = 'Running time: ' + str(time.time() - start_time) + ' seconds'
-    log.append(time_str)
+    # log.append(cmd)
+    # time_str = 'Running time: ' + str(time.time() - start_time) + ' seconds'
+    # log.append(time_str)
 
-    return reliability_fit_once_out_path, reliability_out_path, log
+    return reliability_fit_once_out_path, log
     
     # extracted_seq = open(extracted_output).read().split('\n')[1].strip()
 

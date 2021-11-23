@@ -5,10 +5,10 @@ import shutil
 from Bio import AlignIO
 
 SAMPLE_DENOM = 10
-MAX_SAMPLES = 100#sys.maxsize
+MAX_SAMPLES = 25000#sys.maxsize
 MIN_SPECIES = 2
 # SAMPLE_LENGTH = 15
-random.seed(100)
+random.seed(300)
 
 #BLOCK_IDX_TARGETS = [370, 533, 534, 12365, 14985, 15634]
 
