@@ -1,5 +1,5 @@
 #!/bin/bash
-OUTDIR=/home/ahollar/reapr_x
+OUTDIR=/home/ahollar/reapr_x_full2
 
 #This is where the MAF preprocessing is done (Python 3)
 source ~/mafPreprocessingEnv/bin/activate
