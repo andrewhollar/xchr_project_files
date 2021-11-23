@@ -76,7 +76,9 @@ def run_locarna(locarna, ungap_fasta_path, target_dir, target_file, max_diff, al
 
 def write_improved_boundaries_alignment(reliability_profile_output1, reliability_profile_output2, result_alignment_path, filtered_result_path):
     reliability_profile_fit_once_output = open(reliability_profile_output1).read().split('\n')
+    print reliability_profile_fit_once_output
     reliability_profile_output = open(reliability_profile_output2).read().split('\n')
+    print reliability_profile_output
     fit_line1 = ""
     fit_line2 = ""
     for line in reliability_profile_fit_once_output:
@@ -145,7 +147,7 @@ def run_reliability_profile_on_locarna_output(target_dir, fit_once_on = True):
     log = []
     
     fit_once_on = '--fit-once-on' if fit_once_on else ''
-    cmd = 'perl %s --dont-plot %s %s' % (RELIABILITY_PROFILE, fit_once_on, target_dir)
+    cmd = 'perl %s --dont-plot --write-subseq %s %s' % (RELIABILITY_PROFILE, fit_once_on, target_dir)
 
     start_time = time.time()
     # subprocess.Popen(cmd, shell=True, stdout=open('/dev/null','w'), stderr=subprocess.STDOUT).wait()
@@ -160,7 +162,7 @@ def run_reliability_profile_on_locarna_output(target_dir, fit_once_on = True):
     log.append(time_str)
     
     fit_once_on = ''
-    cmd = 'perl %s --dont-plot %s %s' % (RELIABILITY_PROFILE, fit_once_on, target_dir)
+    cmd = 'perl %s --dont-plot  --write-subseq %s %s' % (RELIABILITY_PROFILE, fit_once_on, target_dir)
     start_time = time.time()
     reliability_out_path = os.path.join(target_dir, "reliability.out")
     reliability_output = open(reliability_out_path, 'w', 1000000)    
