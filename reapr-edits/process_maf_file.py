@@ -4,7 +4,7 @@ import sys
 import shutil
 from Bio import AlignIO
 
-SAMPLE_DENOM = 1000
+SAMPLE_DENOM = 10
 MAX_SAMPLES = 100#sys.maxsize
 MIN_SPECIES = 2
 # SAMPLE_LENGTH = 15
