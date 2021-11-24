@@ -93,57 +93,59 @@ def run_locarna(locarna, ungap_fasta_path, target_dir, target_file, max_diff, al
 
 def write_improved_boundaries_alignment(reliability_profile_output, result_alignment_path, filtered_result_path):
     reliability_profile_fit_once_output = open(reliability_profile_output).read().split('\n')
-    fit_line = ""
-    for line in reliability_profile_fit_once_output:
-        if "FIT" in line:
-            fit_line = line            
+    if "Cannot read" not in reliability_profile_fit_once_output[0]:
         
-    try:
-        assert "FIT" in fit_line
-    except AssertionError:
-        print reliability_profile_output
-        print result_alignment_path
-        print filtered_result_path
-        print fit_line
-        print open(reliability_profile_output).read().split('\n')
-        # raise AssertionError("End")
-    
-    
-    fit_line_tokens = fit_line.split()
-    assert fit_line_tokens[0] == "FIT"
-    fit_line_tokens = fit_line_tokens[1:]
-    
-    fit_line_indices = [int(x) for x in fit_line_tokens]
-    boundaries_start = min(fit_line_indices)
-    boundaries_end = max(fit_line_indices)
+        fit_line = ""
+        for line in reliability_profile_fit_once_output:
+            if "FIT" in line:
+                fit_line = line            
+            
+        try:
+            assert "FIT" in fit_line
+        except AssertionError:
+            print reliability_profile_output
+            print result_alignment_path
+            print filtered_result_path
+            print fit_line
+            print open(reliability_profile_output).read().split('\n')
+            # raise AssertionError("End")
+        
+        
+        fit_line_tokens = fit_line.split()
+        assert fit_line_tokens[0] == "FIT"
+        fit_line_tokens = fit_line_tokens[1:]
+        
+        fit_line_indices = [int(x) for x in fit_line_tokens]
+        boundaries_start = min(fit_line_indices)
+        boundaries_end = max(fit_line_indices)
 
-    # boundaries_start = int(fit_line[1])
-    # boundaries_end = int(fit_line[2])
-    
-    curr_align = open(result_alignment_path).read()
-    assert curr_align != '', 'Alignment is empty'
-    
-    clustal_list = [x.split() for x in curr_align.split('\n') if x!='' and x[:7]!='CLUSTAL']
-    clustal_list = [x for x in clustal_list if len(x) != 0]
-    header_list, seq_list = [], []
-    for x in clustal_list:
-        if x[0] in header_list:
-            seq_list[header_list.index(x[0])].append(x[1])
-        else:
-            header_list.append(x[0])
-            seq_list.append([x[1]])
-    seq_list = [''.join(x) for x in seq_list]
-    seq_lengths = [len(x) for x in seq_list]
+        # boundaries_start = int(fit_line[1])
+        # boundaries_end = int(fit_line[2])
+        
+        curr_align = open(result_alignment_path).read()
+        assert curr_align != '', 'Alignment is empty'
+        
+        clustal_list = [x.split() for x in curr_align.split('\n') if x!='' and x[:7]!='CLUSTAL']
+        clustal_list = [x for x in clustal_list if len(x) != 0]
+        header_list, seq_list = [], []
+        for x in clustal_list:
+            if x[0] in header_list:
+                seq_list[header_list.index(x[0])].append(x[1])
+            else:
+                header_list.append(x[0])
+                seq_list.append([x[1]])
+        seq_list = [''.join(x) for x in seq_list]
+        seq_lengths = [len(x) for x in seq_list]
 
-    # Ensure equal lengths
-    assert seq_lengths.count(seq_lengths[0]) == len(seq_lengths)
+        # Ensure equal lengths
+        assert seq_lengths.count(seq_lengths[0]) == len(seq_lengths)
 
-    # seq_length = int(seq_lengths[0])
+        # seq_length = int(seq_lengths[0])
 
-    # for species, sequence in zip(header_list, seq_list):
-    
-    clustal_string = utilities.generate_clustal_boundaries(header_list, seq_list, boundaries_start, boundaries_end)
-    open(filtered_result_path, 'w').write(clustal_string)
+        # for species, sequence in zip(header_list, seq_list):
+        
+        clustal_string = utilities.generate_clustal_boundaries(header_list, seq_list, boundaries_start, boundaries_end)
+        open(filtered_result_path, 'w').write(clustal_string)
 
 def run_reliability_profile_on_locarna_output(target_dir, fit_once_on = True):
     from commands import RELIABILITY_PROFILE
