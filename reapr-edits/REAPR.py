@@ -123,14 +123,14 @@ def main():
         index_paths = [a + '.windows.indices' for a in block_paths]  # window to slice indices map
         initial_table = os.path.join(args.output_folder, 'original_wga.tab')
         alternate_strands, merge = True, True
-        tabulate_rnaz_results.write_table(initial_table, rnaz_paths, block_names, log_paths, index_paths, alternate_strands, merge, args.threshold, species)
+        #tabulate_rnaz_results.write_table(initial_table, rnaz_paths, block_names, log_paths, index_paths, alternate_strands, merge, args.threshold, species)
 
         ### Extract stable loci ###
         loci_dir = os.path.join(args.output_folder, 'loci')
         
-        if os.path.isdir(loci_dir): 
-            shutil.rmtree(loci_dir)
-            os.makedirs(loci_dir)
+        # if os.path.isdir(loci_dir): 
+        #     shutil.rmtree(loci_dir)
+        #     os.makedirs(loci_dir)
         
         # -------------------------------------------------------------------------------
         # EDIT: Changed the second to last argument to True, this indicates that the chromosome

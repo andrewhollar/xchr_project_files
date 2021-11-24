@@ -6,6 +6,8 @@ def run_locarna(locarna, ungap_fasta_path, target_dir, target_file, max_diff, al
 
     """Run LocARNA.  Returns True if successful, or False otherwise"""
     
+    run_locarna_flag = True
+    
     log = []
 
     if not os.path.isdir(target_dir): os.makedirs(target_dir)
@@ -32,38 +34,53 @@ def run_locarna(locarna, ungap_fasta_path, target_dir, target_file, max_diff, al
       #  % (locarna, acd_arg, guide_tree_arg, ref_arg, max_diff_arg, target_dir_arg, ungap_fasta_path)
     # -------------------------------------------------------------------------------
 
-
-    start_time = time.time()
-    # subprocess.Popen(cmd, shell=True, stdout=open('/dev/null','w'), stderr=subprocess.STDOUT).wait()
-    # -------------------------------------------------------------------------------
-    locarna_out_path = os.path.join(target_dir, "locarna.output")
-    locarna_output = open(locarna_out_path, 'w', 1000000)    
-    subprocess.Popen(cmd, shell=True, stdout=locarna_output, stderr=subprocess.STDOUT).wait()
-    locarna_output.close()
-    # -------------------------------------------------------------------------------
-    
-    #if verbose: print cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds\n'
-    log.append(cmd)
-    time_str = 'Running time: ' + str(time.time() - start_time) + ' seconds'
-    log.append(time_str)
-
-    # Copy final alignment 'results/result.aln' and delete
-    # intermediate directory unless final alignment wasn't created,
-    # probably due to impossible banding constraints
-    result_path = os.path.join(target_dir, 'results', 'result.aln')
+    locarna_results_dir = os.path.join(target_dir, "results", "")
+    result_path = os.path.join(locarna_results_dir, 'result.aln')
     filtered_path = os.path.join(target_dir, 'improved_boundaries.aln')
     
-    # -------------------------------------------------------------------------------
-    # EDIT: add run of reliability-profile.pl script to extract the high-confidence portion of the alignment
-    
-    reliability_fit_once_out_path, reliability_log = run_reliability_profile_on_locarna_output(target_dir)
-    log.extend(reliability_log)
-    write_improved_boundaries_alignment(reliability_fit_once_out_path, result_path, filtered_path)
+    if os.path.isdir(locarna_results_dir):
+        # locarna_result_aln = os.path.join(locarna_results_dir, "result.aln")
+        locarna_reliabilities = os.path.join(locarna_results_dir, "result.bmreliability")
+        
+        if os.path.isfile(result_path) and os.stat(result_path).st_size != 0 and os.path.isfile(locarna_reliabilities) and os.stat(locarna_reliabilities).st_size != 0:
+            if os.path.isfile(filtered_path) and os.stat(filtered_path).st_size != 0:
+                # Locarna has already been run successfully.
+                run_locarna_flag = False
+            else:
+                reliability_fit_once_out_path, reliability_log = run_reliability_profile_on_locarna_output(target_dir)
+                log.extend(reliability_log)
+                write_improved_boundaries_alignment(reliability_fit_once_out_path, result_path, filtered_path)
+                run_locarna_flag = False
+            
+    if run_locarna_flag:
+        start_time = time.time()
+        # subprocess.Popen(cmd, shell=True, stdout=open('/dev/null','w'), stderr=subprocess.STDOUT).wait()
+        # -------------------------------------------------------------------------------
+        locarna_out_path = os.path.join(target_dir, "locarna.output")
+        locarna_output = open(locarna_out_path, 'w', 1000000)    
+        subprocess.Popen(cmd, shell=True, stdout=locarna_output, stderr=subprocess.STDOUT).wait()
+        locarna_output.close()
+        # -------------------------------------------------------------------------------
+        
+        #if verbose: print cmd + '\nRunning time: ' + str(time.time() - start_time) + ' seconds\n'
+        log.append(cmd)
+        time_str = 'Running time: ' + str(time.time() - start_time) + ' seconds'
+        log.append(time_str)
+
+        # Copy final alignment 'results/result.aln' and delete
+        # intermediate directory unless final alignment wasn't created,
+        # # probably due to impossible banding constraints
+        # result_path = os.path.join(target_dir, 'results', 'result.aln')
+        # filtered_path = os.path.join(target_dir, 'improved_boundaries.aln')
+        
+        # -------------------------------------------------------------------------------
+        # EDIT: add run of reliability-profile.pl script to extract the high-confidence portion of the alignment
+        reliability_fit_once_out_path, reliability_log = run_reliability_profile_on_locarna_output(target_dir)
+        log.extend(reliability_log)
+        write_improved_boundaries_alignment(reliability_fit_once_out_path, result_path, filtered_path)
     # -------------------------------------------------------------------------------
 
-    
-    if os.path.isfile(result_path):
-        
+    if os.path.isfile(filtered_path) and os.stat(filtered_path).st_size != 0:        
         # utilities.fix_clustal_header(result_path)  # Fix clustal header (remove non-standard LocARNA header)
         # shutil.copyfile(result_path, target_file)   # Copy final alignment
         # shutil.rmtree(target_dir)                   # Delete intermediate directory
@@ -80,9 +97,7 @@ def write_improved_boundaries_alignment(reliability_profile_output, result_align
     for line in reliability_profile_fit_once_output:
         if "FIT" in line:
             fit_line = line            
-    
-    #print fit_line1, fit_line2
-    
+        
     try:
         assert "FIT" in fit_line
     except AssertionError:
@@ -91,7 +106,7 @@ def write_improved_boundaries_alignment(reliability_profile_output, result_align
         print filtered_result_path
         print fit_line
         print open(reliability_profile_output).read().split('\n')
-        raise AssertionError("End")
+        # raise AssertionError("End")
     
     
     fit_line_tokens = fit_line.split()

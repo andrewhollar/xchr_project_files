@@ -20,8 +20,14 @@ def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
     block = block_group[0][0]
     
     filtered_maf_path = os.path.join(os.path.dirname(block_path), str(os.path.basename(block_path)).replace(".maf", ".filtered.maf"))
-    # print filtered_maf_path
-    
+   
+    # Make directory for syntenic block's loci
+    # -------------------------------------------------------------------------------
+    # EDIT: changed the location of the locus output directory, this removes the .maf from the filepath
+    locus_dir = os.path.join(loci_dir, block.split('.')[0])
+    # -------------------------------------------------------------------------------
+    if not os.path.isdir(locus_dir): os.makedirs(locus_dir)
+   
     # if encode_multiz:
     # Get MAF alignments of syntenic blocks
     # -------------------------------------------------------------------------------
@@ -49,13 +55,6 @@ def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
     maf_direction_list = [x.split()[4] for x in maf_list]
     maf_contig_lengths_list = [int(x.split()[5]) for x in maf_list]
 
-    # Make directory for syntenic block's loci
-    # -------------------------------------------------------------------------------
-    # EDIT: changed the location of the locus output directory, this removes the .maf from the filepath
-    locus_dir = os.path.join(loci_dir, block.split('.')[0])
-    # -------------------------------------------------------------------------------
-    if not os.path.isdir(locus_dir): os.makedirs(locus_dir)
-
     # Iterate over loci
     # This separates the windows by the previously assigned locus index.
     locus_group_list = utilities.bin_list(block_group, key = lambda x: x[3])
@@ -70,6 +69,7 @@ def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
         locus_name = '%s%s%s' % (block, utilities.block_locus_delim, locus_idx)          
         if os.path.isfile(ungap_fasta_path):
             if not os.stat(ungap_fasta_path).st_size == 0:
+                OUTLINE = "Locus already flanked and extracted: %s" % (str(locus_bed_dir))
                 locus_alignment_list.append((locus_name, ungap_fasta_path, OUTLINE))
                 continue
         
@@ -146,7 +146,6 @@ def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
                     print "maf_entry: ", seq_list[k]
                     print "unflanked: ", unflanked_region
                     print "  flanked: ", flanked_sequence
-
                 
                 extracted_seq = flanked_sequence[(start_offset - num_start) : start_offset + len(unflanked_region) + num_end]
                 locus_header_list.append(species_name)
@@ -160,7 +159,7 @@ def extract_locus(block_group, block_path, loci_dir, all_species, stdout=False):
         ungap_fasta_string = '\n'.join(['>' + x + '\n' + y.replace('-', '') for x,y in zip(locus_header_list, locus_seq_list)]) + '\n'
         open(ungap_fasta_path, 'w').write(ungap_fasta_string)
         
-        locus_alignment_list.append((locus_name, ungap_fasta_path,OUTLINE))
+        locus_alignment_list.append((locus_name, ungap_fasta_path, OUTLINE))
 
     return locus_alignment_list
 
