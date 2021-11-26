@@ -37,6 +37,8 @@ def main():
                 rnaz_first = float(line_tokens[4])
                 rnaz_second = float(line_tokens[6])
                 
+                print (rnaz_first, rnaz_second)
+                
                 if rnaz_second > args.threshold:
                     if rnaz_second - rnaz_first >= args.difference:
                         target_alignment_blocks.append(line_tokens[0])
