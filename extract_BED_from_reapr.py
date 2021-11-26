@@ -56,6 +56,7 @@ def main():
     
     #We are looking to extract the start and end coordinates for each reapr hit.
     NUM_SAMPLES = 10
+    block_idx = 0
     
     for block, slice_idx in zip(target_alignment_blocks, target_block_slices):
         block_windows_path = os.path.join(alignment_blocks_dir, block.split('/')[0] + ".windows")
@@ -109,8 +110,8 @@ def main():
         # print(locus_idx)
         # print(slice_idx)
         
-        
-        if window_idx > NUM_SAMPLES:
+        block_idx += 1
+        if block_idx > NUM_SAMPLES:
             break
                     
     
