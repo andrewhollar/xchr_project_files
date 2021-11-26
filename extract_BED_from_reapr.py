@@ -2,6 +2,7 @@ from functools import singledispatch
 import os
 import sys 
 import argparse
+from Bio import AlignIO
 
 
 
@@ -55,11 +56,14 @@ def main():
         block_windows_path = os.path.join(alignment_blocks_dir, block.split('/')[0] + ".windows")
         locus_idx = block.split('/')[1]
         
+        for window in AlignIO.parse(block_windows_path, "maf"):
+            print(window)
         
-        window_list = [x for x in open(block_windows_path).read().split("\n") if len(x) > 0 and x[0] == 's']
         
-        for window, idx in enumerate(window_list):
-            print(window, idx)
+        # window_list = [x for x in open(block_windows_path).read().split("\n") if len(x) > 0 and x[0] == 's']
+        
+        # for window, idx in enumerate(window_list):
+        #     print(window, idx)
         
         # for window, idx in enumerate(open(block_windows_path).read().split("\n") if len()):
         #     print(window)
