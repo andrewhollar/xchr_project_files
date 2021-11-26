@@ -54,30 +54,59 @@ def main():
                         target_block_slices.append((int(line_tokens[1]), int(line_tokens[2])))
                     
     
+    #We are looking to extract the start and end coordinates for each reapr hit.
+    
+    
     for block, slice_idx in zip(target_alignment_blocks, target_block_slices):
         block_windows_path = os.path.join(alignment_blocks_dir, block.split('/')[0] + ".windows")
         locus_idx = block.split('/')[1]
         
+        
+        unflanked_locus_start_pos = -1
+        unflanked_locus_end_pos = -1
+        prev_start = -1
+        multi_window_slide_offset = 0
+        
+        window_idx = 0
         for window in AlignIO.parse(block_windows_path, "maf"):
-            for sequence in window:
-                if sequence.id.split('.')[0] == REFERENCE_SPECIES:
-                    print(sequence.id)
-            print(window)
+            if window_idx >= slice_idx[0] and window_idx <= slice_idx[1]:  
+                if slice_idx[0] == slice_idx[1]:
+                    for sequence in window:
+                        if sequence.id.split('.')[0] == REFERENCE_SPECIES:
+                            unflanked_locus_start_pos = int(sequence.annotations['start'])
+                            unflanked_locus_end_pos = unflanked_locus_start_pos + int(sequence.annotations['size'])
+                else:
+                    for sequence in window:
+                        if sequence.id.split('.')[0] == REFERENCE_SPECIES:
+                            if unflanked_locus_start_pos == -1:
+                                unflanked_locus_start_pos = int(sequence.annotations['start'])
+                                prev_start = unflanked_locus_start_pos
+                            else:
+                                multi_window_slide_offset += (int(sequence.annotations['start']) - prev_start)
+                                unflanked_locus_end_pos = multi_window_slide_offset + int(sequence.annotations['size'])
+                                prev_start = int(sequence.annotations['start'])
+                
+            window_idx += 1
+
+                                
+        print(unflanked_locus_start_pos,unflanked_locus_end_pos)
+                                
+                            
+
+                
+                
+            #     for sequence in window:
+            #         if sequence.id.split('.')[0] == REFERENCE_SPECIES:
+            #             print(sequence.id)
+            #     print(window)
         
         
-        # window_list = [x for x in open(block_windows_path).read().split("\n") if len(x) > 0 and x[0] == 's']
+
         
-        # for window, idx in enumerate(window_list):
-        #     print(window, idx)
-        
-        # for window, idx in enumerate(open(block_windows_path).read().split("\n") if len()):
-        #     print(window)
-        #     print(idx)
-        
-        print(block)
-        print(block_windows_path)
-        print(locus_idx)
-        print(slice_idx)
+        # print(block)
+        # print(block_windows_path)
+        # print(locus_idx)
+        # print(slice_idx)
         
         
         
