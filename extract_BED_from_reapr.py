@@ -1,6 +1,8 @@
+from functools import singledispatch
 import os
 import sys 
 import argparse
+
 
 
 # Arguments: out BED file, Second RNAz score filter, Score difference,
@@ -17,6 +19,8 @@ def main():
     reapr_summary_path = os.path.join(args.input_reapr_dir, "summary.tab")
     assert os.path.isfile(reapr_summary_path)
     assert os.stat(reapr_summary_path).st_size != 0
+    alignment_blocks_dir = os.path.join(args.input_reapr_diir, "alignments", "")
+    assert os.path.isdir(alignment_blocks_dir)
     
     header = True
     header_line = ""
@@ -26,6 +30,7 @@ def main():
     # Column 6: RNAz score (second pass)
     
     target_alignment_blocks = []
+    target_block_slices = []
     
     with open(reapr_summary_path, "r") as summary_table:
         for reapr_hit_line in summary_table.readlines():
@@ -41,11 +46,27 @@ def main():
                 
                 if rnaz_second > args.threshold:
                     if rnaz_second - rnaz_first >= args.difference:
+                        
                         target_alignment_blocks.append(line_tokens[0])
+                        target_block_slices.append((int(line_tokens[1]), int(line_tokens[2])))
                     
-                
-    print(target_alignment_blocks)
-    print(len(target_alignment_blocks))
+    
+    for block, slice_idx in zip(target_alignment_blocks, target_block_slices):
+        block_path = os.path.join(alignment_blocks_dir, block.split('/')[0])
+        locus_idx = block.split('/')[1]
+        
+        print(block)
+        print(block_path)
+        print(locus_idx)
+        print(slice_idx)
+        
+        
+        
+        break
+                    
+    
+    # print(target_alignment_blocks)
+    # print(len(target_alignment_blocks))
     
 
 if __name__=='__main__':
