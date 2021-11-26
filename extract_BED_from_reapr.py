@@ -91,7 +91,7 @@ def main():
             window_idx += 1
 
                                 
-        print(unflanked_locus_start_pos,unflanked_locus_end_pos)
+        print(unflanked_locus_start_pos,unflanked_locus_end_pos, block)
                                 
                             
 
