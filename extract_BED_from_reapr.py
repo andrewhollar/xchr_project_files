@@ -45,6 +45,7 @@ def main():
                     
                 
     print(target_alignment_blocks)
+    print(len(target_alignment_blocks))
     
 
 if __name__=='__main__':
