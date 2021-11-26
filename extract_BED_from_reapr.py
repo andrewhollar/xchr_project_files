@@ -56,9 +56,14 @@ def main():
         locus_idx = block.split('/')[1]
         
         
-        for window, idx in enumerate(open(block_windows_path).read().split("a score=0")):
-            print(window)
-            print(idx)
+        window_list = [x for x in open(block_windows_path).read().split("\n") if len(x) > 0 and x[0] == 's']
+        
+        for window, idx in enumerate(window_list):
+            print(window, idx)
+        
+        # for window, idx in enumerate(open(block_windows_path).read().split("\n") if len()):
+        #     print(window)
+        #     print(idx)
         
         print(block)
         print(block_windows_path)
