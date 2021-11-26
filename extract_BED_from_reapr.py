@@ -19,7 +19,7 @@ def main():
     reapr_summary_path = os.path.join(args.input_reapr_dir, "summary.tab")
     assert os.path.isfile(reapr_summary_path)
     assert os.stat(reapr_summary_path).st_size != 0
-    alignment_blocks_dir = os.path.join(args.input_reapr_diir, "alignments", "")
+    alignment_blocks_dir = os.path.join(args.input_reapr_dir, "alignments", "")
     assert os.path.isdir(alignment_blocks_dir)
     
     header = True
