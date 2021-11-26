@@ -55,7 +55,7 @@ def main():
                     
     
     #We are looking to extract the start and end coordinates for each reapr hit.
-    NUM_SAMPLES = 10
+    NUM_SAMPLES = 100
     block_idx = 0
     
     for block, slice_idx in zip(target_alignment_blocks, target_block_slices):
