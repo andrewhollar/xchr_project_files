@@ -83,6 +83,7 @@ def main():
                                 prev_start = unflanked_locus_start_pos
                             else:
                                 multi_window_slide_offset += (int(sequence.annotations['start']) - prev_start)
+                                print("New slide offset {}".format(str(multi_window_slide_offset)))
                                 unflanked_locus_end_pos = multi_window_slide_offset + int(sequence.annotations['size'])
                                 prev_start = int(sequence.annotations['start'])
                 
