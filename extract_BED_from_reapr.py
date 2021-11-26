@@ -60,8 +60,8 @@ def main():
         
         for window in AlignIO.parse(block_windows_path, "maf"):
             for sequence in window:
-                if sequence.species == REFERENCE_SPECIES:
-                    print(sequence.species)
+                if sequence.id == REFERENCE_SPECIES:
+                    print(sequence.id)
             print(window)
         
         
