@@ -52,11 +52,16 @@ def main():
                     
     
     for block, slice_idx in zip(target_alignment_blocks, target_block_slices):
-        block_path = os.path.join(alignment_blocks_dir, block.split('/')[0])
+        block_windows_path = os.path.join(alignment_blocks_dir, block.split('/')[0] + ".windows")
         locus_idx = block.split('/')[1]
         
+        
+        for window, idx in enumerate(open(block_windows_path).read().split("a score=0")):
+            print(window)
+            print(idx)
+        
         print(block)
-        print(block_path)
+        print(block_windows_path)
         print(locus_idx)
         print(slice_idx)
         
