@@ -129,7 +129,11 @@ def main():
             for sequence in maf_block:
                 if sequence.id.split('.')[0] == REFERENCE_SPECIES:
                     contig_name = sequence.id.split('.')[1]
-                    seq_strand = sequence.annotations['strand']
+                    
+                    if sequence.annotations['strand'] == -1:
+                        seq_strand = "-"
+                    else:
+                        seq_strand = "+"
                     
                     homo_sapiens_block_start = int(sequence.annotations['start'])
                     homo_sapiens_block_end = int(sequence.annotations['start']) + int(sequence.annotations['size'])
