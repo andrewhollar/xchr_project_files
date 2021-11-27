@@ -132,6 +132,7 @@ def main():
                     
                     if sequence.annotations['strand'] == -1:
                         seq_strand = "-"
+                        print("reverse")
                     else:
                         seq_strand = "+"
                     
@@ -166,7 +167,9 @@ def main():
             break
         
     
-    print(BED_COORDINATES)
+    for entry in BED_COORDINATES:
+        print(entry)
+    #print(BED_COORDINATES)
                     
     
     # print(target_alignment_blocks)
