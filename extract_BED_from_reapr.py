@@ -81,8 +81,8 @@ def main():
         unflanked_locus_start_pos = -1
         unflanked_locus_end_pos = -1
             
-        for block in AlignIO.parse(block_filtered_path, "maf"):
-            for sequence in block:
+        for maf_block in AlignIO.parse(block_filtered_path, "maf"):
+            for sequence in maf_block:
                 if sequence.id.split('.')[0] == REFERENCE_SPECIES:
                     unflanked_locus_start_pos = int(sequence.annotations['start']) + len(str(sequence.seq)[:locus_start_column].replace("-", ""))
                     
