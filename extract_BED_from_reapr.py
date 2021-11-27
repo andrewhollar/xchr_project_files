@@ -3,10 +3,12 @@ import os
 import sys 
 import argparse
 from Bio import AlignIO
+# from utilities import FLANK_VALUE
 # from reapr-edits.utilities import WINDOW_SIZE, WINDOW_SLIDE
 
 WINDOW_SIZE = 120
 WINDOW_SLIDE = 20
+FLANK_VALUE = 20
 REFERENCE_SPECIES = "Homo_sapiens"
 
 
@@ -76,12 +78,12 @@ def main():
         locus_improved_boundaries_path = os.path.join(loci_dir, block.split('.')[0], locus_idx + ".ungap.locarna.g.20.d", "reliability_fit_once.out")
         
         
-        extracted_fasta_output = open(locus_extracted_fasta_path).read().split('\n')
+        # extracted_fasta_output = open(locus_extracted_fasta_path).read().split('\n')
         
-        genomic_coordinates_line = extracted_fasta_output[0]
-        assert genomic_coordinates_line.startswith(">")
-        fasta_start = int(genomic_coordinates_line.split(":")[1].split("-")[0])
-        fasta_end = int(genomic_coordinates_line.split(":")[1].split("-")[1])
+        # genomic_coordinates_line = extracted_fasta_output[0]
+        # assert genomic_coordinates_line.startswith(">")
+        # fasta_start = int(genomic_coordinates_line.split(":")[1].split("-")[0])
+        # fasta_end = int(genomic_coordinates_line.split(":")[1].split("-")[1])
         
         reliability_profile_fit_once_output = open(locus_improved_boundaries_path).read().split('\n')
         # if "Cannot read" not in reliability_profile_fit_once_output[0]:
@@ -98,9 +100,9 @@ def main():
         boundaries_end = max(fit_line_indices)
 
         
-        new_locus_start = fasta_start + boundaries_start
-        new_locus_end = fasta_start + boundaries_end        
-        new_locus_length = new_locus_end - new_locus_start
+        # new_locus_start = fasta_start + boundaries_start
+        # new_locus_end = fasta_start + boundaries_end        
+        # new_locus_length = new_locus_end - new_locus_start
         
         locus_start_column = slice_idx[0] * WINDOW_SLIDE
         # This is true only if the locus does not appear at the end of a block with < 120 nts (i.e. WINDOW_SIZE)
@@ -110,11 +112,14 @@ def main():
         unflanked_locus_start_pos = -1
         unflanked_locus_end_pos = -1
         unflanked_locus_length = -1
+        
+        flanked_locus_start_pos = -1
+        flanked_locus_end_pos = -1
+        flanked_locus_length = -1
 
         homo_sapiens_block_start = -1
         homo_sapiens_block_end = -1
         homo_sapiens_alignment_block_length = -1
-        
             
         for maf_block in AlignIO.parse(block_filtered_path, "maf"):
             for sequence in maf_block:
@@ -129,11 +134,30 @@ def main():
                     
                     unflanked_locus_end_pos = int(sequence.annotations['start']) + len(str(sequence.seq)[:locus_end_column].replace("-", ""))
                     unflanked_locus_length = unflanked_locus_end_pos - unflanked_locus_start_pos
+                    
+                    
+                    flanked_locus_start_pos = unflanked_locus_start_pos - FLANK_VALUE
+                    if flanked_locus_start_pos < 0:
+                        flanked_locus_start_pos = 0
+                    flanked_locus_end_pos = unflanked_locus_end_pos + FLANK_VALUE
+                    if flanked_locus_end_pos > int(sequence.annotations['srcSize']):
+                        flanked_locus_end_pos = int(sequence.annotations['srcSize'])
+                    flanked_locus_length = flanked_locus_end_pos - flanked_locus_start_pos
+                    
+                    
+                    
                     # unflanked_locus_start_pos = int(sequence.annotations['start'])
                     # unflanked_locus_end_pos = unflanked_locus_start_pos + int(sequence.annotations['size'])
 
-        print(unflanked_locus_start_pos, unflanked_locus_end_pos, new_locus_start, new_locus_end, unflanked_locus_length, new_locus_length, homo_sapiens_alignment_block_length, block)
+        improved_boundaries_start = flanked_locus_start_pos + boundaries_start
+        improved_boundaries_end = flanked_locus_start_pos + boundaries_end
+        improved_boundaries_length = improved_boundaries_end - improved_boundaries_start
         
+
+
+        #print(unflanked_locus_start_pos, unflanked_locus_end_pos, unflanked_locus_length, homo_sapiens_alignment_block_length, block)
+        
+        print(unflanked_locus_start_pos, unflanked_locus_end_pos, unflanked_locus_length, flanked_locus_start_pos, flanked_locus_end_pos, flanked_locus_length, improved_boundaries_start, improved_boundaries_end, improved_boundaries_length)
         
         
         # assert unflanked_locus_start_pos >= homo_sapiens_block_start
