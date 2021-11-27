@@ -168,10 +168,11 @@ def main():
         
     
     with open(args.output, "w") as bed_out:
-        bed_out.writelines(BED_COORDINATES)
+        # bed_out.writelines(BED_COORDINATES)
         
     
-        # for entry in BED_COORDINATES:
+        for entry in BED_COORDINATES:
+            bed_out.write(entry + "\n")
         # print(entry)
     #print(BED_COORDINATES)
                     
