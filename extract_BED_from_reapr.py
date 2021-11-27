@@ -58,10 +58,11 @@ def main():
                         target_alignment_blocks.append(line_tokens[0])
                         target_block_slices.append((int(line_tokens[1]), int(line_tokens[2])))
                     
-    
     #We are looking to extract the start and end coordinates for each reapr hit.
     NUM_SAMPLES = 100
     block_idx = 0
+    
+    BED_COORDINATES = []
     
     for block, slice_idx in zip(target_alignment_blocks, target_block_slices):
         
@@ -120,10 +121,16 @@ def main():
         homo_sapiens_block_start = -1
         homo_sapiens_block_end = -1
         homo_sapiens_alignment_block_length = -1
+        
+        contig_name = ""
+        seq_strand = ""
             
         for maf_block in AlignIO.parse(block_filtered_path, "maf"):
             for sequence in maf_block:
                 if sequence.id.split('.')[0] == REFERENCE_SPECIES:
+                    contig_name = sequence.id.split('.')[1]
+                    seq_strand = sequence.annotations['strand']
+                    
                     homo_sapiens_block_start = int(sequence.annotations['start'])
                     homo_sapiens_block_end = int(sequence.annotations['start']) + int(sequence.annotations['size'])
                     homo_sapiens_alignment_block_length = homo_sapiens_block_end - homo_sapiens_block_start
@@ -135,7 +142,6 @@ def main():
                     unflanked_locus_end_pos = int(sequence.annotations['start']) + len(str(sequence.seq)[:locus_end_column].replace("-", ""))
                     unflanked_locus_length = unflanked_locus_end_pos - unflanked_locus_start_pos
                     
-                    
                     flanked_locus_start_pos = unflanked_locus_start_pos - FLANK_VALUE
                     if flanked_locus_start_pos < 0:
                         flanked_locus_start_pos = 0
@@ -143,88 +149,20 @@ def main():
                     if flanked_locus_end_pos > int(sequence.annotations['srcSize']):
                         flanked_locus_end_pos = int(sequence.annotations['srcSize'])
                     flanked_locus_length = flanked_locus_end_pos - flanked_locus_start_pos
-                    
-                    
-                    
-                    # unflanked_locus_start_pos = int(sequence.annotations['start'])
-                    # unflanked_locus_end_pos = unflanked_locus_start_pos + int(sequence.annotations['size'])
 
         improved_boundaries_start = flanked_locus_start_pos + boundaries_start
         improved_boundaries_end = flanked_locus_start_pos + boundaries_end
         improved_boundaries_length = improved_boundaries_end - improved_boundaries_start
-        
 
-
-        #print(unflanked_locus_start_pos, unflanked_locus_end_pos, unflanked_locus_length, homo_sapiens_alignment_block_length, block)
-        
-        print(unflanked_locus_start_pos, unflanked_locus_end_pos, unflanked_locus_length, flanked_locus_start_pos, flanked_locus_end_pos, flanked_locus_length, improved_boundaries_start, improved_boundaries_end, improved_boundaries_length)
-        
-        
-        # assert unflanked_locus_start_pos >= homo_sapiens_block_start
-        # assert unflanked_locus_end_pos <= homo_sapiens_block_end    
-        
-        
-        # unflanked_locus_start_pos = -1
-        # unflanked_locus_end_pos = -1
-        
-        
-        
-        # block_windows_path = os.path.join(alignment_blocks_dir, block.split('/')[0] + ".windows")
-        # locus_idx = block.split('/')[1]
-        
-        
-        
-        
-        # unflanked_locus_start_pos = -1
-        # unflanked_locus_end_pos = -1
-        # prev_start = -1
-        # multi_window_slide_offset = 0
-        
-        # window_idx = 0
-        # for window in AlignIO.parse(block_windows_path, "maf"):
-        #     if window_idx >= slice_idx[0] and window_idx <= slice_idx[1]:  
-        #         if slice_idx[0] == slice_idx[1]:
-        #             for sequence in window:
-        #                 if sequence.id.split('.')[0] == REFERENCE_SPECIES:
-        #                     unflanked_locus_start_pos = int(sequence.annotations['start'])
-        #                     unflanked_locus_end_pos = unflanked_locus_start_pos + int(sequence.annotations['size'])
-        #         else:
-        #             for sequence in window:
-        #                 if sequence.id.split('.')[0] == REFERENCE_SPECIES:
-        #                     if unflanked_locus_start_pos == -1:
-        #                         unflanked_locus_start_pos = int(sequence.annotations['start'])
-        #                         prev_start = unflanked_locus_start_pos
-        #                     else:
-        #                         multi_window_slide_offset += (int(sequence.annotations['start']) - prev_start)
-        #                         print("New slide offset {}".format(str(multi_window_slide_offset)))
-        #                         unflanked_locus_end_pos = multi_window_slide_offset + int(sequence.annotations['size'])
-        #                         prev_start = int(sequence.annotations['start'])
-                
-        #     window_idx += 1
-
-                                
-        # print(unflanked_locus_start_pos,unflanked_locus_end_pos, block)
-                                
-                            
-
-                
-                
-            #     for sequence in window:
-            #         if sequence.id.split('.')[0] == REFERENCE_SPECIES:
-            #             print(sequence.id)
-            #     print(window)
-        
-        
-
-        
-        # print(block)
-        # print(block_windows_path)
-        # print(locus_idx)
-        # print(slice_idx)
+        bed_entry = "\t".join([contig_name, str(improved_boundaries_start), str(improved_boundaries_end), block.split('.')[0], "0", seq_strand])
+        BED_COORDINATES.append(bed_entry)
         
         block_idx += 1
         if block_idx > NUM_SAMPLES:
             break
+        
+    
+    print(BED_COORDINATES)
                     
     
     # print(target_alignment_blocks)
