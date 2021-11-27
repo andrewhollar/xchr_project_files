@@ -80,10 +80,17 @@ def main():
         
         unflanked_locus_start_pos = -1
         unflanked_locus_end_pos = -1
+        
+        homo_sapiens_block_start = -1
+        homo_sapiens_block_end = -1
+        
             
         for maf_block in AlignIO.parse(block_filtered_path, "maf"):
             for sequence in maf_block:
                 if sequence.id.split('.')[0] == REFERENCE_SPECIES:
+                    homo_sapiens_block_start = int(sequence.annotations['start'])
+                    homo_sapiens_block_end = int(sequence.annotations['start']) + int(sequence.annotations['size'])
+                    
                     unflanked_locus_start_pos = int(sequence.annotations['start']) + len(str(sequence.seq)[:locus_start_column].replace("-", ""))
                     
                     if locus_end_column > len(str(sequence.seq)):
@@ -94,6 +101,9 @@ def main():
                     # unflanked_locus_end_pos = unflanked_locus_start_pos + int(sequence.annotations['size'])
 
         print(unflanked_locus_start_pos,unflanked_locus_end_pos, block)
+        
+        assert unflanked_locus_start_pos >= homo_sapiens_block_start
+        assert unflanked_locus_end_pos <= homo_sapiens_block_end    
         
         
         # unflanked_locus_start_pos = -1
