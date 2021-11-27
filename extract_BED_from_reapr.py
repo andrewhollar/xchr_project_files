@@ -25,6 +25,7 @@ def main():
     assert os.path.isfile(reapr_summary_path)
     assert os.stat(reapr_summary_path).st_size != 0
     alignment_blocks_dir = os.path.join(args.input_reapr_dir, "alignments", "")
+    loci_dir = os.path.join(args.input_reapr_dir, "loci", "")
     assert os.path.isdir(alignment_blocks_dir)
     
     header = True
@@ -66,23 +67,50 @@ def main():
         # 1. get filtered.maf 
         # 2. use the slice_indices to extract the locus region. 
         
+        #i/7way_block_00414726/0_BED_FILES/0.Homo_sapiens.extracted.fa 
         
+        # /7way_block_00414726/0.ungap.locarna.g.20.d/reliability_fit_once.out 
         block_filtered_path = os.path.join(alignment_blocks_dir, block.split('.')[0] + ".filtered.maf")
         locus_idx = block.split('/')[1]
+        locus_extracted_fasta_path = os.path.join(loci_dir, block.split('.')[0], locus_idx + "_BED_FILES", locus_idx + "." + REFERENCE_SPECIES + ".extracted.fa")
+        locus_improved_boundaries_path = os.path.join(loci_dir, block.split('.')[0], locus_idx + ".ungap.locarna.g.20.d", "reliability_fit_once.out")
         
         
-        locus_start_column = slice_idx[0] * WINDOW_SLIDE
-        # This is true only if the locus does not appear at the end of a block with < 120 nts (i.e. WINDOW_SIZE)
-        locus_end_column = slice_idx[1] * WINDOW_SLIDE + WINDOW_SIZE
+        extracted_fasta_output = open(locus_extracted_fasta_path).read().split('\n')
         
+        genomic_coordinates_line = extracted_fasta_output[0]
+        assert genomic_coordinates_line.startswith(">")
+        fasta_start = int(genomic_coordinates_line.split(":")[1].split("-")[0])
+        fasta_end = int(genomic_coordinates_line.split(":")[1].split("-")[1])
         
-        # if slice_idx[1] == slice_idx[0]:
+        reliability_profile_fit_once_output = open(locus_improved_boundaries_path).read().split('\n')
+        # if "Cannot read" not in reliability_profile_fit_once_output[0]:
+        fit_line = ""
+        for line in reliability_profile_fit_once_output:
+            if "FIT" in line:
+                fit_line = line    
+        fit_line_tokens = fit_line.split()
+        assert fit_line_tokens[0] == "FIT"
+        fit_line_tokens = fit_line_tokens[1:]
+        
+        fit_line_indices = [int(x) for x in fit_line_tokens]
+        boundaries_start = min(fit_line_indices)
+        boundaries_end = max(fit_line_indices)
+
+        
+        new_locus_start = fasta_start + boundaries_start
+        new_locus_end = fasta_start + boundaries_end        
+        new_locus_length = new_locus_end - new_locus_start
+        
+        # locus_start_column = slice_idx[0] * WINDOW_SLIDE
+        # # This is true only if the locus does not appear at the end of a block with < 120 nts (i.e. WINDOW_SIZE)
+        # locus_end_column = slice_idx[1] * WINDOW_SLIDE + WINDOW_SIZE
+
         
         unflanked_locus_start_pos = -1
         unflanked_locus_end_pos = -1
         unflanked_locus_length = -1
 
-        
         homo_sapiens_block_start = -1
         homo_sapiens_block_end = -1
         homo_sapiens_alignment_block_length = -1
@@ -95,9 +123,7 @@ def main():
                     homo_sapiens_block_end = int(sequence.annotations['start']) + int(sequence.annotations['size'])
                     homo_sapiens_alignment_block_length = homo_sapiens_block_end - homo_sapiens_block_start
                     
-                    
                     unflanked_locus_start_pos = int(sequence.annotations['start']) + len(str(sequence.seq)[:locus_start_column].replace("-", ""))
-                    
                     if locus_end_column > len(str(sequence.seq)):
                         locus_end_column = len(str(sequence.seq))
                     
@@ -106,10 +132,12 @@ def main():
                     # unflanked_locus_start_pos = int(sequence.annotations['start'])
                     # unflanked_locus_end_pos = unflanked_locus_start_pos + int(sequence.annotations['size'])
 
-        print(unflanked_locus_start_pos, unflanked_locus_end_pos, unflanked_locus_length, homo_sapiens_alignment_block_length, block)
+        print(unflanked_locus_start_pos, unflanked_locus_end_pos, new_locus_start, new_locus_end, unflanked_locus_length, new_locus_length, homo_sapiens_alignment_block_length, block)
         
-        assert unflanked_locus_start_pos >= homo_sapiens_block_start
-        assert unflanked_locus_end_pos <= homo_sapiens_block_end    
+        
+        
+        # assert unflanked_locus_start_pos >= homo_sapiens_block_start
+        # assert unflanked_locus_end_pos <= homo_sapiens_block_end    
         
         
         # unflanked_locus_start_pos = -1
