@@ -167,7 +167,7 @@ def main():
             break
         
     
-    with open(args.output, "r") as bed_out:
+    with open(args.output, "w") as bed_out:
         bed_out.writelines(BED_COORDINATES)
         
     
