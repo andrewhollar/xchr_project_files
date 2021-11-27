@@ -3,6 +3,7 @@ import os
 import sys 
 import argparse
 from Bio import AlignIO
+from utilities import WINDOW_SIZE, WINDOW_SLIDE
 
 
 REFERENCE_SPECIES = "Homo_sapiens"
@@ -59,39 +60,81 @@ def main():
     block_idx = 0
     
     for block, slice_idx in zip(target_alignment_blocks, target_block_slices):
-        block_windows_path = os.path.join(alignment_blocks_dir, block.split('/')[0] + ".windows")
+        
+        #For each block
+        # 1. get filtered.maf 
+        # 2. use the slice_indices to extract the locus region. 
+        
+        
+        block_filtered_path = os.path.join(alignment_blocks_dir, block.split('.')[0] + ".filtered.maf")
         locus_idx = block.split('/')[1]
         
         
+        locus_start_column = slice_idx[0] * WINDOW_SLIDE
+        # This is true only if the locus does not appear at the end of a block with < 120 nts (i.e. WINDOW_SIZE)
+        locus_end_column = slice_idx[1] * WINDOW_SLIDE + WINDOW_SIZE
+        
+        
+        # if slice_idx[1] == slice_idx[0]:
+        
         unflanked_locus_start_pos = -1
         unflanked_locus_end_pos = -1
-        prev_start = -1
-        multi_window_slide_offset = 0
+            
+        for block in AlignIO.parse(block_filtered_path, "maf"):
+            for sequence in block:
+                if sequence.id.split('.')[0] == REFERENCE_SPECIES:
+                    unflanked_locus_start_pos = int(sequence.annotations['start']) + len(str(sequence.seq)[:locus_start_column].replace("-", ""))
+                    
+                    if locus_end_column > len(str(sequence.seq)):
+                        locus_end_column = len(str(sequence.seq))
+                    
+                    unflanked_locus_end_pos = int(sequence.annotations['start']) + len(str(sequence.seq)[:locus_end_column].replace("-", ""))
+                    # unflanked_locus_start_pos = int(sequence.annotations['start'])
+                    # unflanked_locus_end_pos = unflanked_locus_start_pos + int(sequence.annotations['size'])
+
+        print(unflanked_locus_start_pos,unflanked_locus_end_pos, block)
         
-        window_idx = 0
-        for window in AlignIO.parse(block_windows_path, "maf"):
-            if window_idx >= slice_idx[0] and window_idx <= slice_idx[1]:  
-                if slice_idx[0] == slice_idx[1]:
-                    for sequence in window:
-                        if sequence.id.split('.')[0] == REFERENCE_SPECIES:
-                            unflanked_locus_start_pos = int(sequence.annotations['start'])
-                            unflanked_locus_end_pos = unflanked_locus_start_pos + int(sequence.annotations['size'])
-                else:
-                    for sequence in window:
-                        if sequence.id.split('.')[0] == REFERENCE_SPECIES:
-                            if unflanked_locus_start_pos == -1:
-                                unflanked_locus_start_pos = int(sequence.annotations['start'])
-                                prev_start = unflanked_locus_start_pos
-                            else:
-                                multi_window_slide_offset += (int(sequence.annotations['start']) - prev_start)
-                                print("New slide offset {}".format(str(multi_window_slide_offset)))
-                                unflanked_locus_end_pos = multi_window_slide_offset + int(sequence.annotations['size'])
-                                prev_start = int(sequence.annotations['start'])
+        
+        # unflanked_locus_start_pos = -1
+        # unflanked_locus_end_pos = -1
+        
+        
+        
+        # block_windows_path = os.path.join(alignment_blocks_dir, block.split('/')[0] + ".windows")
+        # locus_idx = block.split('/')[1]
+        
+        
+        
+        
+        # unflanked_locus_start_pos = -1
+        # unflanked_locus_end_pos = -1
+        # prev_start = -1
+        # multi_window_slide_offset = 0
+        
+        # window_idx = 0
+        # for window in AlignIO.parse(block_windows_path, "maf"):
+        #     if window_idx >= slice_idx[0] and window_idx <= slice_idx[1]:  
+        #         if slice_idx[0] == slice_idx[1]:
+        #             for sequence in window:
+        #                 if sequence.id.split('.')[0] == REFERENCE_SPECIES:
+        #                     unflanked_locus_start_pos = int(sequence.annotations['start'])
+        #                     unflanked_locus_end_pos = unflanked_locus_start_pos + int(sequence.annotations['size'])
+        #         else:
+        #             for sequence in window:
+        #                 if sequence.id.split('.')[0] == REFERENCE_SPECIES:
+        #                     if unflanked_locus_start_pos == -1:
+        #                         unflanked_locus_start_pos = int(sequence.annotations['start'])
+        #                         prev_start = unflanked_locus_start_pos
+        #                     else:
+        #                         multi_window_slide_offset += (int(sequence.annotations['start']) - prev_start)
+        #                         print("New slide offset {}".format(str(multi_window_slide_offset)))
+        #                         unflanked_locus_end_pos = multi_window_slide_offset + int(sequence.annotations['size'])
+        #                         prev_start = int(sequence.annotations['start'])
                 
-            window_idx += 1
+        #     window_idx += 1
 
                                 
-        print(unflanked_locus_start_pos,unflanked_locus_end_pos, block)
+        # print(unflanked_locus_start_pos,unflanked_locus_end_pos, block)
                                 
                             
 
