@@ -163,8 +163,8 @@ def main():
         BED_COORDINATES.append(bed_entry)
         
         block_idx += 1
-        if block_idx > NUM_SAMPLES:
-            break
+        # if block_idx > NUM_SAMPLES:
+        #     break
         
     
     with open(args.output, "w") as bed_out:
