@@ -3,9 +3,10 @@ import os
 import sys 
 import argparse
 from Bio import AlignIO
-from utilities import WINDOW_SIZE, WINDOW_SLIDE
+# from reapr-edits.utilities import WINDOW_SIZE, WINDOW_SLIDE
 
-
+WINDOW_SIZE = 120
+WINDOW_SLIDE = 20
 REFERENCE_SPECIES = "Homo_sapiens"
 
 
