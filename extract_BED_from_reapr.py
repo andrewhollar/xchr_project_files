@@ -102,9 +102,9 @@ def main():
         new_locus_end = fasta_start + boundaries_end        
         new_locus_length = new_locus_end - new_locus_start
         
-        # locus_start_column = slice_idx[0] * WINDOW_SLIDE
-        # # This is true only if the locus does not appear at the end of a block with < 120 nts (i.e. WINDOW_SIZE)
-        # locus_end_column = slice_idx[1] * WINDOW_SLIDE + WINDOW_SIZE
+        locus_start_column = slice_idx[0] * WINDOW_SLIDE
+        # This is true only if the locus does not appear at the end of a block with < 120 nts (i.e. WINDOW_SIZE)
+        locus_end_column = slice_idx[1] * WINDOW_SLIDE + WINDOW_SIZE
 
         
         unflanked_locus_start_pos = -1
