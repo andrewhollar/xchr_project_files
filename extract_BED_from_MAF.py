@@ -14,7 +14,7 @@ def run(fn, ref):
                 start_pos = sr.annotations['start']
                 end_pos = int(sr.annotations['start']) + int(sr.annotations['size'])
                 name = sr.id
-                score = 0
+                score = "0"
                 strand = ""
                 
                 if sr.annotations['strand'] == -1:
