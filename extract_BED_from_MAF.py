@@ -17,7 +17,7 @@ def run(fn, ref):
                 score = 0
                 strand = sr.annotations['strand']
                 
-                bed_line = "\t".join([contig, start_pos, str(end_pos), name, score, strand])
+                bed_line = "\t".join([contig, str(start_pos), str(end_pos), name, score, strand])
                 print(bed_line + "\n")
 
 
