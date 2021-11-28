@@ -30,7 +30,7 @@ if __name__ == '__main__':
                         type=str,
                         help="reference species, e.g., mm10, hg19")
     ARGS = parser.parse_args()
-    MAF_FILEPATH = ARGS.file
+    MAF_FILEPATH = ARGS.maf_file
     REFERENCE_SPECIES = ARGS.reference_species
     try:
         run(MAF_FILEPATH, REFERENCE_SPECIES)
