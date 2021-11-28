@@ -15,7 +15,12 @@ def run(fn, ref):
                 end_pos = int(sr.annotations['start']) + int(sr.annotations['size'])
                 name = sr.id
                 score = 0
-                strand = sr.annotations['strand']
+                strand = ""
+                
+                if sr.annotations['strand'] == -1:
+                    strand = "-"
+                else:
+                    strand = "+"
                 
                 bed_line = "\t".join([contig, str(start_pos), str(end_pos), name, score, strand])
                 print(bed_line + "\n")
