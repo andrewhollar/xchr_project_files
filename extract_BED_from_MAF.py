@@ -23,7 +23,7 @@ def run(fn, ref):
                     strand = "+"
                 
                 bed_line = "\t".join([contig, str(start_pos), str(end_pos), name, score, strand])
-                print(bed_line + "\n")
+                print(bed_line)
 
 
 if __name__ == '__main__':
