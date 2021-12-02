@@ -24,13 +24,16 @@ def main():
         end_pos = entry_tokens[2]
         transcript_id = entry_tokens[3]
         
+        transcripts = data.transcript_by_id(transcript_id.split('.')[0])
+        print(transcripts)
+        
         # print(transcript_id)
         
-        gene_name = data.gene_name_of_transcript_id(transcript_id.split('.')[0])
-        gene_info = data.genes_by_name(gene_name)
         
-        print(gene_name)
-        print(gene_info)
+        # gene_name = data.gene_name_of_transcript_id(transcript_id.split('.')[0])
+        # gene_info = data.genes_by_name(gene_name)
+        # print(gene_name)
+        # print(gene_info)
 
         entries +=1
         
