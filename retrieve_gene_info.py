@@ -5,7 +5,7 @@ from pyensembl import EnsemblRelease
 
 def main():
     # release 77 uses human reference genome GRCh38
-    data = EnsemblRelease(77)
+    data = EnsemblRelease(104)
 
     gene_info = data.gene_by_id("ENST00000431238.7")
     print(gene_info)
