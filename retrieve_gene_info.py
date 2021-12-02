@@ -5,7 +5,7 @@ from pyensembl import EnsemblRelease
 UCSC_BED_DIR = "/home/ahollar/bed_files/ucsc_hg38_gencode"
 UCSC_WHOLE_GENES = os.path.join(UCSC_BED_DIR, "ucsc_chrX_wholeGenes.bed")
 
-MAX_SAMPLES = 10
+MAX_SAMPLES = 2
 
 def main():
     # release 77 uses human reference genome GRCh38
@@ -25,12 +25,15 @@ def main():
         transcript_id = entry_tokens[3]
         
         transcripts = data.transcript_by_id(transcript_id.split('.')[0])
-        print(transcripts)
+        # print(transcripts)
         
         # print(transcript_id)
         
         
-        # gene_name = data.gene_name_of_transcript_id(transcript_id.split('.')[0])
+        gene_name = data.gene_name_of_transcript_id(transcript_id.split('.')[0])
+        
+        ids_for_gene = data.transcript_ids_of_gene_name(gene_name)
+        print(ids_for_gene)
         # gene_info = data.genes_by_name(gene_name)
         # print(gene_name)
         # print(gene_info)
