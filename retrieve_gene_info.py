@@ -8,8 +8,10 @@ def main():
     data = EnsemblRelease(77)
 
     #gene_info = data.gene_by_id("ENST00000431238")
-    gene_name = data.gene_name_of_transcript_id("ENST00000431238.7") 
+    gene_name = data.gene_name_of_transcript_id("ENST00000431238") 
+    gene_info = data.genes_by_name(gene_name)
     print(gene_name)
+    print(gene_info)
 
 
 
