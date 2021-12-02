@@ -24,6 +24,8 @@ def main():
         end_pos = entry_tokens[2]
         transcript_id = entry_tokens[3]
         
+        print(transcript_id)
+        
         gene_name = data.gene_name_of_transcript_id(transcript_id.split('.'))
         gene_info = data.genes_by_name(gene_name)
 
