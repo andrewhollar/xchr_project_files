@@ -5,6 +5,8 @@ UCSC_BED_DIR = "/home/ahollar/bed_files/ucsc_hg38_gencode"
 UCSC_EXONS = os.path.join(UCSC_BED_DIR, "ucsc_chrX_exons.bed")
 UCSC_INTRONS = os.path.join(UCSC_BED_DIR, "ucsc_chrX_introns.bed")
 UCSC_INTERGENIC = os.path.join(UCSC_BED_DIR, "ucsc_chrX_intergenic.bed")
+UCSC_WHOLE_GENES = os.path.join(UCSC_BED_DIR, "ucsc_chrX_wholeGenes.bed")
+
 
 MAX_SAMPLES = sys.maxsize
 
@@ -27,10 +29,13 @@ def main():
     exon_cov = get_num_nts(UCSC_EXONS)
     intron_cov = get_num_nts(UCSC_INTRONS)
     intergenic_cov = get_num_nts(UCSC_INTERGENIC)
+    wholeGene_cov = get_num_nts(UCSC_WHOLE_GENES)
     
     total = (exon_cov + intron_cov + intergenic_cov)
     
     print(total)
+    print(exon_cov, intron_cov, intergenic_cov, wholeGene_cov)
+    print((exon_cov + intron_cov), wholeGene_cov)
     print("Exon: {}".format((exon_cov/total)))
     print("Intron: {}".format((intron_cov/total)))
     print("Intergenic: {}".format((intergenic_cov/total)))
