@@ -9,7 +9,7 @@ MAX_SAMPLES = 5
 
 def main():
     # release 77 uses human reference genome GRCh38
-    data = EnsemblRelease(77)
+    data = EnsemblRelease(104)
 
     # gene_name = data.gene_name_of_transcript_id("ENST00000431238") 
     # gene_info = data.genes_by_name(gene_name)
