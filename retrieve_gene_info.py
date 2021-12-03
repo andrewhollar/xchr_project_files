@@ -19,6 +19,8 @@ def main():
     
     entries = 0
     
+    biotype_cts = {}
+    
     for entry in open(UCSC_WHOLE_GENES, "r").readlines():
         entry_tokens = entry.split()
         start_pos = entry_tokens[1]
@@ -33,9 +35,13 @@ def main():
 
         # print(transcripts)
         
-        if 'pseudogene' in transcript.biotype:
-            print(transcript)
-            entries +=1
+        
+        biotype_cts.setdefault(0)
+        biotype_cts[transcript.biotype] += 1
+        
+        # if 'pseudogene' in transcript.biotype:
+        #     print(transcript)
+        #     entries +=1
         # print(transcript_id)
         
         
@@ -52,6 +58,7 @@ def main():
         if entries > MAX_SAMPLES:
             break
         
+    print(biotype_cts)
 
 
 
