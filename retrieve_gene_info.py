@@ -25,7 +25,7 @@ def main():
         transcript_id = entry_tokens[3]
         
         transcripts = data.transcript_by_id(transcript_id.split('.')[0])
-        # print(transcripts)
+        print(transcripts)
         
         # print(transcript_id)
         
