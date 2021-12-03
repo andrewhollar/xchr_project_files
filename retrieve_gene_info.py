@@ -24,7 +24,12 @@ def main():
         end_pos = entry_tokens[2]
         transcript_id = entry_tokens[3]
         
-        transcript = data.transcript_by_id(transcript_id.split('.')[0])
+        try:
+            transcript = data.transcript_by_id(transcript_id.split('.')[0])
+        except ValueError:
+            print("ValueError: Transcript not found: {}".format(transcript_id.split('.')[0]))
+            continue
+
         # print(transcripts)
         
         if 'pseudogene' in transcript.biotype:
