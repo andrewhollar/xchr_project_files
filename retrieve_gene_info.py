@@ -36,8 +36,10 @@ def main():
         # print(transcripts)
         
         
-        biotype_cts.setdefault(0)
-        biotype_cts[transcript.biotype] += 1
+        if transcript.biotype in biotype_cts.keys():
+            biotype_cts[transcript.biotype] += 1
+        else:
+            biotype_cts[transcript.biotype] = 1
         
         # if 'pseudogene' in transcript.biotype:
         #     print(transcript)
