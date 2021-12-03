@@ -2,10 +2,10 @@ import os
 import sys
 
 UCSC_BED_DIR = "/home/ahollar/bed_files/ucsc_hg38_gencode"
-UCSC_EXONS = os.path.join(UCSC_BED_DIR, "ucsc_chrX_exons.bed")
-UCSC_INTRONS = os.path.join(UCSC_BED_DIR, "ucsc_chrX_introns.bed")
+UCSC_EXONS = os.path.join(UCSC_BED_DIR, "ucsc_chrX_exons.merged.bed")
+UCSC_INTRONS = os.path.join(UCSC_BED_DIR, "ucsc_chrX_introns.merged.bed")
 UCSC_INTERGENIC = os.path.join(UCSC_BED_DIR, "ucsc_chrX_intergenic.bed")
-UCSC_WHOLE_GENES = os.path.join(UCSC_BED_DIR, "ucsc_chrX_wholeGenes.bed")
+UCSC_WHOLE_GENES = os.path.join(UCSC_BED_DIR, "ucsc_chrX_wholeGenes.merged.bed")
 
 
 MAX_SAMPLES = sys.maxsize
