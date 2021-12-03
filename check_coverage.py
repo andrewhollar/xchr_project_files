@@ -12,8 +12,8 @@ def get_num_nts(bed_file):
     num_nts = 0
     for entry in open(bed_file, "r").readlines():
         entry_tokens = entry.split()
-        start_pos = entry_tokens[1]
-        end_pos = entry_tokens[2]
+        start_pos = int(entry_tokens[1])
+        end_pos = int(entry_tokens[2])
         #transcript_id = entry_tokens[3]
         assert (end_pos - start_pos) > 0
         num_nts += (end_pos - start_pos)
