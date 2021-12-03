@@ -25,9 +25,9 @@ def main():
         transcript_id = entry_tokens[3]
         
         try:
-            transcript = data.transcript_by_id(transcript_id.split('.')[0])
+            transcript = data.transcript_by_id(transcript_id)
         except ValueError:
-            print("ValueError: Transcript not found: {}".format(transcript_id.split('.')[0]))
+            print("ValueError: Transcript not found: {}".format(transcript_id))
             continue
 
         # print(transcripts)
