@@ -1,11 +1,12 @@
 import argparse
 import os
+import sys
 from pyensembl import EnsemblRelease
 
 UCSC_BED_DIR = "/home/ahollar/bed_files/ucsc_hg38_gencode"
 UCSC_WHOLE_GENES = os.path.join(UCSC_BED_DIR, "ucsc_chrX_wholeGenes.bed")
 
-MAX_SAMPLES = 5
+MAX_SAMPLES = sys.maxsize
 
 def main():
     # release 77 uses human reference genome GRCh38
