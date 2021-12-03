@@ -12,11 +12,6 @@ def main():
     # release 77 uses human reference genome GRCh38
     data = EnsemblRelease(104)
 
-    # gene_name = data.gene_name_of_transcript_id("ENST00000431238") 
-    # gene_info = data.genes_by_name(gene_name)
-    # print(gene_name)
-    # print(gene_info)
-    
     entries = 0
     
     biotype_cts = {}
@@ -31,31 +26,12 @@ def main():
             transcript = data.transcript_by_id(transcript_id.split('.')[0])
         except ValueError:
             print("ValueError: Transcript not found: {}".format(transcript_id.split('.')[0]))
-            continue
-
-        # print(transcripts)
-        
+            continue        
         
         if transcript.biotype in biotype_cts.keys():
             biotype_cts[transcript.biotype] += 1
         else:
             biotype_cts[transcript.biotype] = 1
-        
-        # if 'pseudogene' in transcript.biotype:
-        #     print(transcript)
-        #     entries +=1
-        # print(transcript_id)
-        
-        
-        # gene_name = data.gene_name_of_transcript_id(transcript_id.split('.')[0])
-        
-        # ids_for_gene = data.transcript_ids_of_gene_name(gene_name)
-        # print(ids_for_gene)
-        # gene_info = data.genes_by_name(gene_name)
-        # print(gene_name)
-        # print(gene_info)
-
-
         
         if entries > MAX_SAMPLES:
             break
